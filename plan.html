@@ -170,20 +170,18 @@
     <h2><span class="h2-num">1</span>핵심 흐름 — 한눈에 보기</h2>
 
     <div class="flow">
-      <div class="flow-box partial">
+      <div class="flow-box todo">
         <div class="flow-top">
           <div class="flow-num">1</div>
-          <span class="flow-status">체크리스트 준비완료 · 실조회 전</span>
+          <span class="flow-status">보류 (스킵)</span>
         </div>
         <div class="flow-icon">📥</div>
         <div class="flow-title">어그리게이터<br>선검토</div>
-        <div class="flow-why">왜: 이미 붙어있는 API라 추가 개발·권한 없이 바로 확인 가능 → 가장 빠르고 비용 없음</div>
-        <div class="flow-how-label">어떻게</div>
+        <div class="flow-why">이사님 판단: 실효성이 크지 않아 보류 → 2단계로 바로 진행</div>
+        <div class="flow-how-label">상태</div>
         <ul class="flow-points">
-          <li class="pt-done">트래커 시트에 <b>"1단계_어그리게이터체크"</b> 탭 생성 완료</li>
-          <li class="pt-todo">63개 항공사 <b>대표노선 1~2건씩</b> 실 조회</li>
-          <li class="pt-todo">응답 JSON에서 수하물 필드 <b>있음/비어있음/없음</b> 3분류</li>
-          <li class="pt-todo">값 채워진 항공사는 <b>바로 트래커 반영</b>, 나머지만 2단계로</li>
+          <li class="pt-done">트래커 시트에 <b>"1단계_어그리게이터체크"</b> 탭은 생성해둠(참고용, 보류)</li>
+          <li class="pt-todo">63개 항공사 실조회 — <b>진행 안 함</b></li>
         </ul>
       </div>
 
@@ -192,16 +190,17 @@
       <div class="flow-box partial">
         <div class="flow-top">
           <div class="flow-num">2</div>
-          <span class="flow-status">준비완료 · 테스트 전</span>
+          <span class="flow-status">진행 중 · GDS 테스트 요청 단계</span>
         </div>
         <div class="flow-icon">✈️</div>
         <div class="flow-title">MP / InformativePricing<br>추가조사</div>
-        <div class="flow-why">왜: 1단계에서 빠진 항공사만, GDS 운임조회 한 번으로 Fare Family·무료위탁·기내수하물 동시 확보 가능 — RQ/RS 샘플로 실증됨</div>
+        <div class="flow-why">왜: GDS 운임조회 한 번으로 Fare Family·무료위탁·기내수하물 동시 확보 가능 — RQ/RS 샘플로 실증됨</div>
         <div class="flow-how-label">어떻게</div>
         <ul class="flow-points">
           <li class="pt-done">Fare Family 제공 여부 확인 <b>(36개 완료)</b></li>
           <li class="pt-done">RQ/RS 요청·응답 <b>샘플 확보 완료</b></li>
-          <li class="pt-todo">기반기술팀에 <b>GDS 테스트 요청</b> — 아직 미요청, 예정</li>
+          <li class="pt-done">GDS 접근 경로 확인: <b>지영님</b>이 방화벽 IP 화이트리스트 관리, <b>이승철 팀장님</b>께 요청 시 Postman 등 테스트 도구 기본 제공</li>
+          <li class="pt-todo"><b>QA팀 승연님과 함께</b> 이승철 팀장님께 <b>GDS 테스트 요청</b> — 다음 액션</li>
           <li class="pt-todo">응답값 PieceAllowance/WeightAllowance/FreeText 파싱</li>
         </ul>
         <div class="flow-warn">⚠ FBA/COA는 FF 없는 항공사도 조회 가능한지 — 기반기술팀 확인 필요</div>
