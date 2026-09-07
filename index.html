@@ -230,6 +230,33 @@
     return escapeHtml(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   }
 
+  // 데이터소스 필드 전용: "koreanair.com/baggage/free-baggage" 같은 도메인(+경로) 텍스트를
+  // 실제 클릭 가능한 링크로 바꿔줌. escape 이후 처리하므로 안전함.
+  function linkifySource(s){
+    var esc = renderRich(s);
+    var domainRe = /(?:[a-z0-9-]+\.)+[a-z]{2,10}/gi;
+    var result = '';
+    var lastIndex = 0;
+    var match;
+    while((match = domainRe.exec(esc)) !== null){
+      var domain = match[0];
+      var offset = match.index;
+      if(offset > 0 && /[\/\w@-]/.test(esc.charAt(offset - 1))){ continue; } // 이미 단어/링크의 일부인 경우 건너뜀
+      var rest = esc.slice(offset + domain.length);
+      var m = rest.match(/^\/[^\s,)ㄱ-힣]*/) || rest.match(/^ [a-zA-Z0-9\-_.~%\/]+/);
+      var path = m ? m[0] : '';
+      var display = domain + path;
+      var hrefPath = path.charAt(0) === ' ' ? '/' + path.slice(1) : path;
+      var href = 'https://' + domain + hrefPath;
+      result += esc.slice(lastIndex, offset);
+      result += '<a href="' + href + '" target="_blank" rel="noopener" style="color:var(--accent2);text-decoration:underline;">' + display + '</a>';
+      lastIndex = offset + domain.length + path.length;
+      domainRe.lastIndex = lastIndex;
+    }
+    result += esc.slice(lastIndex);
+    return result;
+  }
+
   function statusBadge(v){
     if(v === '확인완료') return '<span class="badge done">확인완료</span>';
     if(v === '조사중') return '<span class="badge wip">조사중</span>';
@@ -342,8 +369,9 @@
 
     var detailHtml = detailFields.map(function(key){
       var v = r[key];
+      var rendered = v ? (key === '데이터소스' ? linkifySource(v) : renderRich(v)) : '미확인';
       return '<div class="modal-field"><span class="mf-label">' + escapeHtml(key) + '</span>' +
-        '<div class="mf-value' + (v ? '' : ' empty') + '">' + (v ? renderRich(v) : '미확인') + '</div></div>';
+        '<div class="mf-value' + (v ? '' : ' empty') + '">' + rendered + '</div></div>';
     }).join('');
 
     var logoUrl = 'https://pics.avs.io/60/60/' + encodeURIComponent(r['코드']) + '.png';
