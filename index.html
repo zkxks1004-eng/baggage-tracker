@@ -359,17 +359,20 @@
     var weightVal = (perW && perW !== '-') ? perW : ((totalW && totalW !== '-') ? totalW : '');
     // 숫자(+kg)까지만 뽑아서 고정폭으로 오른쪽 정렬하고, "이하"/"초과 금지" 같은 뒤에 붙는 설명은
     // 옅은 색으로 따로 붙인다 — 시트 값은 그대로 두되(추가 안 함) 자릿수만 맞춰 보이게.
-    var weightNum = '', weightSuffix = '';
+    var weightPrefix = '', weightNum = '', weightSuffix = '';
     if(weightVal){
-      var m = String(weightVal).match(/^([\d.,~\-\/]+\s*(?:kg)?)\s*([\s\S]*)$/i);
-      if(m){ weightNum = m[1].trim(); weightSuffix = m[2].trim(); }
+      // 숫자 앞에 "무게 18kg..."처럼 글자가 붙어있는 경우도 있어서 앞/뒤 텍스트를 다 분리한다
+      var m = String(weightVal).match(/^([^\d]*)([\d.,~\-\/]+\s*(?:kg)?)\s*([\s\S]*)$/i);
+      if(m){ weightPrefix = m[1].trim(); weightNum = m[2].trim(); weightSuffix = m[3].trim(); }
       else { weightNum = String(weightVal); }
     }
     var qtyPart = (qty && qty !== '-') ? (qty + '피스') : '';
     var corePlain = [qtyPart, weightNum].filter(Boolean).join(' · ');
     if(!corePlain) return '<span class="badge empty">—</span>';
     var fullText = [qtyPart, weightVal].filter(Boolean).join(' · ');
-    var html = '<span class="allow-num">' + escapeHtml(corePlain) + '</span>' +
+    var html =
+      (weightPrefix ? '<span class="allow-suffix">' + escapeHtml(weightPrefix) + ' </span>' : '') +
+      '<span class="allow-num">' + escapeHtml(corePlain) + '</span>' +
       (weightSuffix ? '<span class="allow-suffix">' + escapeHtml(weightSuffix) + '</span>' : '');
     return '<span class="popover-trigger" data-full="' + escapeHtml(fullText) + '">' + html + '</span>';
   }
