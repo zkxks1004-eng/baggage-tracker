@@ -459,10 +459,11 @@
     // 클릭하면 전체 내용을 팝오버로 보여준다(허용량 칸과 동일한 패턴).
     return '<span class="popover-trigger"' + popoverAttrs(items) + '>' + inlineHtml + '</span>';
   }
+  // 라벨은 항상 붙이고, 시트 값 앞에 그 라벨 단어가 이미 들어있으면(중복 방지) 잘라낸다.
+  // 승연님이 "유아 요금에는..."처럼 라벨 단어로 문장을 시작해도 "유아: 요금에는..."으로 자동 정리됨.
   function splitLabel(label, value, accent){
-    var v = value.trim();
-    if(new RegExp('^' + label).test(v)) return { label:'', text:v, accent:accent };
-    return { label: label + (accent ? ':' : ''), text:v, accent:accent };
+    var v = value.trim().replace(new RegExp('^' + label + '\\s*'), '');
+    return { label: label + (accent ? ':' : ''), text: v, accent: accent };
   }
 
   function airlineLogoUrl(code){ return 'https://pics.avs.io/60/60/' + encodeURIComponent(code) + '.png'; }
