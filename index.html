@@ -230,7 +230,6 @@
     text-align:left; font-family:"IBM Plex Mono"; font-size:9.5px; font-weight:700; color:var(--ink-dim);
     letter-spacing:.03em; padding:5px 8px; border-bottom:1px solid var(--line); white-space:nowrap;
   }
-  .mtx-table .mhead .mcell:nth-child(3){ text-align:right; }
   .mtx-table .mcell{
     padding:7px 8px; border-bottom:1px solid var(--line);
     white-space:normal; overflow:visible; text-overflow:clip; word-break:break-word; align-self:start;
@@ -239,8 +238,15 @@
   .mtx-table .cls{ font-weight:700; }
   .mtx-table .brand{ color:var(--ink-dim); }
   .mtx-table .allow{
-    font-family:"IBM Plex Mono"; font-weight:700; color:var(--accent-ink); text-align:right;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; cursor:pointer;
+  }
+  .mtx-table .allow-num{
+    display:inline-block; min-width:64px; text-align:right;
+    font-family:"IBM Plex Mono"; font-weight:700; color:var(--accent-ink);
+  }
+  .mtx-table .allow-suffix{
+    display:inline-block; margin-left:6px; color:var(--ink-faint); font-weight:500;
+    font-family:"Pretendard"; font-size:11px;
   }
   .cell-popover{
     position:fixed; z-index:80; max-width:320px; padding:9px 12px; border-radius:8px;
@@ -345,18 +351,25 @@
   // ---- 허용량(개수/무게) 표기 ----
   // 셀에 다 안 들어가면 "..."으로 줄이고, 클릭 시 전체 텍스트를 팝업으로 보여준다 (아래 cell-popover 참고)
   function formatAllowance(r){
-    var concept = r[COL.CONCEPT] || '';
     var qty = r[COL.QTY] || '';
     var perW = r[COL.PER_W] || '';
     var totalW = r[COL.TOTAL_W] || '';
-    // 구글시트에 있는 값 그대로만 붙여서 보여준다(개수만 "피스" 붙임, 무게 쪽엔 단위·수식어 추가 안 함)
-    var parts = [];
-    if(qty && qty !== '-') parts.push(qty + '피스');
-    if(perW && perW !== '-') parts.push(perW);
-    if((!perW || perW === '-') && totalW && totalW !== '-') parts.push(totalW);
-    if(!parts.length) return '<span class="badge empty">—</span>';
-    var text = parts.join(' · ');
-    return '<span class="popover-trigger" data-full="' + escapeHtml(text) + '">' + escapeHtml(text) + '</span>';
+    var weightVal = (perW && perW !== '-') ? perW : ((totalW && totalW !== '-') ? totalW : '');
+    // 숫자(+kg)까지만 뽑아서 고정폭으로 오른쪽 정렬하고, "이하"/"초과 금지" 같은 뒤에 붙는 설명은
+    // 옅은 색으로 따로 붙인다 — 시트 값은 그대로 두되(추가 안 함) 자릿수만 맞춰 보이게.
+    var weightNum = '', weightSuffix = '';
+    if(weightVal){
+      var m = String(weightVal).match(/^([\d.,~\-\/]+\s*(?:kg)?)\s*([\s\S]*)$/i);
+      if(m){ weightNum = m[1].trim(); weightSuffix = m[2].trim(); }
+      else { weightNum = String(weightVal); }
+    }
+    var qtyPart = (qty && qty !== '-') ? (qty + '피스') : '';
+    var corePlain = [qtyPart, weightNum].filter(Boolean).join(' · ');
+    if(!corePlain) return '<span class="badge empty">—</span>';
+    var fullText = [qtyPart, weightVal].filter(Boolean).join(' · ');
+    var html = '<span class="allow-num">' + escapeHtml(corePlain) + '</span>' +
+      (weightSuffix ? '<span class="allow-suffix">' + escapeHtml(weightSuffix) + '</span>' : '');
+    return '<span class="popover-trigger" data-full="' + escapeHtml(fullText) + '">' + html + '</span>';
   }
 
   function formatTags(r){
