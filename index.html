@@ -330,7 +330,8 @@
   var COL = {
     NO:0, CODE:1, NAME_EN:2, NAME_KR:3, BAG_TYPE:4, ROUTE:5, CLASS:6, BRAND:7,
     PAX:8, TIER:9, CODESHARE:10, CONCEPT:11, QTY:12, PER_W:13, TOTAL_W:14,
-    DIM:15, PERSONAL:16, INFANT:17, CHILD:18, START:19, END:20, STATUS:21, LAST_CHECK:22, SOURCE:23, NOTE:24
+    DIM:15, P_QTY:16, P_PER_W:17, P_TOTAL_W:18,
+    PERSONAL:19, INFANT:20, CHILD:21, START:22, END:23, STATUS:24, LAST_CHECK:25, SOURCE:26, NOTE:27
   };
 
   var frame = document.getElementById('table-frame');
@@ -382,12 +383,9 @@
     return ' data-full="' + escapeAttr(bits.plainFull) + '" data-full-html="' + escapeAttr(bits.popoverHtml) + '"';
   }
 
-  // ---- 허용량(개수/무게) 표기 ----
-  // 셀에는 개수/무게 요약만 보여주고, 클릭하면 규격/개인소지품 상세까지 팝업으로 보여준다.
-  function formatAllowance(r){
-    var qty = r[COL.QTY] || '';
-    var perW = r[COL.PER_W] || '';
-    var totalW = r[COL.TOTAL_W] || '';
+  // 허용개수/개당중량/총중량 3칸을 "N피스 · Mkg" 형태로 합치는 공용 로직
+  // (메인 허용량, 개인소지품 허용량 둘 다 같은 3-컬럼 구조라 재사용한다)
+  function qtyWeightText(qty, perW, totalW){
     var weightVal = (perW && perW !== '-') ? perW : ((totalW && totalW !== '-') ? totalW : '');
     // 숫자(+kg)까지만 뽑아서 고정폭으로 오른쪽 정렬하고, "이하"/"초과 금지" 같은 뒤에 붙는 설명은
     // 옅은 색으로 따로 붙인다 — 시트 값은 그대로 두되(추가 안 함) 자릿수만 맞게 보이게.
@@ -399,19 +397,32 @@
       else { weightNum = String(weightVal); }
     }
     var qtyPart = (qty && qty !== '-') ? (qty + '피스') : '';
-    var corePlain = [qtyPart, weightNum].filter(Boolean).join(' · ');
-    var fullText = [qtyPart, weightVal].filter(Boolean).join(' · ');
+    return {
+      corePlain: [qtyPart, weightNum].filter(Boolean).join(' · '),
+      fullText: [qtyPart, weightVal].filter(Boolean).join(' · '),
+      weightPrefix: weightPrefix, weightSuffix: weightSuffix
+    };
+  }
+
+  // ---- 허용량(개수/무게) 표기 ----
+  // 셀에는 개수/무게 요약만 보여주고, 클릭하면 규격/개인소지품 상세까지 팝업으로 보여준다.
+  function formatAllowance(r){
+    var main = qtyWeightText(r[COL.QTY] || '', r[COL.PER_W] || '', r[COL.TOTAL_W] || '');
+    var corePlain = main.corePlain, fullText = main.fullText, weightPrefix = main.weightPrefix, weightSuffix = main.weightSuffix;
+
+    var bagType = r[COL.BAG_TYPE];
+    var bagLabel = (bagType === '위탁수하물' || bagType === '기내수하물') ? bagType : '허용량';
 
     var items = [];
-    if(fullText) items.push({label:'', text: fullText, accent:false});
+    if(fullText) items.push({ label: bagLabel + ' 정보:', text: fullText, accent:false });
     var dim = r[COL.DIM];
     if(dim && dim !== '-'){
       // "규격"만으로는 위탁/기내 중 뭘 말하는지 헷갈리므로 수하물 종류를 라벨에 명시하고,
       // 시트 값에 남아있을 수 있는 중복 "규격 " 앞말은 제거한다.
-      var bagType = r[COL.BAG_TYPE];
-      var dimLabel = (bagType === '위탁수하물' || bagType === '기내수하물') ? (bagType + ' 규격') : '규격';
-      items.push({ label: dimLabel + ':', text: dim.trim().replace(/^규격\s*/, ''), accent:false });
+      items.push({ label: bagLabel + ' 규격:', text: dim.trim().replace(/^규격\s*/, ''), accent:false });
     }
+    var personalQW = qtyWeightText(r[COL.P_QTY] || '', r[COL.P_PER_W] || '', r[COL.P_TOTAL_W] || '');
+    if(personalQW.fullText) items.push({ label: '개인소지품 정보:', text: personalQW.fullText, accent:true });
     var personal = r[COL.PERSONAL];
     if(personal && personal !== '해당없음' && personal !== '-'){
       // 개인소지품도 "규격" 항목이라는 걸 명확히 하려고 위탁/기내수하물 규격과 같은 방식으로 라벨을 통일한다.
