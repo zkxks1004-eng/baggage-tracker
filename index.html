@@ -164,6 +164,8 @@
   }
   .mtx-section-title .icon{ font-size:16px; }
   .mtx-section-title .count{ font-family:"IBM Plex Mono"; font-size:11px; font-weight:600; color:var(--ink-dim); margin-left:auto; }
+  .mtx-section-source{ font-size:11.5px; color:var(--ink-dim); margin:-4px 0 12px; }
+  .mtx-section-source a{ color:var(--accent2); }
   .mtx-route{ margin-bottom:14px; }
   .mtx-route:last-child{ margin-bottom:0; }
   .mtx-route-title{
@@ -401,10 +403,12 @@
     // 노선구간별로 그룹핑 (원본 정렬 순서를 그대로 유지)
     var routeOrder = [];
     var byRoute = {};
+    var source = '';
     rows.forEach(function(r){
       var route = r[COL.ROUTE] || '기타';
       if(!byRoute[route]){ byRoute[route] = []; routeOrder.push(route); }
       byRoute[route].push(r);
+      if(!source && r[COL.SOURCE]) source = r[COL.SOURCE];
     });
     var body = routeOrder.map(function(route){
       return '<div class="mtx-route">' +
@@ -414,6 +418,7 @@
     }).join('');
     return '<div class="mtx-section">' +
       '<div class="mtx-section-title"><span class="icon">' + icon + '</span>' + escapeHtml(title) + '<span class="count">' + rows.length + '개 조건</span></div>' +
+      '<div class="mtx-section-source">출처: ' + (source ? linkifyUrl(source) : '<span class="badge empty">—</span>') + '</div>' +
       body +
       '</div>';
   }
@@ -429,8 +434,7 @@
       '<div><div class="tf-label">확인상태</div><div class="tf-value">' + statusBadge(a.status) + '</div></div>' +
       '<div><div class="tf-label">최종확인일</div><div class="tf-value' + (a.lastDate ? '' : ' empty') + '">' + escapeHtml(a.lastDate || '—') + '</div></div>' +
       '<div><div class="tf-label">전체 조건행</div><div class="tf-value">' + a.total + '개</div></div>' +
-      '<div><div class="tf-label">노선구간 종류</div><div class="tf-value">' + a.routeCount + '개</div></div>' +
-      '<div><div class="tf-label">출처</div><div class="tf-value' + (a.source ? '' : ' empty') + '">' + (a.source ? linkifyUrl(a.source) : '—') + '</div></div>';
+      '<div><div class="tf-label">노선구간 종류</div><div class="tf-value">' + a.routeCount + '개</div></div>';
 
     var bodyHtml =
       buildSection('🧳', '위탁수하물', consignRows) +
