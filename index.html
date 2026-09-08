@@ -410,9 +410,13 @@
       // 시트 값에 남아있을 수 있는 중복 "규격 " 앞말은 제거한다.
       var bagType = r[COL.BAG_TYPE];
       var dimLabel = (bagType === '위탁수하물' || bagType === '기내수하물') ? (bagType + ' 규격') : '규격';
-      items.push({ label: dimLabel, text: dim.trim().replace(/^규격\s*/, ''), accent:false });
+      items.push({ label: dimLabel + ':', text: dim.trim().replace(/^규격\s*/, ''), accent:false });
     }
-    var personal = r[COL.PERSONAL]; if(personal && personal !== '해당없음' && personal !== '-') items.push(splitLabel('개인소지품', personal, true));
+    var personal = r[COL.PERSONAL];
+    if(personal && personal !== '해당없음' && personal !== '-'){
+      // 개인소지품도 "규격" 항목이라는 걸 명확히 하려고 위탁/기내수하물 규격과 같은 방식으로 라벨을 통일한다.
+      items.push({ label: '개인소지품 규격:', text: personal.trim().replace(/^개인소지품\s*/, ''), accent:true });
+    }
 
     if(!corePlain){
       if(!items.length) return '<span class="badge empty">—</span>';
