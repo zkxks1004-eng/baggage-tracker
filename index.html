@@ -252,12 +252,15 @@
   .cell-popover{
     position:fixed; z-index:80; max-width:320px; padding:9px 12px; border-radius:8px;
     background:#1a2338; color:#f2f4fa; font-size:12.5px; font-family:"IBM Plex Mono";
-    line-height:1.5; box-shadow:0 12px 30px -10px rgba(0,0,0,.5); white-space:normal; word-break:break-word;
+    line-height:1.5; box-shadow:0 12px 30px -10px rgba(0,0,0,.5); white-space:pre-line; word-break:break-word;
     animation:popIn .12s ease;
   }
   .cell-popover[hidden]{ display:none; }
   @keyframes popIn{ from{opacity:0; transform:translateY(-2px);} to{opacity:1; transform:none;} }
-  .mtx-table .note{ color:var(--ink-dim); font-size:11.5px; }
+  .mtx-table .note{
+    color:var(--ink-dim); font-size:11.5px;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; cursor:pointer;
+  }
   .mtx-table .note em{ color:var(--accent-ink); font-style:normal; }
   .mf-value strong, .tf-value strong{ color:var(--accent2); font-weight:700; }
 </style>
@@ -392,14 +395,34 @@
     return new RegExp('^' + label).test(v) ? v : (label + ': ' + v);
   }
   function formatNote(r){
-    var bits = [];
+    var htmlBits = [], plainBits = [];
     var personal = r[COL.PERSONAL];
-    if(personal && personal !== '해당없음' && personal !== '-') bits.push('<em>' + escapeHtml(withLabel('개인소지품', personal)) + '</em>');
-    var dim = r[COL.DIM]; if(dim && dim !== '-') bits.push((/^규격/.test(dim.trim()) ? '' : '규격 ') + escapeHtml(dim));
-    var infant = r[COL.INFANT]; if(infant && infant !== '해당없음' && infant !== '-') bits.push('<em>' + escapeHtml(withLabel('유아', infant)) + '</em>');
-    var child = r[COL.CHILD]; if(child && child !== '해당없음' && child !== '-') bits.push('<em>' + escapeHtml(withLabel('소아', child)) + '</em>');
-    var note = r[COL.NOTE]; if(note && note !== '-') bits.push(escapeHtml(note));
-    return bits.join('<br>');
+    if(personal && personal !== '해당없음' && personal !== '-'){
+      var personalText = withLabel('개인소지품', personal);
+      htmlBits.push('<em>' + escapeHtml(personalText) + '</em>'); plainBits.push(personalText);
+    }
+    var dim = r[COL.DIM];
+    if(dim && dim !== '-'){
+      var dimText = (/^규격/.test(dim.trim()) ? '' : '규격 ') + dim;
+      htmlBits.push(escapeHtml(dimText)); plainBits.push(dimText);
+    }
+    var infant = r[COL.INFANT];
+    if(infant && infant !== '해당없음' && infant !== '-'){
+      var infantText = withLabel('유아', infant);
+      htmlBits.push('<em>' + escapeHtml(infantText) + '</em>'); plainBits.push(infantText);
+    }
+    var child = r[COL.CHILD];
+    if(child && child !== '해당없음' && child !== '-'){
+      var childText = withLabel('소아', child);
+      htmlBits.push('<em>' + escapeHtml(childText) + '</em>'); plainBits.push(childText);
+    }
+    var note = r[COL.NOTE];
+    if(note && note !== '-'){ htmlBits.push(escapeHtml(note)); plainBits.push(note); }
+    if(!htmlBits.length) return '';
+    // 비고가 여러 줄이면 행 높이가 노선구간표마다 들쭉날쭉해지므로, 한 줄로 축약하고
+    // 클릭하면 전체 내용을 팝오버로 보여준다(허용량 칸과 동일한 패턴).
+    return '<span class="popover-trigger" data-full="' + escapeHtml(plainBits.join('\n')) + '">' +
+      htmlBits.join(' · ') + '</span>';
   }
 
   function airlineLogoUrl(code){ return 'https://pics.avs.io/60/60/' + encodeURIComponent(code) + '.png'; }
