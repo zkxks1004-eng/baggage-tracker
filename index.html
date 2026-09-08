@@ -391,8 +391,10 @@
     var personal = r[COL.PERSONAL];
     if(personal && personal !== '해당없음' && personal !== '-') bits.push('<em>개인소지품: ' + escapeHtml(personal) + '</em>');
     var dim = r[COL.DIM]; if(dim && dim !== '-') bits.push('규격 ' + escapeHtml(dim));
+    var infant = r[COL.INFANT]; if(infant && infant !== '해당없음' && infant !== '-') bits.push('<em>유아: ' + escapeHtml(infant) + '</em>');
+    var child = r[COL.CHILD]; if(child && child !== '해당없음' && child !== '-') bits.push('<em>소아: ' + escapeHtml(child) + '</em>');
     var note = r[COL.NOTE]; if(note && note !== '-') bits.push(escapeHtml(note));
-    return bits.join(' · ');
+    return bits.join('<br>');
   }
 
   function airlineLogoUrl(code){ return 'https://pics.avs.io/60/60/' + encodeURIComponent(code) + '.png'; }
