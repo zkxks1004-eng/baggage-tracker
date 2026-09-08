@@ -348,9 +348,9 @@
     var qty = r[COL.QTY] || '';
     var perW = r[COL.PER_W] || '';
     var totalW = r[COL.TOTAL_W] || '';
-    // 구글시트에 있는 값 그대로만 붙여서 보여준다(단위·수식어 추가 안 함)
+    // 구글시트에 있는 값 그대로만 붙여서 보여준다(개수만 "피스" 붙임, 무게 쪽엔 단위·수식어 추가 안 함)
     var parts = [];
-    if(qty && qty !== '-') parts.push(qty);
+    if(qty && qty !== '-') parts.push(qty + '피스');
     if(perW && perW !== '-') parts.push(perW);
     if((!perW || perW === '-') && totalW && totalW !== '-') parts.push(totalW);
     if(!parts.length) return '<span class="badge empty">—</span>';
