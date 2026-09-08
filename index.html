@@ -313,10 +313,12 @@
   var SHEET_NAME = '메인매트릭스';
 
   // 메인매트릭스 탭 컬럼 인덱스(A=0 ... W=22)
+  // 2026-09-08: 시트에 "유아/소아 무료 위탁수하물 허용량" 2개 컬럼이 개인소지품 상세와 적용시작일
+  // 사이에 새로 추가되면서 이후 컬럼이 전부 +2 밀림 — 이 매핑을 시트 실제 헤더 순서에 맞게 갱신함.
   var COL = {
     NO:0, CODE:1, NAME_EN:2, NAME_KR:3, BAG_TYPE:4, ROUTE:5, CLASS:6, BRAND:7,
     PAX:8, TIER:9, CODESHARE:10, CONCEPT:11, QTY:12, PER_W:13, TOTAL_W:14,
-    DIM:15, PERSONAL:16, START:17, END:18, STATUS:19, LAST_CHECK:20, SOURCE:21, NOTE:22
+    DIM:15, PERSONAL:16, INFANT:17, CHILD:18, START:19, END:20, STATUS:21, LAST_CHECK:22, SOURCE:23, NOTE:24
   };
 
   var frame = document.getElementById('table-frame');
