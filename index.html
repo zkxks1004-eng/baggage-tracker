@@ -404,7 +404,14 @@
 
     var items = [];
     if(fullText) items.push({label:'', text: fullText, accent:false});
-    var dim = r[COL.DIM]; if(dim && dim !== '-') items.push(splitLabel('규격', dim, false));
+    var dim = r[COL.DIM];
+    if(dim && dim !== '-'){
+      // "규격"만으로는 위탁/기내 중 뭘 말하는지 헷갈리므로 수하물 종류를 라벨에 명시하고,
+      // 시트 값에 남아있을 수 있는 중복 "규격 " 앞말은 제거한다.
+      var bagType = r[COL.BAG_TYPE];
+      var dimLabel = (bagType === '위탁수하물' || bagType === '기내수하물') ? (bagType + ' 규격') : '규격';
+      items.push({ label: dimLabel, text: dim.trim().replace(/^규격\s*/, ''), accent:false });
+    }
     var personal = r[COL.PERSONAL]; if(personal && personal !== '해당없음' && personal !== '-') items.push(splitLabel('개인소지품', personal, true));
 
     if(!corePlain){
