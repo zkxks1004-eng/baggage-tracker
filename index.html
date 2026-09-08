@@ -250,13 +250,18 @@
     font-family:"Pretendard"; font-size:11px; vertical-align:top;
   }
   .cell-popover{
-    position:fixed; z-index:80; max-width:320px; padding:9px 12px; border-radius:8px;
-    background:#1a2338; color:#f2f4fa; font-size:12.5px; font-family:"IBM Plex Mono";
-    line-height:1.5; box-shadow:0 12px 30px -10px rgba(0,0,0,.5); white-space:pre-line; word-break:break-word;
+    position:fixed; z-index:80; max-width:360px; padding:12px 14px; border-radius:10px;
+    background:#1a2338; color:#eef1f8; font-size:13px; font-family:"Pretendard",-apple-system,sans-serif;
+    line-height:1.55; box-shadow:0 12px 30px -10px rgba(0,0,0,.5); white-space:pre-line; word-break:break-word;
     animation:popIn .12s ease;
   }
   .cell-popover[hidden]{ display:none; }
   @keyframes popIn{ from{opacity:0; transform:translateY(-2px);} to{opacity:1; transform:none;} }
+  .cell-popover .cp-item{ margin-bottom:8px; }
+  .cell-popover .cp-item:last-child{ margin-bottom:0; }
+  .cell-popover .cp-label{ font-weight:700; margin-right:4px; color:#9fb2d6; }
+  .cell-popover .cp-item.accent .cp-label{ color:#f3c98a; }
+  .cell-popover .cp-text{ color:#eef1f8; }
   .mtx-table .note{
     color:var(--ink-dim); font-size:11.5px;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; cursor:pointer;
@@ -339,6 +344,9 @@
   function escapeHtml(s){
     return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
+  function escapeAttr(s){
+    return escapeHtml(s).replace(/"/g,'&quot;');
+  }
   function renderRich(s){
     return escapeHtml(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   }
@@ -378,7 +386,7 @@
       (weightPrefix ? '<span class="allow-suffix">' + escapeHtml(weightPrefix) + ' </span>' : '') +
       '<span class="allow-num">' + escapeHtml(corePlain) + '</span>' +
       (weightSuffix ? '<span class="allow-suffix">' + escapeHtml(weightSuffix) + '</span>' : '');
-    return '<span class="popover-trigger" data-full="' + escapeHtml(fullText) + '">' + html + '</span>';
+    return '<span class="popover-trigger" data-full="' + escapeAttr(fullText) + '">' + html + '</span>';
   }
 
   function formatTags(r){
@@ -390,39 +398,42 @@
     return tags.map(function(t){ return '<span class="pill">' + escapeHtml(t) + '</span>'; }).join('');
   }
 
-  function withLabel(label, value){
-    var v = value.trim();
-    return new RegExp('^' + label).test(v) ? v : (label + ': ' + v);
-  }
   function formatNote(r){
-    var htmlBits = [], plainBits = [];
+    var items = []; // {label, text, accent}
     var personal = r[COL.PERSONAL];
-    if(personal && personal !== '해당없음' && personal !== '-'){
-      var personalText = withLabel('개인소지품', personal);
-      htmlBits.push('<em>' + escapeHtml(personalText) + '</em>'); plainBits.push(personalText);
-    }
+    if(personal && personal !== '해당없음' && personal !== '-') items.push(splitLabel('개인소지품', personal, true));
     var dim = r[COL.DIM];
-    if(dim && dim !== '-'){
-      var dimText = (/^규격/.test(dim.trim()) ? '' : '규격 ') + dim;
-      htmlBits.push(escapeHtml(dimText)); plainBits.push(dimText);
-    }
+    if(dim && dim !== '-') items.push(splitLabel('규격', dim, false));
     var infant = r[COL.INFANT];
-    if(infant && infant !== '해당없음' && infant !== '-'){
-      var infantText = withLabel('유아', infant);
-      htmlBits.push('<em>' + escapeHtml(infantText) + '</em>'); plainBits.push(infantText);
-    }
+    if(infant && infant !== '해당없음' && infant !== '-') items.push(splitLabel('유아', infant, true));
     var child = r[COL.CHILD];
-    if(child && child !== '해당없음' && child !== '-'){
-      var childText = withLabel('소아', child);
-      htmlBits.push('<em>' + escapeHtml(childText) + '</em>'); plainBits.push(childText);
-    }
+    if(child && child !== '해당없음' && child !== '-') items.push(splitLabel('소아', child, true));
     var note = r[COL.NOTE];
-    if(note && note !== '-'){ htmlBits.push(escapeHtml(note)); plainBits.push(note); }
-    if(!htmlBits.length) return '';
+    if(note && note !== '-') items.push({label:'', text: note, accent:false});
+    if(!items.length) return '';
+
+    var inlineHtml = items.map(function(it){
+      var full = (it.label ? it.label + ' ' : '') + it.text;
+      return it.accent ? '<em>' + escapeHtml(full) + '</em>' : escapeHtml(full);
+    }).join(' · ');
+    var plainFull = items.map(function(it){ return (it.label ? it.label + ' ' : '') + it.text; }).join('\n');
+    // 팝오버는 라벨을 굵게 강조하고 항목별로 줄을 나눠 가독성을 높인다.
+    var popoverHtml = items.map(function(it){
+      return '<div class="cp-item' + (it.accent ? ' accent' : '') + '">' +
+        (it.label ? '<span class="cp-label">' + escapeHtml(it.label) + '</span>' : '') +
+        '<span class="cp-text">' + escapeHtml(it.text) + '</span>' +
+        '</div>';
+    }).join('');
+
     // 비고가 여러 줄이면 행 높이가 노선구간표마다 들쭉날쭉해지므로, 한 줄로 축약하고
     // 클릭하면 전체 내용을 팝오버로 보여준다(허용량 칸과 동일한 패턴).
-    return '<span class="popover-trigger" data-full="' + escapeHtml(plainBits.join('\n')) + '">' +
-      htmlBits.join(' · ') + '</span>';
+    return '<span class="popover-trigger" data-full="' + escapeAttr(plainFull) + '" data-full-html="' + escapeAttr(popoverHtml) + '">' +
+      inlineHtml + '</span>';
+  }
+  function splitLabel(label, value, accent){
+    var v = value.trim();
+    if(new RegExp('^' + label).test(v)) return { label:'', text:v, accent:accent };
+    return { label: label + (accent ? ':' : ''), text:v, accent:accent };
   }
 
   function airlineLogoUrl(code){ return 'https://pics.avs.io/60/60/' + encodeURIComponent(code) + '.png'; }
@@ -616,7 +627,9 @@
   // ---- 허용량처럼 "..."으로 줄인 셀 클릭 시 전체 텍스트 팝업 ----
   var cellPopover = document.getElementById('cell-popover');
   function showCellPopover(trigger){
-    cellPopover.textContent = trigger.getAttribute('data-full') || '';
+    var fullHtml = trigger.getAttribute('data-full-html');
+    if(fullHtml){ cellPopover.innerHTML = fullHtml; }
+    else { cellPopover.textContent = trigger.getAttribute('data-full') || ''; }
     cellPopover.hidden = false;
     var r = trigger.getBoundingClientRect();
     var top = r.bottom + 6;
