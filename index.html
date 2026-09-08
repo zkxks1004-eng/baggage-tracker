@@ -223,7 +223,7 @@
      thead/tbody columns apart in Chrome, so per-route detail rows use a shared grid instead. */
   .mtx-table{ font-size:12.5px; }
   .mtx-table .mrow{
-    display:grid; grid-template-columns: 130px 150px minmax(160px,1fr) minmax(200px,1.3fr);
+    display:grid; grid-template-columns: 130px 190px 150px minmax(200px,1fr);
     column-gap:8px;
   }
   .mtx-table .mhead .mcell{
@@ -485,13 +485,13 @@
 
   function buildRouteTable(rows){
     var html = '<div class="mtx-table"><div class="mrow mhead">' +
-      '<div class="mcell">클래스</div><div class="mcell">허용량</div><div class="mcell">운임브랜드</div><div class="mcell">비고</div>' +
+      '<div class="mcell">클래스</div><div class="mcell">운임브랜드</div><div class="mcell">허용량</div><div class="mcell">비고</div>' +
       '</div>';
     rows.forEach(function(r){
       html += '<div class="mrow">';
       html += '<div class="mcell cls">' + escapeHtml(r[COL.CLASS] || '—') + '</div>';
-      html += '<div class="mcell allow">' + formatAllowance(r) + '</div>';
       html += '<div class="mcell brand">' + escapeHtml(r[COL.BRAND] || '—') + '</div>';
+      html += '<div class="mcell allow">' + formatAllowance(r) + '</div>';
       html += '<div class="mcell note">' + (formatNote(r) || '—') + '</div>';
       html += '</div>';
     });
