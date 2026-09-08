@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
+<meta name="color-scheme" content="light">
 <title>항공사 수하물 정책 트래커</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,8 +11,8 @@
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <style>
   :root{
-    color-scheme: light dark;
-    /* NUUA 브랜드 컬러 (nuua.ai 실제 팔레트 기준) */
+    color-scheme: light;
+    /* NUUA 브랜드 컬러 (nuua.ai 실제 팔레트 기준) — 시스템 설정과 무관하게 항상 라이트(흰 배경) 고정 */
     --bg:#f3f4f9; --surface:#ffffff; --surface-2:#f3f8fd; --surface-raised:#ffffff;
     --ink:#111d2d; --ink-dim:#767d94; --ink-faint:#868da3; --line:#e8eaf0;
     --accent:#bd6f16; --accent-ink:#7a480b; --accent-soft:#f3e2c6;
@@ -23,16 +23,6 @@
     --shadow: 0 1px 2px rgba(17,29,45,.05), 0 10px 28px -14px rgba(17,29,45,.18);
     --shadow-lg: 0 24px 60px -20px rgba(17,29,45,.35);
     --grad-brand: linear-gradient(135deg, var(--accent2), var(--accent2-ink));
-  }
-  @media (prefers-color-scheme: dark){
-    :root{
-      --bg:#0d1220; --surface:#141a2b; --surface-2:#1a2136; --surface-raised:#182036;
-      --ink:#eef1f8; --ink-dim:#93a0be; --ink-faint:#5c6885; --line:#252d44;
-      --accent-soft:#3a2c14; --accent2-soft:#12233f;
-      --ok-soft:#0f2e22; --wait-soft:#20263a; --partial-soft:#332a10;
-      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 28px -14px rgba(0,0,0,.55);
-      --shadow-lg: 0 24px 60px -20px rgba(0,0,0,.7);
-    }
   }
   *{box-sizing:border-box;}
   body{ margin:0; background:var(--bg); color:var(--ink); font-family:"Pretendard",-apple-system,BlinkMacSystemFont,system-ui,sans-serif; line-height:1.6; transition:background .25s ease,color .25s ease; }
@@ -57,7 +47,7 @@
   .stat-card.wait{ --card-accent: var(--wait); }
   .stat-card.accent{ --card-accent: var(--accent); }
 
-  .toolbar{ max-width:2200px; margin:0 auto; padding:0 24px 16px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; }
+  .toolbar{ max-width:2200px; margin:28px auto 0; padding:0 24px 16px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; }
   .toolbar-left{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
   input[type="search"]{
     -webkit-appearance:none; appearance:none;
