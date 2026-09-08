@@ -365,15 +365,32 @@
     return '<span class="badge wip">조사중</span>';
   }
 
+  // 여러 항목(label+text)을 팝오버용 plain text / rich html로 조립하는 공용 헬퍼
+  // (허용량 상세, 비고 둘 다 같은 팝오버 스타일을 쓴다)
+  function buildPopoverBits(items){
+    var plainFull = items.map(function(it){ return (it.label ? it.label + ' ' : '') + it.text; }).join('\n');
+    var popoverHtml = items.map(function(it){
+      return '<div class="cp-item' + (it.accent ? ' accent' : '') + '">' +
+        (it.label ? '<span class="cp-label">' + escapeHtml(it.label) + '</span>' : '') +
+        '<span class="cp-text">' + escapeHtml(it.text) + '</span>' +
+        '</div>';
+    }).join('');
+    return { plainFull: plainFull, popoverHtml: popoverHtml };
+  }
+  function popoverAttrs(items){
+    var bits = buildPopoverBits(items);
+    return ' data-full="' + escapeAttr(bits.plainFull) + '" data-full-html="' + escapeAttr(bits.popoverHtml) + '"';
+  }
+
   // ---- 허용량(개수/무게) 표기 ----
-  // 셀에 다 안 들어가면 "..."으로 줄이고, 클릭 시 전체 텍스트를 팝업으로 보여준다 (아래 cell-popover 참고)
+  // 셀에는 개수/무게 요약만 보여주고, 클릭하면 규격/개인소지품 상세까지 팝업으로 보여준다.
   function formatAllowance(r){
     var qty = r[COL.QTY] || '';
     var perW = r[COL.PER_W] || '';
     var totalW = r[COL.TOTAL_W] || '';
     var weightVal = (perW && perW !== '-') ? perW : ((totalW && totalW !== '-') ? totalW : '');
     // 숫자(+kg)까지만 뽑아서 고정폭으로 오른쪽 정렬하고, "이하"/"초과 금지" 같은 뒤에 붙는 설명은
-    // 옅은 색으로 따로 붙인다 — 시트 값은 그대로 두되(추가 안 함) 자릿수만 맞춰 보이게.
+    // 옅은 색으로 따로 붙인다 — 시트 값은 그대로 두되(추가 안 함) 자릿수만 맞게 보이게.
     var weightPrefix = '', weightNum = '', weightSuffix = '';
     if(weightVal){
       // 숫자 앞에 "무게 18kg..."처럼 글자가 붙어있는 경우도 있어서 앞/뒤 텍스트를 다 분리한다
@@ -383,13 +400,22 @@
     }
     var qtyPart = (qty && qty !== '-') ? (qty + '피스') : '';
     var corePlain = [qtyPart, weightNum].filter(Boolean).join(' · ');
-    if(!corePlain) return '<span class="badge empty">—</span>';
     var fullText = [qtyPart, weightVal].filter(Boolean).join(' · ');
+
+    var items = [];
+    if(fullText) items.push({label:'', text: fullText, accent:false});
+    var dim = r[COL.DIM]; if(dim && dim !== '-') items.push(splitLabel('규격', dim, false));
+    var personal = r[COL.PERSONAL]; if(personal && personal !== '해당없음' && personal !== '-') items.push(splitLabel('개인소지품', personal, true));
+
+    if(!corePlain){
+      if(!items.length) return '<span class="badge empty">—</span>';
+      return '<span class="popover-trigger badge empty"' + popoverAttrs(items) + '>—</span>';
+    }
     var html =
       (weightPrefix ? '<span class="allow-suffix">' + escapeHtml(weightPrefix) + ' </span>' : '') +
       '<span class="allow-num">' + escapeHtml(corePlain) + '</span>' +
       (weightSuffix ? '<span class="allow-suffix">' + escapeHtml(weightSuffix) + '</span>' : '');
-    return '<span class="popover-trigger" data-full="' + escapeAttr(fullText) + '">' + html + '</span>';
+    return '<span class="popover-trigger"' + popoverAttrs(items) + '>' + html + '</span>';
   }
 
   function formatTags(r){
@@ -401,12 +427,10 @@
     return tags.map(function(t){ return '<span class="pill">' + escapeHtml(t) + '</span>'; }).join('');
   }
 
+  // 규격/개인소지품은 허용량 팝업 쪽으로 옮겼으므로(formatAllowance 참고),
+  // 비고에는 유아/소아/일반 비고만 남는다.
   function formatNote(r){
     var items = []; // {label, text, accent}
-    var personal = r[COL.PERSONAL];
-    if(personal && personal !== '해당없음' && personal !== '-') items.push(splitLabel('개인소지품', personal, true));
-    var dim = r[COL.DIM];
-    if(dim && dim !== '-') items.push(splitLabel('규격', dim, false));
     var infant = r[COL.INFANT];
     if(infant && infant !== '해당없음' && infant !== '-') items.push(splitLabel('유아', infant, true));
     var child = r[COL.CHILD];
@@ -419,19 +443,10 @@
       var full = (it.label ? it.label + ' ' : '') + it.text;
       return it.accent ? '<em>' + escapeHtml(full) + '</em>' : escapeHtml(full);
     }).join(' · ');
-    var plainFull = items.map(function(it){ return (it.label ? it.label + ' ' : '') + it.text; }).join('\n');
-    // 팝오버는 라벨을 굵게 강조하고 항목별로 줄을 나눠 가독성을 높인다.
-    var popoverHtml = items.map(function(it){
-      return '<div class="cp-item' + (it.accent ? ' accent' : '') + '">' +
-        (it.label ? '<span class="cp-label">' + escapeHtml(it.label) + '</span>' : '') +
-        '<span class="cp-text">' + escapeHtml(it.text) + '</span>' +
-        '</div>';
-    }).join('');
 
     // 비고가 여러 줄이면 행 높이가 노선구간표마다 들쭉날쭉해지므로, 한 줄로 축약하고
     // 클릭하면 전체 내용을 팝오버로 보여준다(허용량 칸과 동일한 패턴).
-    return '<span class="popover-trigger" data-full="' + escapeAttr(plainFull) + '" data-full-html="' + escapeAttr(popoverHtml) + '">' +
-      inlineHtml + '</span>';
+    return '<span class="popover-trigger"' + popoverAttrs(items) + '>' + inlineHtml + '</span>';
   }
   function splitLabel(label, value, accent){
     var v = value.trim();
