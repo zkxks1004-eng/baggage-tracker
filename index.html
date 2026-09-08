@@ -219,21 +219,27 @@
     font-family:"IBM Plex Mono"; font-size:11px; font-weight:700; color:var(--accent2);
     background:var(--accent2-soft); display:inline-block; padding:3px 9px; border-radius:5px; margin-bottom:7px;
   }
-  .mtx-table{ width:100%; border-collapse:collapse; font-size:12.5px; }
-  .mtx-table th{
+  /* CSS Grid rows (not <table>) — same fix as the list view: table-layout:fixed can drift
+     thead/tbody columns apart in Chrome, so per-route detail rows use a shared grid instead. */
+  .mtx-table{ font-size:12.5px; }
+  .mtx-table .mrow{
+    display:grid; grid-template-columns: 100px minmax(140px,1fr) 110px 100px minmax(160px,1.3fr);
+    column-gap:8px;
+  }
+  .mtx-table .mhead .mcell{
     text-align:left; font-family:"IBM Plex Mono"; font-size:9.5px; font-weight:700; color:var(--ink-dim);
     letter-spacing:.03em; padding:5px 8px; border-bottom:1px solid var(--line); white-space:nowrap;
   }
-  .mtx-table td{
-    padding:7px 8px; border-bottom:1px solid var(--line); vertical-align:top;
-    white-space:normal; overflow:visible; text-overflow:clip; word-break:break-word;
+  .mtx-table .mcell{
+    padding:7px 8px; border-bottom:1px solid var(--line);
+    white-space:normal; overflow:visible; text-overflow:clip; word-break:break-word; align-self:start;
   }
-  .mtx-table tr:last-child td{ border-bottom:none; }
+  .mtx-table .mrow:last-child .mcell{ border-bottom:none; }
   .mtx-table .cls{ font-weight:700; white-space:nowrap; }
   .mtx-table .brand{ color:var(--ink-dim); }
   .mtx-table .allow{
     font-family:"IBM Plex Mono"; font-weight:700; color:var(--accent-ink);
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:1px; cursor:pointer;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; cursor:pointer;
   }
   .cell-popover{
     position:fixed; z-index:80; max-width:320px; padding:9px 12px; border-radius:8px;
@@ -478,19 +484,19 @@
   var modalContent = document.getElementById('modal-content');
 
   function buildRouteTable(rows){
-    var html = '<table class="mtx-table"><thead><tr>' +
-      '<th>클래스</th><th>운임브랜드</th><th>조건</th><th>허용량</th><th>비고</th>' +
-      '</tr></thead><tbody>';
+    var html = '<div class="mtx-table"><div class="mrow mhead">' +
+      '<div class="mcell">클래스</div><div class="mcell">운임브랜드</div><div class="mcell">조건</div><div class="mcell">허용량</div><div class="mcell">비고</div>' +
+      '</div>';
     rows.forEach(function(r){
-      html += '<tr>';
-      html += '<td class="cls">' + escapeHtml(r[COL.CLASS] || '—') + '</td>';
-      html += '<td class="brand">' + escapeHtml(r[COL.BRAND] || '—') + '</td>';
-      html += '<td class="tags">' + (formatTags(r) || '<span class="badge empty">—</span>') + '</td>';
-      html += '<td class="allow">' + formatAllowance(r) + '</td>';
-      html += '<td class="note">' + (formatNote(r) || '—') + '</td>';
-      html += '</tr>';
+      html += '<div class="mrow">';
+      html += '<div class="mcell cls">' + escapeHtml(r[COL.CLASS] || '—') + '</div>';
+      html += '<div class="mcell brand">' + escapeHtml(r[COL.BRAND] || '—') + '</div>';
+      html += '<div class="mcell tags">' + (formatTags(r) || '<span class="badge empty">—</span>') + '</div>';
+      html += '<div class="mcell allow">' + formatAllowance(r) + '</div>';
+      html += '<div class="mcell note">' + (formatNote(r) || '—') + '</div>';
+      html += '</div>';
     });
-    html += '</tbody></table>';
+    html += '</div>';
     return html;
   }
 
