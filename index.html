@@ -80,31 +80,34 @@
     background:var(--surface); border:1px solid var(--line); border-radius:12px;
     overflow:auto; max-height:75vh; box-shadow:var(--shadow);
   }
-  table{ width:100%; table-layout:fixed; border-collapse:collapse; font-size:13.5px; }
-  th, td{ padding:11px 14px; text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  td.wrap{ white-space:normal; overflow:visible; text-overflow:clip; }
-  th.center, td.center{ text-align:center; }
-  thead th{
-    position:sticky; top:0; background:var(--surface-2); color:var(--ink-dim);
-    font-family:"IBM Plex Mono"; font-size:10.5px; font-weight:700; letter-spacing:.04em;
-    border-bottom:1px solid var(--line); cursor:pointer; user-select:none;
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  /* ---- list view: CSS Grid rows (not <table>) so header/body columns can never drift apart ---- */
+  .gtable{ font-size:13.5px; min-width:900px; }
+  .grow{ display:grid; grid-template-columns: 70px 220px 90px 90px 100px 100px 110px minmax(200px,1fr); align-items:center; }
+  .grow .gcell{ padding:11px 14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+  .grow .gcell.center{ text-align:center; }
+  .ghead{
+    position:sticky; top:0; background:var(--surface-2); z-index:1;
+    border-bottom:1px solid var(--line);
   }
-  thead th:hover{ color:var(--ink); }
-  thead th .arrow{ margin-left:4px; opacity:.5; }
-  thead th.sorted .arrow{ opacity:1; color:var(--accent2); }
-  tbody tr{ border-bottom:1px solid var(--line); transition:background .12s ease; position:relative; }
-  tbody tr:nth-child(even){ background:var(--surface-2); }
-  tbody tr:last-child{ border-bottom:none; }
-  tbody tr:hover{ background:var(--accent2-soft); }
-  tbody tr.row-click:active{ background:var(--accent2-soft); }
-  tbody tr.row-click::before{
+  .ghead .gcell{
+    color:var(--ink-dim); font-family:"IBM Plex Mono"; font-size:10.5px; font-weight:700; letter-spacing:.04em;
+    cursor:pointer; user-select:none;
+  }
+  .ghead .gcell:hover{ color:var(--ink); }
+  .ghead .gcell .arrow{ margin-left:4px; opacity:.5; }
+  .ghead .gcell.sorted .arrow{ opacity:1; color:var(--accent2); }
+  .gbody .grow{ border-bottom:1px solid var(--line); transition:background .12s ease; position:relative; }
+  .gbody .grow:nth-child(even){ background:var(--surface-2); }
+  .gbody .grow:last-child{ border-bottom:none; }
+  .gbody .grow:hover{ background:var(--accent2-soft); }
+  .gbody .grow.row-click:active{ background:var(--accent2-soft); }
+  .gbody .grow.row-click::before{
     content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--accent2);
     transform:scaleY(0); transition:transform .15s ease;
   }
-  tbody tr.row-click:hover::before{ transform:scaleY(1); }
-  td.code{ font-family:"IBM Plex Mono"; font-weight:700; color:var(--accent-ink); }
-  tbody tr[hidden]{ display:none; }
+  .gbody .grow.row-click:hover::before{ transform:scaleY(1); }
+  .gcell.code{ font-family:"IBM Plex Mono"; font-weight:700; color:var(--accent-ink); }
+  .gbody .grow[hidden]{ display:none; }
   .al-cell{ display:flex; align-items:center; gap:9px; }
   .al-logo{
     width:22px; height:22px; border-radius:6px; background:var(--surface-2); border:1px solid var(--line);
@@ -419,48 +422,49 @@
       airlines.reduce(function(s,a){ return s + a.total; }, 0) + '개 조건행';
 
     var cols = [
-      { key:'code', label:'코드', width:'70px' },
-      { key:'kr', label:'항공사명', width:'220px' },
-      { key:'consignCount', label:'위탁조건', width:'90px', center:true },
-      { key:'cabinCount', label:'기내조건', width:'90px', center:true },
-      { key:'routeCount', label:'노선구간종류', width:'100px', center:true },
-      { key:'status', label:'확인상태', width:'100px', center:true },
-      { key:'lastDate', label:'최종확인일', width:'110px', center:true },
-      { key:'source', label:'출처', width:'auto' }
+      { key:'code', label:'코드' },
+      { key:'kr', label:'항공사명' },
+      { key:'consignCount', label:'위탁조건', center:true },
+      { key:'cabinCount', label:'기내조건', center:true },
+      { key:'routeCount', label:'노선구간종류', center:true },
+      { key:'status', label:'확인상태', center:true },
+      { key:'lastDate', label:'최종확인일', center:true },
+      { key:'source', label:'출처' }
     ];
 
-    var html = '<table>';
-    html += '<colgroup>' + cols.map(function(c){ return '<col style="width:' + (c.width === 'auto' ? '240px' : c.width) + '">'; }).join('') + '</colgroup>';
-    html += '<thead><tr>';
+    // CSS Grid rows (not <table>): header and body share the same grid-template-columns
+    // via the shared ".grow" class, so columns can never drift apart between them.
+    var html = '<div class="gtable">';
+    html += '<div class="grow ghead">';
     cols.forEach(function(c){
       var sorted = sortState.key === c.key;
-      html += '<th data-key="' + c.key + '" class="' + (sorted ? 'sorted' : '') + (c.center ? ' center' : '') + '">' + escapeHtml(c.label) + ' <span class="arrow">' + (sorted && sortState.dir === -1 ? '▴' : '▾') + '</span></th>';
+      html += '<div class="gcell' + (sorted ? ' sorted' : '') + (c.center ? ' center' : '') + '" data-key="' + c.key + '">' + escapeHtml(c.label) + ' <span class="arrow">' + (sorted && sortState.dir === -1 ? '▴' : '▾') + '</span></div>';
     });
-    html += '</tr></thead><tbody>';
+    html += '</div><div class="gbody">';
     filtered.forEach(function(a, idx){
-      html += '<tr class="row-click" data-idx="' + idx + '">';
-      html += '<td class="code">' + escapeHtml(a.code) + '</td>';
-      html += '<td><div class="al-cell"><div class="al-logo"><img src="' + airlineLogoUrl(a.code) + '" alt="" loading="lazy" onerror="this.parentElement.hidden=true"></div>' +
-        '<div class="al-name">' + escapeHtml(a.kr) + '<div class="al-en">' + escapeHtml(a.en) + '</div></div></div></td>';
-      html += '<td class="center">' + a.consignCount + '</td>';
-      html += '<td class="center">' + a.cabinCount + '</td>';
-      html += '<td class="center">' + a.routeCount + '</td>';
-      html += '<td class="center">' + statusBadge(a.status) + '</td>';
-      html += '<td class="center">' + escapeHtml(a.lastDate || '—') + '</td>';
-      html += '<td>' + (a.source ? linkifyUrl(a.source) : '<span class="badge empty">—</span>') + '</td>';
-      html += '</tr>';
+      html += '<div class="grow row-click" data-idx="' + idx + '">';
+      html += '<div class="gcell code">' + escapeHtml(a.code) + '</div>';
+      html += '<div class="gcell"><div class="al-cell"><div class="al-logo"><img src="' + airlineLogoUrl(a.code) + '" alt="" loading="lazy" onerror="this.parentElement.hidden=true"></div>' +
+        '<div class="al-name">' + escapeHtml(a.kr) + '<div class="al-en">' + escapeHtml(a.en) + '</div></div></div></div>';
+      html += '<div class="gcell center">' + a.consignCount + '</div>';
+      html += '<div class="gcell center">' + a.cabinCount + '</div>';
+      html += '<div class="gcell center">' + a.routeCount + '</div>';
+      html += '<div class="gcell center">' + statusBadge(a.status) + '</div>';
+      html += '<div class="gcell center">' + escapeHtml(a.lastDate || '—') + '</div>';
+      html += '<div class="gcell">' + (a.source ? linkifyUrl(a.source) : '<span class="badge empty">—</span>') + '</div>';
+      html += '</div>';
     });
-    html += '</tbody></table>';
+    html += '</div></div>';
     frame.innerHTML = html;
 
-    frame.querySelectorAll('tr.row-click').forEach(function(tr){
+    frame.querySelectorAll('.grow.row-click').forEach(function(tr){
       tr.addEventListener('click', function(){
         var idx = parseInt(tr.getAttribute('data-idx'), 10);
         openAirlineModal(filtered[idx]);
       });
     });
 
-    frame.querySelectorAll('th[data-key]').forEach(function(th){
+    frame.querySelectorAll('.ghead .gcell[data-key]').forEach(function(th){
       th.addEventListener('click', function(){
         var key = th.getAttribute('data-key');
         if(sortState.key === key){ sortState.dir *= -1; }
