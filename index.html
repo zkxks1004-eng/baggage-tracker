@@ -330,8 +330,8 @@
   var COL = {
     NO:0, CODE:1, NAME_EN:2, NAME_KR:3, BAG_TYPE:4, ROUTE:5, CLASS:6, BRAND:7,
     PAX:8, TIER:9, CODESHARE:10, CONCEPT:11, QTY:12, PER_W:13, TOTAL_W:14,
-    DIM:15, P_QTY:16, P_PER_W:17, P_TOTAL_W:18,
-    PERSONAL:19, INFANT:20, CHILD:21, START:22, END:23, STATUS:24, LAST_CHECK:25, SOURCE:26, NOTE:27
+    DIM:15, P_QTY:16, P_PER_W:17,
+    PERSONAL:18, INFANT:19, CHILD:20, START:21, END:22, STATUS:23, LAST_CHECK:24, SOURCE:25, NOTE:26
   };
 
   var frame = document.getElementById('table-frame');
@@ -421,7 +421,7 @@
       // 시트 값에 남아있을 수 있는 중복 "규격 " 앞말은 제거한다.
       items.push({ label: bagLabel + ' 규격:', text: dim.trim().replace(/^규격\s*/, ''), accent:false });
     }
-    var personalQW = qtyWeightText(r[COL.P_QTY] || '', r[COL.P_PER_W] || '', r[COL.P_TOTAL_W] || '');
+    var personalQW = qtyWeightText(r[COL.P_QTY] || '', r[COL.P_PER_W] || '', '');
     if(personalQW.fullText) items.push({ label: '개인소지품 정보:', text: personalQW.fullText, accent:true });
     var personal = r[COL.PERSONAL];
     if(personal && personal !== '해당없음' && personal !== '-'){
