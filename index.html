@@ -225,7 +225,7 @@
      클래스=색상 칩, 운임브랜드=작은 칩 목록, 허용량=큰 숫자 토큰으로 바꿔 한눈에 읽히게 한다. */
   .mtx-table{ font-size:12.5px; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--surface); }
   .mtx-table .mrow{
-    display:grid; grid-template-columns: 150px minmax(180px,1fr) 190px minmax(240px,1.5fr);
+    display:grid; grid-template-columns: 150px minmax(170px,1fr) 250px minmax(240px,1.5fr);
     column-gap:10px; align-items:center; min-height:50px;
     border-bottom:1px solid var(--line);
   }
@@ -260,8 +260,9 @@
   }
   .brand-chip.common{ color:var(--ink-faint); font-weight:500; border-style:dashed; }
   /* 허용량 토큰 */
-  .mtx-table .allow{ cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .allow-tokens{ display:inline-flex; align-items:center; gap:6px; vertical-align:middle; }
+  .mtx-table .allow{ cursor:pointer; white-space:normal; overflow:visible; }
+  .allow-tokens{ display:inline-flex; flex-wrap:wrap; align-items:center; gap:5px; vertical-align:middle; }
+  .tok{ white-space:nowrap; }
   .tok{
     display:inline-flex; align-items:baseline; gap:2px; padding:3px 9px; border-radius:8px;
     font-family:"IBM Plex Mono"; font-size:11px; font-weight:600; color:var(--ink-dim); background:var(--surface);
