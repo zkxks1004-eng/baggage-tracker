@@ -221,34 +221,68 @@
   }
   /* CSS Grid rows (not <table>) — same fix as the list view: table-layout:fixed can drift
      thead/tbody columns apart in Chrome, so per-route detail rows use a shared grid instead. */
-  .mtx-table{ font-size:12.5px; }
+  /* 2026-09-09 리디자인: 행 높이를 균일하게(테두리를 셀이 아니라 행에, 세로 중앙 정렬),
+     클래스=색상 칩, 운임브랜드=작은 칩 목록, 허용량=큰 숫자 토큰으로 바꿔 한눈에 읽히게 한다. */
+  .mtx-table{ font-size:12.5px; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--surface); }
   .mtx-table .mrow{
-    display:grid; grid-template-columns: 130px 170px 150px minmax(200px,1fr);
-    column-gap:8px;
+    display:grid; grid-template-columns: 150px minmax(180px,1fr) 190px minmax(240px,1.5fr);
+    column-gap:10px; align-items:center; min-height:50px;
+    border-bottom:1px solid var(--line);
   }
+  .mtx-table .mrow:last-child{ border-bottom:none; }
+  .mtx-table .mrow:not(.mhead):nth-child(even){ background:var(--surface-2); }
+  .mtx-table .mrow:not(.mhead):hover{ background:var(--accent2-soft); }
+  .mtx-table .mhead{ background:var(--surface-2); min-height:32px; }
   .mtx-table .mhead .mcell{
     text-align:left; font-family:"IBM Plex Mono"; font-size:9.5px; font-weight:700; color:var(--ink-dim);
-    letter-spacing:.03em; padding:7px 8px; border-bottom:1px solid var(--line); white-space:nowrap;
+    letter-spacing:.06em; padding:6px 12px; white-space:nowrap; text-transform:uppercase;
   }
   .mtx-table .mcell{
-    padding:7px 8px; border-bottom:1px solid var(--line); line-height:19px;
-    white-space:normal; overflow:visible; text-overflow:clip; word-break:break-word; align-self:start;
+    padding:8px 12px; line-height:1.4; min-width:0;
+    white-space:normal; overflow:visible; word-break:keep-all; overflow-wrap:anywhere;
   }
-  .mtx-table .mrow:last-child .mcell{ border-bottom:none; }
-  .mtx-table .cls{ font-weight:700; }
-  .mtx-table .brand{ color:var(--ink-dim); }
-  .mtx-table .allow{
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; cursor:pointer;
+  /* 클래스 칩: 색으로 등급이 바로 구분되게 */
+  .cls-chip{
+    display:inline-block; padding:3px 9px; border-radius:7px; font-weight:700; font-size:12px; line-height:1.35;
+    background:var(--wait-soft); color:var(--ink); border:1px solid transparent;
   }
-  .mtx-table .allow .badge{ vertical-align:top; }
-  .mtx-table .allow-num{
-    display:inline-block; vertical-align:top;
-    font-family:"IBM Plex Mono"; font-weight:700; color:var(--accent-ink);
+  .cls-chip.eco{ background:#eef2f7; color:#2b3a4f; }
+  .cls-chip.pe{ background:var(--accent2-soft); color:var(--accent2-ink); }
+  .cls-chip.biz{ background:var(--accent-soft); color:var(--accent-ink); }
+  .cls-chip.first{ background:#efe6fb; color:#4f2a86; }
+  .cls-chip.all{ background:var(--ok-soft); color:var(--ok); }
+  .cls-sub{ font-size:10.5px; color:var(--ink-faint); margin-top:3px; line-height:1.3; }
+  /* 운임브랜드 칩 */
+  .brand-chips{ display:flex; flex-wrap:wrap; gap:4px; }
+  .brand-chip{
+    display:inline-block; padding:2px 8px; border-radius:999px; font-size:11.5px; font-weight:600;
+    background:var(--surface); border:1px solid var(--line); color:var(--ink-dim); white-space:nowrap;
   }
-  .mtx-table .allow-suffix{
-    display:inline-block; margin-left:6px; color:var(--ink-faint); font-weight:500;
-    font-family:"Pretendard"; font-size:11px; vertical-align:top;
+  .brand-chip.common{ color:var(--ink-faint); font-weight:500; border-style:dashed; }
+  /* 허용량 토큰 */
+  .mtx-table .allow{ cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .allow-tokens{ display:inline-flex; align-items:center; gap:6px; vertical-align:middle; }
+  .tok{
+    display:inline-flex; align-items:baseline; gap:2px; padding:3px 9px; border-radius:8px;
+    font-family:"IBM Plex Mono"; font-size:11px; font-weight:600; color:var(--ink-dim); background:var(--surface);
+    border:1px solid var(--line); line-height:1.2;
   }
+  .tok b{ font-size:15px; font-weight:700; color:var(--ink); letter-spacing:-.01em; }
+  .tok.qty b{ color:var(--accent2); }
+  .tok.wt b{ color:var(--accent-ink); }
+  .tok.pi{ background:var(--surface-2); border-style:dashed; }
+  .tok.pi b{ font-size:13px; color:var(--ink-dim); }
+  .tok.zero{ background:#fdecec; border-color:#f5c2c2; color:#b42318; }
+  .tok.zero b{ color:#b42318; }
+  .tok .tok-extra{ font-family:"Pretendard"; font-size:10.5px; color:var(--ink-faint); margin-left:2px; }
+  .allow-suffix{ font-family:"Pretendard"; font-size:11px; color:var(--ink-faint); margin-left:2px; }
+  /* 비고: 유아/소아 태그 + 한 줄 말줄임 */
+  .note-tag{
+    display:inline-block; padding:1px 6px; border-radius:5px; font-size:10.5px; font-weight:700;
+    background:var(--accent-soft); color:var(--accent-ink); margin-right:3px; vertical-align:middle;
+  }
+  .note-tag.child{ background:var(--accent2-soft); color:var(--accent2-ink); }
+  .note-sep{ color:var(--ink-faint); margin:0 5px; }
   .cell-popover{
     position:fixed; z-index:80; max-width:360px; padding:8px 14px; border-radius:16px;
     background:rgba(255,255,255,.82); -webkit-backdrop-filter:blur(24px) saturate(180%); backdrop-filter:blur(24px) saturate(180%);
@@ -269,7 +303,7 @@
     color:var(--ink-dim); font-size:11.5px;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; cursor:pointer;
   }
-  .mtx-table .note em{ color:var(--accent-ink); font-style:normal; }
+  .mtx-table .note .popover-trigger{ display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .mf-value strong, .tf-value strong{ color:var(--accent2); font-weight:700; }
 </style>
 </head>
@@ -433,11 +467,66 @@
       if(!items.length) return '<span class="badge empty">—</span>';
       return '<span class="popover-trigger badge empty"' + popoverAttrs(items) + '>—</span>';
     }
-    var html =
-      (weightPrefix ? '<span class="allow-suffix">' + escapeHtml(weightPrefix) + ' </span>' : '') +
-      '<span class="allow-num">' + escapeHtml(corePlain) + '</span>' +
-      (weightSuffix ? '<span class="allow-suffix">' + escapeHtml(weightSuffix) + '</span>' : '');
-    return '<span class="popover-trigger"' + popoverAttrs(items) + '>' + html + '</span>';
+    // 큰 숫자 토큰: [2 피스] [23 kg 이하] — 0피스는 붉은 "무료 없음" 토큰으로
+    var qtyRaw = String(r[COL.QTY] || '').trim();
+    var toks = '';
+    if(qtyRaw && qtyRaw !== '-'){
+      var qm = qtyRaw.match(/^([\d~\-–.]+)\s*(.*)$/);
+      var qNum = qm ? qm[1] : qtyRaw, qExtra = qm ? qm[2] : '';
+      if(qNum === '0'){
+        toks += '<span class="tok zero"><b>0</b>피스' + (qExtra ? '<span class="tok-extra">' + escapeHtml(qExtra) + '</span>' : '') + '</span>';
+      } else {
+        toks += '<span class="tok qty"><b>' + escapeHtml(qNum) + '</b>피스' + (qExtra ? '<span class="tok-extra">' + escapeHtml(qExtra) + '</span>' : '') + '</span>';
+      }
+    }
+    var perW = String(r[COL.PER_W] || '').trim(), totalW = String(r[COL.TOTAL_W] || '').trim();
+    var hasPer = perW && perW !== '-';
+    var wRaw = hasPer ? perW : ((totalW && totalW !== '-') ? totalW : '');
+    if(wRaw){
+      var isTotal = !hasPer;
+      var wm = wRaw.match(/^([^\d]*)([\d.,~\-–\/]+)\s*(kg)?\s*([\s\S]*)$/i);
+      if(wm){
+        toks += '<span class="tok wt">' + (isTotal ? '<span class="tok-extra">총</span>' : '') +
+          (wm[1].trim() ? '<span class="tok-extra">' + escapeHtml(wm[1].trim()) + '</span>' : '') +
+          '<b>' + escapeHtml(wm[2]) + '</b>' + (wm[3] ? 'kg' : '') +
+          (wm[4].trim() ? '<span class="tok-extra">' + escapeHtml(wm[4].trim()) + '</span>' : '') + '</span>';
+      }
+    }
+    // Q열(개인소지품 허용개수)이 있으면 "+개인소지품 1" 보조 토큰으로 같이 보여준다
+    // (gviz가 M열을 숫자형으로 읽어서 "1(+개인소지품)" 같은 텍스트는 버리므로, 시트는 M=숫자·Q=개수로 분리 기재)
+    var pq = String(r[COL.P_QTY] || '').trim();
+    if(pq && pq !== '-'){
+      toks += '<span class="tok pi"><span class="tok-extra">+개인소지품</span><b>' + escapeHtml(pq) + '</b></span>';
+    }
+    if(!toks) toks = '<span class="tok"><b>' + escapeHtml(corePlain) + '</b></span>';
+    return '<span class="popover-trigger allow-tokens"' + popoverAttrs(items) + '>' + toks + '</span>';
+  }
+
+  // 클래스 문자열 → 색상 칩(이코노미/프리미엄이코노미/비즈니스/퍼스트/전클래스)
+  function classChip(cls){
+    var c = String(cls || '').trim();
+    if(!c || c === '-') return '<span class="badge empty">—</span>';
+    var kind = 'eco';
+    if(/전\s*클래스|전체|공통/.test(c)) kind = 'all';
+    else if(/퍼스트|first/i.test(c) && !/비즈니스|business/i.test(c)) kind = 'first';
+    else if(/비즈니스|business|프레스티지|로렐/i.test(c)) kind = 'biz';
+    else if(/프리미엄|premium|Go Plus|SAS Plus/i.test(c)) kind = 'pe';
+    // "비즈니스(로얄로렐/프리미엄로렐/비즈니스)"처럼 괄호 설명이 길면 칩에는 앞부분만 넣고
+    // 괄호 안은 작은 보조 줄로 내려 행 높이가 들쭉날쭉해지지 않게 한다.
+    var pm = c.match(/^([^(]+?)\s*\((.+)\)\s*$/);
+    if(pm && pm[2].length > 6){
+      return '<span class="cls-chip ' + kind + '">' + escapeHtml(pm[1]) + '</span>' +
+        '<div class="cls-sub">' + escapeHtml(pm[2]) + '</div>';
+    }
+    return '<span class="cls-chip ' + kind + '">' + escapeHtml(c) + '</span>';
+  }
+  // 운임브랜드 "Up(B/Y)/Standard(Q/H/M)/Basic(V/W/S)" → 괄호 밖의 "/"로만 나눠 칩으로
+  function brandChips(brand){
+    var b = String(brand || '').trim();
+    if(!b || b === '-') return '<span class="badge empty">—</span>';
+    if(/공통\(전체동일\)|^공통$/.test(b)) return '<div class="brand-chips"><span class="brand-chip common">공통(전체동일)</span></div>';
+    var parts = b.split(/\s*\/\s*(?![^(]*\))/).filter(Boolean);
+    return '<div class="brand-chips">' + parts.map(function(p){ return '<span class="brand-chip">' + escapeHtml(p) + '</span>'; }).join('') + '</div>';
   }
 
   function formatTags(r){
@@ -462,9 +551,12 @@
     if(!items.length) return '';
 
     var inlineHtml = items.map(function(it){
-      var full = (it.label ? it.label + ' ' : '') + it.text;
-      return it.accent ? '<em>' + escapeHtml(full) + '</em>' : escapeHtml(full);
-    }).join(' · ');
+      if(it.accent){
+        var tagCls = it.label.indexOf('소아') === 0 ? 'note-tag child' : 'note-tag';
+        return '<span class="' + tagCls + '">' + escapeHtml(it.label.replace(/:$/, '')) + '</span>' + escapeHtml(it.text);
+      }
+      return escapeHtml(it.text);
+    }).join('<span class="note-sep">·</span>');
 
     // 비고가 여러 줄이면 행 높이가 노선구간표마다 들쭉날쭉해지므로, 한 줄로 축약하고
     // 클릭하면 전체 내용을 팝오버로 보여준다(허용량 칸과 동일한 패턴).
@@ -472,8 +564,17 @@
   }
   // 라벨은 항상 붙이고, 시트 값 앞에 그 라벨 단어가 이미 들어있으면(중복 방지) 잘라낸다.
   // 승연님이 "유아 요금에는..."처럼 라벨 단어로 문장을 시작해도 "유아: 요금에는..."으로 자동 정리됨.
+  // 2026-09-09: "좌석 미점유 유아: …", "무릎 유아: …", "유아(만 0~2세): …"처럼 수식어가 붙은 접두어도
+  // 라벨과 중복이므로 같이 잘라내고, 수식어는 괄호로 뒤에 붙여 정보는 잃지 않게 한다.
   function splitLabel(label, value, accent){
-    var v = value.trim().replace(new RegExp('^' + label + '\\s*'), '');
+    var v = value.trim();
+    // 라벨 뒤에 공백/콜론/괄호가 올 때만 접두어로 본다 — "유아용품…"처럼 단어 일부인 경우는 건드리지 않는다.
+    var m = v.match(new RegExp('^((?:좌석\\s*미점유|좌석\\s*점유|무릎|비점유|동반)?)\\s*' + label + '(?=\\s|[:：(]|$)\\s*(\\([^)]*\\))?\\s*[:：]?\\s*'));
+    if(m && m[0].length){
+      v = v.slice(m[0].length);
+      var qual = [m[1], m[2]].filter(Boolean).join(' ').trim();
+      if(qual && v) v = v + ' (' + qual.replace(/^\(|\)$/g, '') + ')';
+    }
     return { label: label + (accent ? ':' : ''), text: v, accent: accent };
   }
 
@@ -590,8 +691,8 @@
       '</div>';
     rows.forEach(function(r){
       html += '<div class="mrow">';
-      html += '<div class="mcell cls">' + escapeHtml(r[COL.CLASS] || '—') + '</div>';
-      html += '<div class="mcell brand">' + escapeHtml(r[COL.BRAND] || '—') + '</div>';
+      html += '<div class="mcell cls">' + classChip(r[COL.CLASS]) + '</div>';
+      html += '<div class="mcell brand">' + brandChips(r[COL.BRAND]) + '</div>';
       html += '<div class="mcell allow">' + formatAllowance(r) + '</div>';
       html += '<div class="mcell note">' + (formatNote(r) || '—') + '</div>';
       html += '</div>';
