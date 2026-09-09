@@ -213,6 +213,17 @@
   .mtx-section-title .count{ font-family:"IBM Plex Mono"; font-size:11px; font-weight:600; color:var(--ink-dim); margin-left:auto; }
   .mtx-section-source{ font-size:11.5px; color:var(--ink-dim); margin:-4px 0 12px; }
   .mtx-section-source a{ color:var(--accent2); }
+  /* 발권 기준일자(E열) 소구역: "2026-04-23 이후 발권 위탁수하물" */
+  .mtx-ticket-group{ margin:6px 0 18px; padding:12px 14px 4px; border-radius:12px; border:1px dashed var(--line); background:rgba(255,255,255,.5); }
+  .mtx-ticket-title{
+    display:flex; align-items:center; gap:7px; font-weight:800; font-size:13px; margin-bottom:10px;
+    padding:6px 12px; border-radius:8px; width:fit-content;
+  }
+  .mtx-ticket-title.after{ background:var(--ok-soft); color:var(--ok); }
+  .mtx-ticket-title.before{ background:var(--partial-soft); color:var(--partial); }
+  .mtx-ticket-title.plain{ background:var(--wait-soft); color:var(--ink-dim); font-weight:700; font-size:12px; }
+  .mtx-ticket-title .tk-ico{ font-size:14px; }
+  .mtx-ticket-title .tk-count{ font-family:"IBM Plex Mono"; font-size:10.5px; font-weight:600; opacity:.75; margin-left:4px; }
   .mtx-route{ margin-bottom:14px; }
   .mtx-route:last-child{ margin-bottom:0; }
   .mtx-route-title{
@@ -362,11 +373,13 @@
   // 메인매트릭스 탭 컬럼 인덱스(A=0 ... W=22)
   // 2026-09-08: 시트에 "유아/소아 무료 위탁수하물 허용량" 2개 컬럼이 개인소지품 상세와 적용시작일
   // 사이에 새로 추가되면서 이후 컬럼이 전부 +2 밀림 — 이 매핑을 시트 실제 헤더 순서에 맞게 갱신함.
+  // 2026-09-09: E열 "발권 기준일자"가 항공사명(한글) 뒤에 추가되어 이후 컬럼이 전부 +1 밀림.
+  // 값 형식은 "YYYY-MM-DD 이후" / "YYYY-MM-DD 이전"(이후 = 해당일 포함). 비어 있으면 발권일 무관.
   var COL = {
-    NO:0, CODE:1, NAME_EN:2, NAME_KR:3, BAG_TYPE:4, ROUTE:5, CLASS:6, BRAND:7,
-    PAX:8, TIER:9, CODESHARE:10, CONCEPT:11, QTY:12, PER_W:13, TOTAL_W:14,
-    DIM:15, P_QTY:16, P_PER_W:17,
-    PERSONAL:18, INFANT:19, CHILD:20, START:21, END:22, STATUS:23, LAST_CHECK:24, SOURCE:25, NOTE:26
+    NO:0, CODE:1, NAME_EN:2, NAME_KR:3, TICKET_DATE:4, BAG_TYPE:5, ROUTE:6, CLASS:7, BRAND:8,
+    PAX:9, TIER:10, CODESHARE:11, CONCEPT:12, QTY:13, PER_W:14, TOTAL_W:15,
+    DIM:16, P_QTY:17, P_PER_W:18,
+    PERSONAL:19, INFANT:20, CHILD:21, START:22, END:23, STATUS:24, LAST_CHECK:25, SOURCE:26, NOTE:27
   };
 
   var frame = document.getElementById('table-frame');
@@ -702,24 +715,69 @@
     return html;
   }
 
-  function buildSection(icon, title, rows){
-    if(!rows.length) return '';
-    // 노선구간별로 그룹핑 (원본 정렬 순서를 그대로 유지)
+  // 노선구간별로 그룹핑해 표를 만든다 (원본 정렬 순서 유지)
+  function buildRouteGroups(rows){
     var routeOrder = [];
     var byRoute = {};
-    var source = '';
     rows.forEach(function(r){
       var route = r[COL.ROUTE] || '기타';
       if(!byRoute[route]){ byRoute[route] = []; routeOrder.push(route); }
       byRoute[route].push(r);
-      if(!source && r[COL.SOURCE]) source = r[COL.SOURCE];
     });
-    var body = routeOrder.map(function(route){
+    return routeOrder.map(function(route){
       return '<div class="mtx-route">' +
         '<div class="mtx-route-title">' + escapeHtml(route) + '</div>' +
         buildRouteTable(byRoute[route]) +
         '</div>';
     }).join('');
+  }
+
+  // E열(발권 기준일자) 값을 정규화: "2026-04-23 이후" → {date, dir:'after'} / 빈값 → null
+  function parseTicketDate(v){
+    var s = String(v || '').trim();
+    if(!s) return null;
+    var m = s.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})\s*(이후|이전|부터|까지|after|before)?/i);
+    if(!m) return { key: s, label: s, date: '', dir: '' };
+    var date = m[1] + '-' + String(m[2]).padStart(2,'0') + '-' + String(m[3]).padStart(2,'0');
+    var dir = /이전|까지|before/i.test(m[4] || '') ? 'before' : 'after';
+    return { key: date + '|' + dir, date: date, dir: dir, label: date + (dir === 'before' ? ' 이전' : ' 이후') + ' 발권' };
+  }
+
+  function buildSection(icon, title, rows){
+    if(!rows.length) return '';
+    var source = '';
+    rows.forEach(function(r){ if(!source && r[COL.SOURCE]) source = r[COL.SOURCE]; });
+
+    // 발권 기준일자(E열)가 있는 행은 "YYYY-MM-DD 이전/이후 발권" 소구역으로 나누고,
+    // 없는 행은 지금까지처럼 그대로 보여준다. 소구역은 해당 행이 있을 때만 생긴다.
+    var plain = [], dated = {}, datedOrder = [];
+    rows.forEach(function(r){
+      var td = parseTicketDate(r[COL.TICKET_DATE]);
+      if(!td){ plain.push(r); return; }
+      if(!dated[td.key]){ dated[td.key] = { info: td, rows: [] }; datedOrder.push(td.key); }
+      dated[td.key].rows.push(r);
+    });
+    // 같은 날짜는 "이전" → "이후" 순, 날짜는 오름차순
+    datedOrder.sort(function(a, b){
+      var A = dated[a].info, B = dated[b].info;
+      if(A.date !== B.date) return A.date < B.date ? -1 : 1;
+      return (A.dir === 'before' ? 0 : 1) - (B.dir === 'before' ? 0 : 1);
+    });
+
+    var body = '';
+    if(plain.length){
+      body += (datedOrder.length ? '<div class="mtx-ticket-group"><div class="mtx-ticket-title plain">발권일 무관</div>' + buildRouteGroups(plain) + '</div>' : buildRouteGroups(plain));
+    }
+    datedOrder.forEach(function(k){
+      var g = dated[k];
+      body += '<div class="mtx-ticket-group">' +
+        '<div class="mtx-ticket-title ' + (g.info.dir === 'before' ? 'before' : 'after') + '">' +
+          '<span class="tk-ico">🎫</span>' + escapeHtml(g.info.label) + ' ' + escapeHtml(title) +
+          '<span class="tk-count">' + g.rows.length + '개</span></div>' +
+        buildRouteGroups(g.rows) +
+        '</div>';
+    });
+
     return '<div class="mtx-section">' +
       '<div class="mtx-section-title"><span class="icon">' + icon + '</span>' + escapeHtml(title) + '<span class="count">' + rows.length + '개 조건</span></div>' +
       '<div class="mtx-section-source">출처: ' + (source ? linkifyUrl(source) : '<span class="badge empty">—</span>') + '</div>' +
