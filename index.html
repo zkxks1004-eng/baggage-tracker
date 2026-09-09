@@ -222,7 +222,12 @@
   .mtx-ticket-title.after{ background:var(--ok-soft); color:var(--ok); }
   .mtx-ticket-title.before{ background:var(--partial-soft); color:var(--partial); }
   .mtx-ticket-title.plain{ background:var(--wait-soft); color:var(--ink-dim); font-weight:700; font-size:12px; }
-  .mtx-ticket-title .tk-ico{ font-size:14px; }
+  .mtx-ticket-title .tk-ico{ flex-shrink:0; display:block; }
+  .mtx-ticket-title .tk-kicker{
+    font-family:"IBM Plex Mono"; font-size:9.5px; font-weight:700; letter-spacing:.08em;
+    padding:2px 6px; border-radius:5px; background:rgba(255,255,255,.7); border:1px solid currentColor; opacity:.85;
+  }
+  .mtx-ticket-title .tk-what{ font-weight:600; opacity:.8; }
   .mtx-ticket-title .tk-count{ font-family:"IBM Plex Mono"; font-size:10.5px; font-weight:600; opacity:.75; margin-left:4px; }
   .mtx-route{ margin-bottom:14px; }
   .mtx-route:last-child{ margin-bottom:0; }
@@ -772,7 +777,8 @@
       var g = dated[k];
       body += '<div class="mtx-ticket-group">' +
         '<div class="mtx-ticket-title ' + (g.info.dir === 'before' ? 'before' : 'after') + '">' +
-          '<span class="tk-ico">🎫</span>' + escapeHtml(g.info.label) + ' ' + escapeHtml(title) +
+          '<svg class="tk-ico" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="1.5" y="3" width="13" height="11.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M1.5 6.5h13" stroke="currentColor" stroke-width="1.5"/><path d="M5 1.5v3M11 1.5v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><rect x="4.5" y="8.5" width="3" height="3" rx=".6" fill="currentColor"/></svg>' +
+          '<span class="tk-kicker">발권일</span>' + escapeHtml(g.info.label.replace(/ 발권$/, '')) + ' <span class="tk-what">' + escapeHtml(title) + '</span>' +
           '<span class="tk-count">' + g.rows.length + '개</span></div>' +
         buildRouteGroups(g.rows) +
         '</div>';
