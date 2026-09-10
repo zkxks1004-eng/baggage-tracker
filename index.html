@@ -303,7 +303,7 @@
   .mtx-section-title .count{ font-family:"IBM Plex Mono"; font-size:11px; font-weight:600; color:var(--ink-dim); margin-left:auto; }
   .mtx-section-source{ font-size:11.5px; color:var(--ink-dim); margin:-4px 0 12px; }
   .mtx-section-source a{ color:var(--accent2); }
-  /* 발권 기준일자(E열) 소구역: "2026-04-23 이후 발권 위탁수하물" */
+  /* 기준일자(E열) 소구역: "발권일 2026-04-23 이후 위탁수하물" / "탑승일 2026-10-24 까지 ..." */
   .mtx-ticket-group{ margin:6px 0 18px; padding:12px 14px 4px; border-radius:12px; border:1px dashed var(--line); background:rgba(255,255,255,.5); }
   .mtx-ticket-title{
     display:flex; align-items:center; gap:7px; font-weight:800; font-size:13px; margin-bottom:10px;
@@ -318,6 +318,7 @@
     padding:2px 6px; border-radius:5px; background:rgba(255,255,255,.7); border:1px solid currentColor; opacity:.85;
   }
   .mtx-ticket-title .tk-what{ font-weight:600; opacity:.8; }
+  .mtx-ticket-note{ font-size:11.5px; color:var(--ink-dim); margin:-4px 0 10px 4px; line-height:1.45; }
   .mtx-ticket-title .tk-count{ font-family:"IBM Plex Mono"; font-size:10.5px; font-weight:600; opacity:.75; margin-left:4px; }
   .mtx-route{ margin-bottom:14px; }
   .mtx-route:last-child{ margin-bottom:0; }
@@ -1038,15 +1039,26 @@
     }).join('');
   }
 
-  // E열(발권 기준일자) 값을 정규화: "2026-04-23 이후" → {date, dir:'after'} / 빈값 → null
+  // E열(기준일자) 값을 정규화. 기준은 셀 문구에서 읽는다:
+  //   "2026-04-23 이후"            → 발권일 2026-04-23 이후
+  //   "탑승일 기준 2026.10.24 까지" → 탑승일 2026-10-24 까지
+  //   "2026-04-29부터 발행 또는 변경된 항공권" → 발권·변경일 2026-04-29 부터
+  // 둘째 줄부터는 부가 조건(출발 기간 등)으로 보고 소구역 제목 아래에 그대로 보여준다.
   function parseTicketDate(v){
     var s = String(v || '').trim();
     if(!s) return null;
-    var m = s.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})\s*(이후|이전|부터|까지|after|before)?/i);
-    if(!m) return { key: s, label: s, date: '', dir: '' };
+    var lines = s.split(/\n+/).map(function(l){ return l.trim(); }).filter(Boolean);
+    var first = lines[0], note = lines.slice(1).join(' / ');
+    // "발행"은 발권과 같은 뜻으로 보고 합친다(VN 셀이 두 표기를 섞어 씀).
+    var basis = /탑승|출발/.test(first) ? '탑승일'
+              : /변경/.test(first) ? '발권·변경일' : '발권일';
+    var m = first.match(/(\d{4})\s*[.\-\/]\s*(\d{1,2})\s*[.\-\/]\s*(\d{1,2})\s*(?:일)?\s*(이후|이전|부터|까지|after|before)?/i);
+    if(!m) return { key: s, label: first, basis: basis, note: note, date: '', dir: '' };
     var date = m[1] + '-' + String(m[2]).padStart(2,'0') + '-' + String(m[3]).padStart(2,'0');
-    var dir = /이전|까지|before/i.test(m[4] || '') ? 'before' : 'after';
-    return { key: date + '|' + dir, date: date, dir: dir, label: date + (dir === 'before' ? ' 이전' : ' 이후') + ' 발권' };
+    var word = (m[4] || '이후').toLowerCase();
+    var dir = /이전|까지|before/.test(word) ? 'before' : 'after';
+    if(word === 'after') word = '이후'; if(word === 'before') word = '이전';
+    return { key: basis + '|' + date + '|' + dir + '|' + note, date: date, dir: dir, basis: basis, note: note, label: date + ' ' + word };
   }
 
   function buildSection(icon, title, rows){
@@ -1054,7 +1066,7 @@
     var source = '';
     rows.forEach(function(r){ if(!source && r[COL.SOURCE]) source = r[COL.SOURCE]; });
 
-    // 발권 기준일자(E열)가 있는 행은 "YYYY-MM-DD 이전/이후 발권" 소구역으로 나누고,
+    // 기준일자(E열)가 있는 행은 "발권일/탑승일/발행일 YYYY-MM-DD 이전/이후" 소구역으로 나누고,
     // 없는 행은 지금까지처럼 그대로 보여준다. 소구역은 해당 행이 있을 때만 생긴다.
     var plain = [], dated = {}, datedOrder = [];
     rows.forEach(function(r){
@@ -1072,15 +1084,16 @@
 
     var body = '';
     if(plain.length){
-      body += (datedOrder.length ? '<div class="mtx-ticket-group"><div class="mtx-ticket-title plain">발권일 무관</div>' + buildRouteGroups(plain) + '</div>' : buildRouteGroups(plain));
+      body += (datedOrder.length ? '<div class="mtx-ticket-group"><div class="mtx-ticket-title plain">기준일 무관</div>' + buildRouteGroups(plain) + '</div>' : buildRouteGroups(plain));
     }
     datedOrder.forEach(function(k){
       var g = dated[k];
       body += '<div class="mtx-ticket-group">' +
         '<div class="mtx-ticket-title ' + (g.info.dir === 'before' ? 'before' : 'after') + '">' +
           '<svg class="tk-ico" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="1.5" y="3" width="13" height="11.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M1.5 6.5h13" stroke="currentColor" stroke-width="1.5"/><path d="M5 1.5v3M11 1.5v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><rect x="4.5" y="8.5" width="3" height="3" rx=".6" fill="currentColor"/></svg>' +
-          '<span class="tk-kicker">발권일</span>' + escapeHtml(g.info.label.replace(/ 발권$/, '')) + ' <span class="tk-what">' + escapeHtml(title) + '</span>' +
+          '<span class="tk-kicker">' + escapeHtml(g.info.basis) + '</span>' + escapeHtml(g.info.label) + ' <span class="tk-what">' + escapeHtml(title) + '</span>' +
           '<span class="tk-count">' + g.rows.length + '개</span></div>' +
+        (g.info.note ? '<div class="mtx-ticket-note">' + escapeHtml(g.info.note) + '</div>' : '') +
         buildRouteGroups(g.rows) +
         '</div>';
     });
@@ -1406,7 +1419,7 @@
 
   var CSV_COLS = [
     { key: COL.CODE, label: '코드' }, { key: COL.NAME_KR, label: '항공사명' }, { key: COL.NAME_EN, label: '영문명' },
-    { key: COL.TICKET_DATE, label: '발권기준일자' }, { key: COL.AIRCRAFT, label: '기종' },
+    { key: COL.TICKET_DATE, label: '기준일자(발권/탑승)' }, { key: COL.AIRCRAFT, label: '기종' },
     { key: COL.BAG_TYPE, label: '수하물종류' }, { key: COL.ROUTE, label: '노선구간' }, { key: COL.CLASS, label: '클래스' },
     { key: COL.BRAND, label: '운임브랜드' }, { key: COL.PAX, label: '승객유형' }, { key: COL.TIER, label: '회원등급' },
     { key: COL.CODESHARE, label: '공동운항' }, { key: COL.CONCEPT, label: '개념' }, { key: COL.QTY, label: '허용개수' },
