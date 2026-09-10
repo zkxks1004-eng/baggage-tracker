@@ -235,6 +235,13 @@
     font-family:"IBM Plex Mono"; font-size:11px; font-weight:700; color:var(--accent2);
     background:var(--accent2-soft); display:inline-block; padding:3px 9px; border-radius:5px; margin-bottom:7px;
   }
+  /* 노선구간 안에서 기종(F열)별로 한 번 더 나뉘는 소구역 — 현재는 VN만 사용 */
+  .mtx-aircraft{ margin:8px 0 12px 14px; padding-left:12px; border-left:2px solid var(--line); }
+  .mtx-aircraft:last-child{ margin-bottom:0; }
+  .mtx-aircraft-title{
+    font-family:"IBM Plex Mono"; font-size:10px; font-weight:700; color:var(--ink-dim);
+    background:var(--surface-2); display:inline-block; padding:2px 8px; border-radius:5px; margin-bottom:6px;
+  }
   /* CSS Grid rows (not <table>) — same fix as the list view: table-layout:fixed can drift
      thead/tbody columns apart in Chrome, so per-route detail rows use a shared grid instead. */
   /* 2026-09-09 리디자인: 행 높이를 균일하게(테두리를 셀이 아니라 행에, 세로 중앙 정렬),
@@ -380,11 +387,13 @@
   // 사이에 새로 추가되면서 이후 컬럼이 전부 +2 밀림 — 이 매핑을 시트 실제 헤더 순서에 맞게 갱신함.
   // 2026-09-09: E열 "발권 기준일자"가 항공사명(한글) 뒤에 추가되어 이후 컬럼이 전부 +1 밀림.
   // 값 형식은 "YYYY-MM-DD 이후" / "YYYY-MM-DD 이전"(이후 = 해당일 포함). 비어 있으면 발권일 무관.
+  // 2026-09-10: F열 "기종"이 발권 기준일자 뒤에 새로 추가되어 이후 컬럼이 전부 +1 밀림
+  // (발권일기준 > 노선별 > 기종별로 더 세분화된 항공사가 생김, 현재는 VN만 사용).
   var COL = {
-    NO:0, CODE:1, NAME_EN:2, NAME_KR:3, TICKET_DATE:4, BAG_TYPE:5, ROUTE:6, CLASS:7, BRAND:8,
-    PAX:9, TIER:10, CODESHARE:11, CONCEPT:12, QTY:13, PER_W:14, TOTAL_W:15,
-    DIM:16, P_QTY:17, P_PER_W:18,
-    PERSONAL:19, INFANT:20, CHILD:21, START:22, END:23, STATUS:24, LAST_CHECK:25, SOURCE:26, NOTE:27
+    NO:0, CODE:1, NAME_EN:2, NAME_KR:3, TICKET_DATE:4, AIRCRAFT:5, BAG_TYPE:6, ROUTE:7, CLASS:8, BRAND:9,
+    PAX:10, TIER:11, CODESHARE:12, CONCEPT:13, QTY:14, PER_W:15, TOTAL_W:16,
+    DIM:17, P_QTY:18, P_PER_W:19,
+    PERSONAL:20, INFANT:21, CHILD:22, START:23, END:24, STATUS:25, LAST_CHECK:26, SOURCE:27, NOTE:28
   };
 
   var frame = document.getElementById('table-frame');
@@ -720,6 +729,26 @@
     return html;
   }
 
+  // 노선구간 안에서 기종(F열)별로 한 번 더 나눈다. 기종 값이 있는 행이 하나도 없으면
+  // 지금까지처럼 표를 바로 보여주고, 기종별로 조건이 갈리는 항공사(예: VN)만 소구역을 만든다.
+  function buildAircraftGroups(rows){
+    var hasAircraft = rows.some(function(r){ return r[COL.AIRCRAFT]; });
+    if(!hasAircraft) return buildRouteTable(rows);
+    var acOrder = [];
+    var byAircraft = {};
+    rows.forEach(function(r){
+      var ac = r[COL.AIRCRAFT] || '기종 미구분';
+      if(!byAircraft[ac]){ byAircraft[ac] = []; acOrder.push(ac); }
+      byAircraft[ac].push(r);
+    });
+    return acOrder.map(function(ac){
+      return '<div class="mtx-aircraft">' +
+        '<div class="mtx-aircraft-title">' + escapeHtml(ac) + '</div>' +
+        buildRouteTable(byAircraft[ac]) +
+        '</div>';
+    }).join('');
+  }
+
   // 노선구간별로 그룹핑해 표를 만든다 (원본 정렬 순서 유지)
   function buildRouteGroups(rows){
     var routeOrder = [];
@@ -732,7 +761,7 @@
     return routeOrder.map(function(route){
       return '<div class="mtx-route">' +
         '<div class="mtx-route-title">' + escapeHtml(route) + '</div>' +
-        buildRouteTable(byRoute[route]) +
+        buildAircraftGroups(byRoute[route]) +
         '</div>';
     }).join('');
   }
