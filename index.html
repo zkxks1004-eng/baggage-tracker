@@ -196,11 +196,21 @@
     display:inline-flex; align-items:center; gap:6px; padding:6px 12px 6px 13px; border-radius:999px;
     background:var(--accent2-soft); color:var(--accent2-ink); font-family:"Pretendard"; font-size:12px; font-weight:600;
     text-decoration:none; white-space:nowrap; transition:background .15s ease, transform .1s ease;
+    flex-shrink:0;
   }
   .src-btn:hover{ background:var(--accent2); color:#fff; }
   .src-btn:active{ transform:scale(.96); }
   .src-btn .src-arrow{ font-size:12px; transition:transform .15s ease; }
   .src-btn:hover .src-arrow{ transform:translate(1px,-1px); }
+  .gcell.src-gcell{ overflow:visible; white-space:normal; }
+  .src-cell{ display:flex; align-items:center; gap:10px; min-width:0; }
+  .src-domain{
+    font-family:"IBM Plex Mono"; font-size:11px; color:var(--ink-faint); opacity:.68;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; letter-spacing:.01em;
+    transition:opacity .15s ease, color .15s ease;
+  }
+  .grow.row-click:hover .src-domain{ opacity:1; color:var(--ink-dim); }
+  .src-domain::before{ content:'·'; margin-right:8px; color:var(--line); font-weight:700; }
 
   .state{ max-width:2200px; margin:0 auto; padding:70px 24px; text-align:center; color:var(--ink-dim); font-size:14px; }
   .state code{ font-family:"IBM Plex Mono"; background:var(--surface-2); padding:2px 6px; border-radius:4px; }
@@ -527,6 +537,14 @@
       'onclick="event.stopPropagation()" title="' + escapeAttr(u) + '">출처 <span class="src-arrow">↗</span></a>';
   }
 
+  // 출처 버튼 옆 남는 공간에 실제 도메인을 흐리게 보여줘서 빈 여백을 정보로 채운다.
+  function sourceCell(u){
+    if(!u) return '<span class="badge empty">—</span>';
+    var domain = u.replace(/^https?:\/\//i, '').split('/')[0];
+    return '<div class="src-cell">' + sourceButton(u) +
+      '<span class="src-domain">' + escapeHtml(domain) + '</span></div>';
+  }
+
   // 여러 항목(label+text)을 팝오버용 plain text / rich html로 조립하는 공용 헬퍼
   // (허용량 상세, 비고 둘 다 같은 팝오버 스타일을 쓴다)
   function buildPopoverBits(items){
@@ -786,7 +804,7 @@
       html += '<div class="gcell center">' + countChip(a.routeCount) + '</div>';
       html += '<div class="gcell center">' + statusBadge(a.status) + '</div>';
       html += '<div class="gcell center">' + escapeHtml(a.lastDate || '—') + '</div>';
-      html += '<div class="gcell">' + sourceButton(a.source) + '</div>';
+      html += '<div class="gcell src-gcell">' + sourceCell(a.source) + '</div>';
       html += '</div>';
     });
     html += '</div></div>';
