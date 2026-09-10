@@ -422,10 +422,118 @@
   }
   .mtx-table .note .popover-trigger{ display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .mf-value strong, .tf-value strong{ color:var(--accent2); font-weight:700; }
+
+  /* ---- app shell: left icon rail + slide-out menu ---- */
+  .app-shell{ display:flex; align-items:flex-start; }
+  .side-rail{
+    position:sticky; top:0; align-self:flex-start; height:100vh; flex-shrink:0;
+    width:64px; background:linear-gradient(180deg,#0b1220,#141b30);
+    display:flex; flex-direction:column; align-items:center; padding-top:20px; z-index:50;
+  }
+  .rail-toggle{
+    width:38px; height:38px; border-radius:11px; border:1px solid rgba(255,255,255,.14);
+    background:rgba(255,255,255,.06); color:#fff; font-size:16px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; transition:background .15s ease;
+  }
+  .rail-toggle:hover{ background:rgba(255,255,255,.16); }
+  .rail-menu{
+    position:fixed; top:0; left:64px; height:100vh; width:216px;
+    background:#101a30; border-right:1px solid rgba(255,255,255,.08);
+    padding:20px 10px; display:flex; flex-direction:column; gap:3px; z-index:49;
+    box-shadow:24px 0 60px -24px rgba(0,0,0,.45);
+    animation:railIn .15s cubic-bezier(.2,.8,.2,1);
+  }
+  .rail-menu[hidden]{ display:none; }
+  @keyframes railIn{ from{opacity:0; transform:translateX(-8px);} to{opacity:1; transform:none;} }
+  .rail-item{
+    display:flex; align-items:center; gap:11px; padding:11px 12px; border-radius:10px;
+    color:rgba(255,255,255,.68); font-family:"Pretendard"; font-size:13.5px; font-weight:600;
+    background:none; border:none; cursor:pointer; text-align:left; width:100%;
+    transition:background .15s ease, color .15s ease;
+  }
+  .rail-item:hover{ background:rgba(255,255,255,.08); color:#fff; }
+  .rail-item.active{ background:rgba(255,255,255,.14); color:#fff; }
+  .rail-item .ri-ico{ font-size:15px; flex-shrink:0; width:18px; text-align:center; }
+  .app-main{ flex:1; min-width:0; }
+  .view[hidden]{ display:none; }
+
+  /* ---- generic sub-page header (compare / export) ---- */
+  .page-head{ max-width:2200px; margin:0 auto; padding:52px 24px 6px; }
+  .page-head h1{ font-size:26px; margin:0 0 8px; font-weight:800; letter-spacing:-.01em; color:var(--ink); }
+  .page-head p{ margin:0; color:var(--ink-dim); font-size:13.5px; max-width:640px; }
+
+  /* ---- 항공사 비교 ---- */
+  .compare-picker{ max-width:2200px; margin:22px auto 0; padding:0 24px; position:relative; }
+  .compare-picker input{
+    width:100%; max-width:440px; padding:12px 16px; border-radius:12px; border:1px solid var(--line);
+    background:var(--surface); font-family:"Pretendard"; font-size:14px; outline:none; box-shadow:var(--shadow);
+  }
+  .compare-picker input:focus{ border-color:var(--accent2); box-shadow:0 0 0 3px var(--accent2-soft); }
+  .compare-suggest{
+    position:absolute; top:calc(100% + 6px); left:24px; width:calc(100% - 48px); max-width:440px;
+    background:var(--surface); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow-lg);
+    max-height:280px; overflow-y:auto; z-index:20; padding:6px;
+  }
+  .compare-suggest[hidden]{ display:none; }
+  .compare-suggest-item{ display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:9px; cursor:pointer; }
+  .compare-suggest-item:hover{ background:var(--surface-2); }
+  .compare-suggest-item .cs-code{
+    font-family:"IBM Plex Mono"; font-weight:700; font-size:11px; color:var(--accent-ink);
+    background:var(--accent-soft); padding:2px 7px; border-radius:6px; flex-shrink:0;
+  }
+  .compare-suggest-empty{ padding:10px; font-size:12.5px; color:var(--ink-faint); }
+  .compare-chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .compare-chip{
+    display:inline-flex; align-items:center; gap:9px; padding:6px 8px 6px 8px; border-radius:999px;
+    background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow);
+  }
+  .compare-chip .code-badge{ margin:0; }
+  .compare-chip .cc-name{ font-weight:700; font-size:12.5px; }
+  .compare-chip .cc-remove{
+    width:20px; height:20px; border-radius:50%; border:none; background:var(--surface-2); color:var(--ink-dim);
+    cursor:pointer; font-size:11px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .compare-chip .cc-remove:hover{ background:#fdecec; color:#b42318; }
+  .compare-hint{ max-width:2200px; margin:8px auto 0; padding:0 24px; font-size:12px; color:var(--ink-faint); }
+  .compare-empty{ max-width:1040px; margin:70px auto; padding:0 24px; text-align:center; color:var(--ink-dim); font-size:14px; }
+  .compare-grid{
+    max-width:2200px; margin:26px auto 60px; padding:0 24px;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(min(380px,100%),1fr)); gap:20px; align-items:start;
+  }
+  .compare-col{
+    background:var(--surface); border:1px solid var(--line); border-radius:20px;
+    box-shadow:var(--shadow-lg); overflow:hidden; max-height:calc(100vh - 120px); display:flex; flex-direction:column;
+  }
+  .compare-col .tk-body{ overflow-y:auto; }
+
+  /* ---- 내보내기 ---- */
+  .export-toolbar{ max-width:2200px; margin:22px auto 0; padding:0 24px; }
+  .export-summary{ max-width:2200px; margin:20px auto 60px; padding:0 24px; }
+  .export-list{
+    background:var(--surface); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow-lg);
+    overflow:hidden;
+  }
+  .export-list-item{
+    display:flex; align-items:center; gap:14px; padding:13px 20px; border-bottom:1px solid var(--line);
+  }
+  .export-list-item:last-child{ border-bottom:none; }
+  .export-list-item .el-name{ font-weight:650; font-size:13.5px; }
+  .export-list-item .el-count{ margin-left:auto; font-family:"IBM Plex Mono"; font-size:11.5px; color:var(--ink-dim); }
 </style>
 </head>
 <body>
+<div class="app-shell">
+  <nav class="side-rail">
+    <button class="rail-toggle" id="rail-toggle" type="button" aria-label="메뉴 열기">☰</button>
+    <div class="rail-menu" id="rail-menu" hidden>
+      <button class="rail-item active" data-view="tracker" type="button"><span class="ri-ico">📋</span>트래커</button>
+      <button class="rail-item" data-view="compare" type="button"><span class="ri-ico">⚖️</span>항공사 비교</button>
+      <button class="rail-item" data-view="export" type="button"><span class="ri-ico">⬇️</span>내보내기</button>
+    </div>
+  </nav>
+  <div class="app-main">
 
+<section id="view-tracker" class="view">
 <header class="hero">
   <div class="hero-inner">
     <div class="hero-top">
@@ -462,10 +570,52 @@
     <div class="state"><div class="spinner"></div>불러오는 중…</div>
   </div>
 </div>
+</section>
+
+<section id="view-compare" class="view" hidden>
+  <div class="page-head">
+    <h1>항공사 비교</h1>
+    <p>항공사를 2~3개 골라서 노선·클래스·운임브랜드별 상세 조건을 나란히 비교합니다.</p>
+  </div>
+  <div class="compare-picker">
+    <input type="search" id="compare-search" placeholder="항공사 코드·이름 검색해서 추가 (최대 3개)" autocomplete="off">
+    <div class="compare-suggest" id="compare-suggest" hidden></div>
+    <div class="compare-chips" id="compare-chips"></div>
+  </div>
+  <div class="compare-grid" id="compare-grid">
+    <div class="compare-empty">비교할 항공사를 검색해서 추가해주세요.</div>
+  </div>
+</section>
+
+<section id="view-export" class="view" hidden>
+  <div class="page-head">
+    <h1>내보내기</h1>
+    <p>검색어·확인상태로 걸러진 항공사들의 전체 상세 조건행을 CSV로 내려받습니다.</p>
+  </div>
+  <div class="toolbar export-toolbar">
+    <div class="toolbar-left">
+      <input type="search" id="export-filter-input" placeholder="코드·항공사명 검색…" autocomplete="off">
+      <select id="export-status-filter">
+        <option value="">확인상태 전체</option>
+        <option value="확인완료">확인완료</option>
+        <option value="일부확인">일부확인</option>
+        <option value="조사중">조사중</option>
+      </select>
+    </div>
+    <div class="toolbar-left">
+      <span class="stat" id="export-count-stat"></span>
+      <button class="btn primary" id="export-download-btn" type="button">⬇ CSV 다운로드</button>
+    </div>
+  </div>
+  <div class="export-summary" id="export-summary"></div>
+</section>
 
 <footer>
   데이터 소스: <a href="https://docs.google.com/spreadsheets/d/12WL67NcJZq09hT_nx07y-zZKCOP5AyZAHgqjZAy8nSo/edit" target="_blank" rel="noopener">항공사 수하물 정책 트래커 v5 · 메인매트릭스 (Google Sheets)</a> · 이 시트는 "링크가 있는 모든 사용자 - 뷰어"로 공유되어 있어야 이 페이지가 데이터를 읽어올 수 있습니다. 시트 값을 바꾼 뒤 "새로고침"을 누르면 반영됩니다(반영까지 몇 분 걸릴 수 있음). 행을 클릭하면 항공사별 세부 조건 팝업이 뜹니다.
 </footer>
+
+  </div>
+</div>
 
 <div class="modal-overlay" id="modal-overlay" hidden>
   <div class="modal" role="dialog" aria-modal="true">
@@ -942,9 +1092,9 @@
       '</div>';
   }
 
-  function openAirlineModal(a){
-    if(!a) return;
-
+  // 항공사 1개의 "보딩패스" 카드 HTML(로고/코드/핵심수치 + 위탁/기내/기타 섹션)을 만든다.
+  // 모달과 비교 화면이 완전히 같은 렌더링을 쓰도록 공용 함수로 뺐다.
+  function airlineDetailHtml(a){
     var consignRows = a.rows.filter(function(r){ return r[COL.BAG_TYPE] === '위탁수하물'; });
     var cabinRows = a.rows.filter(function(r){ return r[COL.BAG_TYPE] === '기내수하물'; });
     var otherRows = a.rows.filter(function(r){ return r[COL.BAG_TYPE] !== '위탁수하물' && r[COL.BAG_TYPE] !== '기내수하물'; });
@@ -962,8 +1112,7 @@
 
     var logoUrl = airlineLogoUrl(a.code);
 
-    modalContent.innerHTML =
-      '<div class="tk-header">' +
+    return '<div class="tk-header">' +
         '<div class="tk-logo"><img src="' + logoUrl + '" alt="" onerror="this.parentElement.hidden=true"></div>' +
         '<div class="tk-text">' +
           '<div class="tk-eyebrow">✈ NUUA BAGGAGE PASS</div>' +
@@ -974,7 +1123,11 @@
       '<div class="tk-facts">' + factsHtml + '</div>' +
       '<div class="tk-perf"></div>' +
       '<div class="tk-body">' + bodyHtml + '</div>';
+  }
 
+  function openAirlineModal(a){
+    if(!a) return;
+    modalContent.innerHTML = airlineDetailHtml(a);
     modalOverlay.hidden = false;
   }
   function closeModal(){ modalOverlay.hidden = true; }
@@ -1070,6 +1223,9 @@
     metaLine.innerHTML = '<span class="dot"></span>마지막 불러오기: ' + new Date().toLocaleString('ko-KR') + ' · 구글시트 "메인매트릭스" 탭에서 직접 읽어옵니다';
     renderStats();
     render();
+    renderCompareChips();
+    renderCompare();
+    renderExport();
   };
 
   function showLoadError(detail){
@@ -1101,6 +1257,190 @@
   filterInput.addEventListener('input', render);
   statusFilter.addEventListener('change', render);
   refreshBtn.addEventListener('click', load);
+
+  // ---- 왼쪽 사이드바: 클릭하면 펼쳐지고, 메뉴 고르면 화면 전환 후 자동으로 닫힘 ----
+  var railToggle = document.getElementById('rail-toggle');
+  var railMenu = document.getElementById('rail-menu');
+  var views = {
+    tracker: document.getElementById('view-tracker'),
+    compare: document.getElementById('view-compare'),
+    export: document.getElementById('view-export')
+  };
+  railToggle.addEventListener('click', function(e){
+    e.stopPropagation();
+    railMenu.hidden = !railMenu.hidden;
+  });
+  document.addEventListener('click', function(e){
+    if(!railMenu.hidden && !e.target.closest('.side-rail')) railMenu.hidden = true;
+  });
+  document.querySelectorAll('.rail-item').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var v = btn.getAttribute('data-view');
+      Object.keys(views).forEach(function(k){ views[k].hidden = (k !== v); });
+      document.querySelectorAll('.rail-item').forEach(function(b){ b.classList.toggle('active', b === btn); });
+      railMenu.hidden = true;
+      if(v === 'compare') renderCompare();
+      if(v === 'export') renderExport();
+    });
+  });
+
+  // ---- 항공사 비교 ----
+  var compareSelected = [];
+  var compareSearchInput = document.getElementById('compare-search');
+  var compareSuggest = document.getElementById('compare-suggest');
+  var compareChipsEl = document.getElementById('compare-chips');
+  var compareGrid = document.getElementById('compare-grid');
+
+  function renderCompareChips(){
+    compareChipsEl.innerHTML = compareSelected.map(function(code){
+      var a = airlines.find(function(x){ return x.code === code; });
+      if(!a) return '';
+      return '<div class="compare-chip" data-code="' + escapeAttr(code) + '">' +
+        '<span class="code-badge">' + escapeHtml(code) + '</span>' +
+        '<span class="cc-name">' + escapeHtml(a.kr) + '</span>' +
+        '<button class="cc-remove" type="button" aria-label="비교에서 제거">✕</button>' +
+        '</div>';
+    }).join('');
+    compareChipsEl.querySelectorAll('.cc-remove').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var code = btn.closest('.compare-chip').getAttribute('data-code');
+        compareSelected = compareSelected.filter(function(c){ return c !== code; });
+        renderCompareChips();
+        renderCompare();
+      });
+    });
+  }
+
+  function renderCompare(){
+    if(!compareGrid) return;
+    if(!compareSelected.length){
+      compareGrid.innerHTML = '<div class="compare-empty">비교할 항공사를 검색해서 추가해주세요.</div>';
+      return;
+    }
+    compareGrid.innerHTML = compareSelected.map(function(code){
+      var a = airlines.find(function(x){ return x.code === code; });
+      if(!a) return '';
+      return '<div class="compare-col">' + airlineDetailHtml(a) + '</div>';
+    }).join('');
+  }
+
+  function renderCompareSuggest(){
+    var q = compareSearchInput.value.trim().toLowerCase();
+    if(!q){ compareSuggest.hidden = true; return; }
+    if(compareSelected.length >= 3){
+      compareSuggest.innerHTML = '<div class="compare-suggest-empty">최대 3개까지 비교할 수 있어요. 하나를 빼고 다시 골라주세요.</div>';
+      compareSuggest.hidden = false;
+      return;
+    }
+    var matches = airlines.filter(function(a){
+      return compareSelected.indexOf(a.code) === -1 &&
+        (a.code + ' ' + a.en + ' ' + a.kr).toLowerCase().indexOf(q) !== -1;
+    }).slice(0, 8);
+    if(!matches.length){
+      compareSuggest.innerHTML = '<div class="compare-suggest-empty">일치하는 항공사가 없습니다.</div>';
+      compareSuggest.hidden = false;
+      return;
+    }
+    compareSuggest.innerHTML = matches.map(function(a){
+      return '<div class="compare-suggest-item" data-code="' + escapeAttr(a.code) + '">' +
+        '<span class="cs-code">' + escapeHtml(a.code) + '</span>' +
+        '<span>' + escapeHtml(a.kr) + '</span>' +
+        '</div>';
+    }).join('');
+    compareSuggest.hidden = false;
+    compareSuggest.querySelectorAll('.compare-suggest-item').forEach(function(el){
+      el.addEventListener('click', function(){
+        var code = el.getAttribute('data-code');
+        if(compareSelected.length < 3 && compareSelected.indexOf(code) === -1){
+          compareSelected.push(code);
+          renderCompareChips();
+          renderCompare();
+        }
+        compareSearchInput.value = '';
+        compareSuggest.hidden = true;
+      });
+    });
+  }
+  compareSearchInput.addEventListener('input', renderCompareSuggest);
+  compareSearchInput.addEventListener('focus', renderCompareSuggest);
+  document.addEventListener('click', function(e){
+    if(!e.target.closest('.compare-picker')) compareSuggest.hidden = true;
+  });
+
+  // ---- 내보내기 ----
+  var exportFilterInput = document.getElementById('export-filter-input');
+  var exportStatusFilter = document.getElementById('export-status-filter');
+  var exportCountStat = document.getElementById('export-count-stat');
+  var exportSummary = document.getElementById('export-summary');
+  var exportDownloadBtn = document.getElementById('export-download-btn');
+
+  function getFilteredAirlines(query, statusVal){
+    var q = (query || '').trim().toLowerCase();
+    return airlines.filter(function(a){
+      if(q && (a.code + ' ' + a.en + ' ' + a.kr).toLowerCase().indexOf(q) === -1) return false;
+      if(statusVal && a.status !== statusVal) return false;
+      return true;
+    });
+  }
+
+  function renderExport(){
+    if(!exportSummary) return;
+    var filtered = getFilteredAirlines(exportFilterInput.value, exportStatusFilter.value);
+    var totalRows = filtered.reduce(function(s,a){ return s + a.total; }, 0);
+    exportCountStat.textContent = filtered.length + ' / ' + airlines.length + '개 항공사 · 조건행 ' + totalRows.toLocaleString('ko-KR') + '개';
+    if(!filtered.length){
+      exportSummary.innerHTML = '<div class="state">조건에 맞는 항공사가 없습니다.</div>';
+      return;
+    }
+    exportSummary.innerHTML = '<div class="export-list">' + filtered.map(function(a){
+      return '<div class="export-list-item">' +
+        '<span class="code-badge">' + escapeHtml(a.code) + '</span>' +
+        '<span class="el-name">' + escapeHtml(a.kr) + '</span>' +
+        statusBadge(a.status) +
+        '<span class="el-count">' + a.total + '개 조건행</span>' +
+        '</div>';
+    }).join('') + '</div>';
+  }
+  exportFilterInput.addEventListener('input', renderExport);
+  exportStatusFilter.addEventListener('change', renderExport);
+
+  var CSV_COLS = [
+    { key: COL.CODE, label: '코드' }, { key: COL.NAME_KR, label: '항공사명' }, { key: COL.NAME_EN, label: '영문명' },
+    { key: COL.TICKET_DATE, label: '발권기준일자' }, { key: COL.AIRCRAFT, label: '기종' },
+    { key: COL.BAG_TYPE, label: '수하물종류' }, { key: COL.ROUTE, label: '노선구간' }, { key: COL.CLASS, label: '클래스' },
+    { key: COL.BRAND, label: '운임브랜드' }, { key: COL.PAX, label: '승객유형' }, { key: COL.TIER, label: '회원등급' },
+    { key: COL.CODESHARE, label: '공동운항' }, { key: COL.CONCEPT, label: '개념' }, { key: COL.QTY, label: '허용개수' },
+    { key: COL.PER_W, label: '개당최대중량' }, { key: COL.TOTAL_W, label: '총허용중량' }, { key: COL.DIM, label: '규격' },
+    { key: COL.P_QTY, label: '개인소지품개수' }, { key: COL.P_PER_W, label: '개인소지품무게' }, { key: COL.PERSONAL, label: '개인소지품상세' },
+    { key: COL.INFANT, label: '유아' }, { key: COL.CHILD, label: '소아' }, { key: COL.STATUS, label: '확인상태' },
+    { key: COL.LAST_CHECK, label: '최종확인일' }, { key: COL.SOURCE, label: '출처' }, { key: COL.NOTE, label: '비고' }
+  ];
+  function csvEscape(v){
+    var s = v == null ? '' : String(v);
+    if(/[",\n]/.test(s)) s = '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+  function downloadExportCsv(){
+    var filtered = getFilteredAirlines(exportFilterInput.value, exportStatusFilter.value);
+    if(!filtered.length) return;
+    var lines = [CSV_COLS.map(function(c){ return csvEscape(c.label); }).join(',')];
+    filtered.forEach(function(a){
+      a.rows.forEach(function(r){
+        lines.push(CSV_COLS.map(function(c){ return csvEscape(r[c.key]); }).join(','));
+      });
+    });
+    var csv = '﻿' + lines.join('\r\n'); // BOM: 엑셀에서 한글 깨짐 방지
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement('a');
+    link.href = url;
+    link.download = '항공사_수하물_' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  }
+  exportDownloadBtn.addEventListener('click', downloadExportCsv);
 
   load();
 })();
