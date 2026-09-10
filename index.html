@@ -133,7 +133,7 @@
   }
   /* ---- list view: CSS Grid rows (not <table>) so header/body columns can never drift apart ---- */
   .gtable{ font-size:13.5px; min-width:900px; }
-  .grow{ display:grid; grid-template-columns: 66px 240px 92px 92px 108px 112px 116px minmax(220px,1fr); align-items:center; column-gap:2px; }
+  .grow{ display:grid; grid-template-columns: 68px 268px 92px 92px 108px 112px 116px minmax(140px,1fr); align-items:center; column-gap:6px; }
   .grow .gcell{ padding:16px 14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
   .grow .gcell.center{ text-align:center; }
   .ghead{
@@ -191,6 +191,16 @@
   .badge.empty{ color:var(--ink-dim); }
   .badge.empty::before{ display:none; }
   .pill{ display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:600; background:var(--surface-2); color:var(--ink-dim); margin-right:4px; }
+
+  .src-btn{
+    display:inline-flex; align-items:center; gap:6px; padding:6px 12px 6px 13px; border-radius:999px;
+    background:var(--accent2-soft); color:var(--accent2-ink); font-family:"Pretendard"; font-size:12px; font-weight:600;
+    text-decoration:none; white-space:nowrap; transition:background .15s ease, transform .1s ease;
+  }
+  .src-btn:hover{ background:var(--accent2); color:#fff; }
+  .src-btn:active{ transform:scale(.96); }
+  .src-btn .src-arrow{ font-size:12px; transition:transform .15s ease; }
+  .src-btn:hover .src-arrow{ transform:translate(1px,-1px); }
 
   .state{ max-width:2200px; margin:0 auto; padding:70px 24px; text-align:center; color:var(--ink-dim); font-size:14px; }
   .state code{ font-family:"IBM Plex Mono"; background:var(--surface-2); padding:2px 6px; border-radius:4px; }
@@ -510,6 +520,13 @@
     return '<span class="count-chip' + (n === 0 ? ' zero' : '') + '">' + n + '</span>';
   }
 
+  function sourceButton(u){
+    if(!u) return '<span class="badge empty">—</span>';
+    var href = /^https?:\/\//i.test(u) ? u : 'https://' + u;
+    return '<a class="src-btn" href="' + escapeAttr(href) + '" target="_blank" rel="noopener" ' +
+      'onclick="event.stopPropagation()" title="' + escapeAttr(u) + '">출처 <span class="src-arrow">↗</span></a>';
+  }
+
   // 여러 항목(label+text)을 팝오버용 plain text / rich html로 조립하는 공용 헬퍼
   // (허용량 상세, 비고 둘 다 같은 팝오버 스타일을 쓴다)
   function buildPopoverBits(items){
@@ -769,7 +786,7 @@
       html += '<div class="gcell center">' + countChip(a.routeCount) + '</div>';
       html += '<div class="gcell center">' + statusBadge(a.status) + '</div>';
       html += '<div class="gcell center">' + escapeHtml(a.lastDate || '—') + '</div>';
-      html += '<div class="gcell">' + (a.source ? linkifyUrl(a.source) : '<span class="badge empty">—</span>') + '</div>';
+      html += '<div class="gcell">' + sourceButton(a.source) + '</div>';
       html += '</div>';
     });
     html += '</div></div>';
