@@ -1201,8 +1201,17 @@
       return s;
     }
 
+    // 시트에서 "위탁수화물"/"위탁 수화물"처럼 표기가 흔들려도 위탁/기내로 분류되도록 정규화
+    function normalizeBagType(s){
+      var t = String(s || '').replace(/\s+/g, '').replace(/수화물/g, '수하물');
+      if(t === '위탁수하물' || t === '기내수하물') return t;
+      return String(s || '');
+    }
+
     var raw = response.table.rows.map(function(r){
-      return r.c.map(function(cell){ return cell ? cellToString(cell.v) : ''; });
+      var arr = r.c.map(function(cell){ return cell ? cellToString(cell.v) : ''; });
+      arr[COL.BAG_TYPE] = normalizeBagType(arr[COL.BAG_TYPE]);
+      return arr;
     });
 
     var byCode = {}; var order = [];
