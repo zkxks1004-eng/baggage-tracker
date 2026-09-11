@@ -97,6 +97,7 @@
   .stat-card.ok{ --card-accent: var(--ok); }
   .stat-card.wait{ --card-accent: var(--wait); }
   .stat-card.accent{ --card-accent: var(--accent); }
+  .stat-card.plane{ --card-accent: var(--plane); }
 
   .toolbar{ max-width:2200px; margin:28px auto 0; padding:0 24px 16px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; }
   .toolbar-left{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
@@ -336,6 +337,44 @@
     border-radius:7px; margin-bottom:10px;
   }
   .mtx-aircraft-title .ac-ico{ flex-shrink:0; display:block; }
+
+  /* ---- 초과 수하물 요금 (AD~AG, 존:구간 금액 통화 표기규칙을 칩으로 풀어서 보여줌) ---- */
+  .fee-row{ margin-bottom:14px; padding:12px 14px; border-radius:10px; background:var(--surface-2); border:1px solid var(--line); }
+  .fee-row:last-child{ margin-bottom:0; }
+  .fee-route{
+    font-family:"IBM Plex Mono"; font-size:11px; font-weight:700; color:var(--accent-ink);
+    background:var(--accent-soft); display:inline-block; padding:3px 9px; border-radius:5px; margin-bottom:10px;
+  }
+  .fee-route-sep{ opacity:.5; }
+  .fee-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+  @media (max-width:640px){ .fee-grid{ grid-template-columns:repeat(2,1fr); } }
+  .fee-cell{ min-width:0; }
+  .fee-cell-label{ font-size:10.5px; font-weight:700; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.04em; margin-bottom:5px; }
+  .fee-cell-value{ font-size:12px; line-height:1.5; color:var(--ink); }
+  .fee-zone{ margin-bottom:6px; }
+  .fee-zone:last-child{ margin-bottom:0; }
+  .fee-tier{ padding:1px 0; word-break:keep-all; }
+  .fee-empty{ color:var(--ink-faint); font-style:normal; }
+
+  /* ---- 부가서비스(스포츠/악기/반려동물/유아용품 — 항공사별 공통정책 탭, 항공사당 1행) ---- */
+  .pol-group{ margin-bottom:14px; }
+  .pol-group:last-child{ margin-bottom:0; }
+  .pol-group-title{
+    font-family:"IBM Plex Mono"; font-size:11px; font-weight:700; color:var(--plane);
+    background:var(--plane-soft); display:inline-block; padding:3px 9px; border-radius:5px; margin-bottom:8px;
+  }
+  .pol-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:8px; }
+  .pol-item{
+    display:flex; align-items:flex-start; gap:9px; padding:9px 11px; border-radius:10px;
+    background:var(--surface-2); border:1px solid var(--line);
+  }
+  .pol-item.empty{ opacity:.55; }
+  .pol-icon{ font-size:16px; line-height:1; flex-shrink:0; margin-top:1px; }
+  .pol-body{ min-width:0; }
+  .pol-label{ font-size:10.5px; font-weight:700; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.03em; margin-bottom:3px; }
+  .pol-value{ font-size:12px; line-height:1.5; color:var(--ink); word-break:keep-all; }
+  .pol-item.empty .pol-value{ color:var(--ink-faint); }
+
   /* CSS Grid rows (not <table>) — same fix as the list view: table-layout:fixed can drift
      thead/tbody columns apart in Chrome, so per-route detail rows use a shared grid instead. */
   /* 2026-09-09 리디자인: 행 높이를 균일하게(테두리를 셀이 아니라 행에, 세로 중앙 정렬),
@@ -631,6 +670,11 @@
 (function(){
   var SHEET_ID = '12WL67NcJZq09hT_nx07y-zZKCOP5AyZAHgqjZAy8nSo';
   var SHEET_NAME = '메인매트릭스';
+  // 초과요금·사전구매(AD~AG)는 아직 "메인매트릭스"엔 없고 "메인매트릭스의 사본" 탭에만 있다(2026-09-11
+  // 리서치 결과, 운임브랜드까지 세분화된 별도 작업본). 부가서비스(스포츠/악기/반려동물/유아용품)는
+  // "항공사별 공통정책" 탭에 항공사당 1행으로 있다. 셋 다 항공사 코드로 조인해서 같이 보여준다.
+  var SHEET_NAME_FEE = '메인매트릭스의 사본';
+  var SHEET_NAME_POLICY = '항공사별 공통정책';
 
   // 메인매트릭스 탭 컬럼 인덱스(A=0 ... W=22)
   // 2026-09-08: 시트에 "유아/소아 무료 위탁수하물 허용량" 2개 컬럼이 개인소지품 상세와 적용시작일
@@ -643,7 +687,20 @@
     NO:0, CODE:1, NAME_EN:2, NAME_KR:3, TICKET_DATE:4, AIRCRAFT:5, BAG_TYPE:6, ROUTE:7, CLASS:8, BRAND:9,
     PAX:10, TIER:11, CODESHARE:12, CONCEPT:13, QTY:14, PER_W:15, TOTAL_W:16,
     DIM:17, P_QTY:18, P_PER_W:19,
-    PERSONAL:20, INFANT:21, CHILD:22, START:23, END:24, STATUS:25, LAST_CHECK:26, SOURCE:27, NOTE:28
+    PERSONAL:20, INFANT:21, CHILD:22, START:23, END:24, STATUS:25, LAST_CHECK:26, SOURCE:27, NOTE:28,
+    // "메인매트릭스의 사본" 탭에만 있는 4개 컬럼(AD~AG). A~AC까지는 메인매트릭스와 동일한 레이아웃이라
+    // 위 COL 그대로 재사용하고 이 4개만 더 읽는다.
+    EXCESS_WEIGHT:29, EXCESS_COUNT:30, EXCESS_SIZE:31, PREBUY:32
+  };
+
+  // "항공사별 공통정책" 탭(항공사당 1행, A~R 18컬럼) 전용 인덱스
+  var PCOL = {
+    CODE:0, NAME_EN:1, NAME_KR:2,
+    GOLF:3, SKI:4, BIKE:5, SURF:6,
+    INST_CABIN:7, INST_SEAT:8,
+    PET_CABIN:9, PET_HOLD:10, PET_FEE:11,
+    STROLLER:12, CARSEAT:13,
+    STATUS:14, LAST_CHECK:15, SOURCE:16, NOTE:17
   };
 
   var frame = document.getElementById('table-frame');
@@ -675,6 +732,7 @@
   function statusBadge(v){
     if(v === '확인완료') return '<span class="badge done">확인완료</span>';
     if(v === '일부확인') return '<span class="badge partial">일부확인</span>';
+    if(v === '검토진행중') return '<span class="badge wip">검토진행중</span>';
     return '<span class="badge wip">조사중</span>';
   }
 
@@ -886,17 +944,22 @@
   // ---- 상단 통계 카드 ----
   function renderStats(){
     var done = 0, partial = 0, wip = 0, totalRows = 0, routeSet = {};
+    var feeConfirmed = 0, policyConfirmed = 0;
     airlines.forEach(function(a){
       totalRows += a.total;
       if(a.status === '확인완료') done++;
       else if(a.status === '일부확인') partial++;
       else wip++;
+      if((a.fees || []).some(function(f){ return f.hasFee; })) feeConfirmed++;
+      if(a.policy && (a.policy.status || '').indexOf('확인') !== -1) policyConfirmed++;
     });
     var cards = [
       { cls:'', label:'항공사', value: airlines.length + '개', sub:'추적 중인 전체' },
       { cls:'ok', label:'확인완료', value: done + '개', sub:'모든 조건행 확인됨' },
       { cls:'accent', label:'일부확인 · 조사중', value: (partial + wip) + '개', sub:'검증 진행 중' },
-      { cls:'wait', label:'조건행', value: totalRows.toLocaleString('ko-KR') + '개', sub:'노선·클래스·운임 조합' }
+      { cls:'wait', label:'조건행', value: totalRows.toLocaleString('ko-KR') + '개', sub:'노선·클래스·운임 조합' },
+      { cls:'accent', label:'초과요금 확인', value: feeConfirmed + '개사', sub:'중량·개수·규격 중 1개 이상' },
+      { cls:'plane', label:'부가서비스 확인', value: policyConfirmed + '개사', sub:'스포츠·악기·반려동물·유아용품' }
     ];
     statRow.hidden = false;
     statRow.innerHTML = cards.map(function(c){
@@ -1110,7 +1173,87 @@
       '</div>';
   }
 
-  // 항공사 1개의 "보딩패스" 카드 HTML(로고/코드/핵심수치 + 위탁/기내/기타 섹션)을 만든다.
+  // 초과요금 셀 표기규칙("존명: 구간 금액 통화 / 구간 금액 통화; 존명: ...")을 칩으로 풀어준다.
+  // 존이 하나뿐이면 세미콜론이 없어 zones가 1개고, 구간이 하나뿐이면 슬래시가 없어 tiers도 1개 —
+  // 어느 쪽이든 그대로 자연스럽게 렌더링된다.
+  function formatFeeValue(v){
+    if(!v || v === '-') return '<span class="fee-empty">공홈 미공개</span>';
+    var zones = String(v).split(';').map(function(z){ return z.trim(); }).filter(Boolean);
+    return zones.map(function(z){
+      var tiers = z.split('/').map(function(t){ return t.trim(); }).filter(Boolean);
+      return '<div class="fee-zone">' + tiers.map(function(t){
+        return '<div class="fee-tier">' + escapeHtml(t) + '</div>';
+      }).join('') + '</div>';
+    }).join('');
+  }
+
+  function buildFeeSection(a){
+    var fees = a.fees || [];
+    if(!fees.length) return '';
+    var withFee = fees.filter(function(f){ return f.hasFee; });
+    // 전부 "공홈 미공개"인 항공사도 있다(유럽 FSC 등, 계산기 전용) — 그래도 대표로 1행은 보여서
+    // "확인은 했지만 항공사가 수치를 안 준다"는 걸 알 수 있게 한다.
+    var rows = withFee.length ? withFee : fees.slice(0, 1);
+    var body = rows.map(function(f){
+      return '<div class="fee-row">' +
+        '<div class="fee-route">' + escapeHtml(f.route) + ' <span class="fee-route-sep">·</span> ' + escapeHtml(f.cls) + '</div>' +
+        '<div class="fee-grid">' +
+          '<div class="fee-cell"><div class="fee-cell-label">중량초과</div><div class="fee-cell-value">' + formatFeeValue(f.w) + '</div></div>' +
+          '<div class="fee-cell"><div class="fee-cell-label">개수초과</div><div class="fee-cell-value">' + formatFeeValue(f.c) + '</div></div>' +
+          '<div class="fee-cell"><div class="fee-cell-label">규격초과</div><div class="fee-cell-value">' + formatFeeValue(f.s) + '</div></div>' +
+          '<div class="fee-cell"><div class="fee-cell-label">사전구매</div><div class="fee-cell-value">' + formatFeeValue(f.pre) + '</div></div>' +
+        '</div></div>';
+    }).join('');
+    return '<div class="mtx-section">' +
+      '<div class="mtx-section-title"><span class="icon">💳</span>초과 수하물 요금<span class="count">' + rows.length + '개 조합</span></div>' +
+      body +
+      '</div>';
+  }
+
+  function policyItem(icon, label, val){
+    var has = val && val !== '-' && !/^(미확인|공홈 미기재)/.test(val);
+    return '<div class="pol-item' + (has ? '' : ' empty') + '">' +
+      '<div class="pol-icon">' + icon + '</div>' +
+      '<div class="pol-body">' +
+        '<div class="pol-label">' + escapeHtml(label) + '</div>' +
+        '<div class="pol-value">' + (has ? escapeHtml(val) : '정보 없음') + '</div>' +
+      '</div></div>';
+  }
+
+  function buildPolicySection(a){
+    var p = a.policy;
+    if(!p) return '';
+    var groups = [
+      { title:'스포츠 장비', items:[
+        policyItem('⛳', '골프', p.golf), policyItem('🎿', '스키·스노보드', p.ski),
+        policyItem('🚲', '자전거', p.bike), policyItem('🏄', '서핑보드', p.surf)
+      ]},
+      { title:'악기', items:[
+        policyItem('🎻', '기내 반입', p.instCabin), policyItem('🎻', '좌석 구매', p.instSeat)
+      ]},
+      { title:'반려동물', items:[
+        policyItem('🐾', '기내 동반', p.petCabin), policyItem('🐾', '화물칸 위탁', p.petHold),
+        policyItem('💰', '운송 요금', p.petFee)
+      ]},
+      { title:'유아용품', items:[
+        policyItem('🍼', '유모차', p.stroller), policyItem('🪑', '카시트', p.carseat)
+      ]}
+    ];
+    var body = groups.map(function(g){
+      return '<div class="pol-group"><div class="pol-group-title">' + escapeHtml(g.title) + '</div>' +
+        '<div class="pol-grid">' + g.items.join('') + '</div></div>';
+    }).join('');
+    return '<div class="mtx-section">' +
+      '<div class="mtx-section-title"><span class="icon">🧭</span>부가서비스</div>' +
+      '<div class="mtx-section-source">' + statusBadge(p.status) +
+        (p.lastCheck ? ' · 최종확인 ' + escapeHtml(p.lastCheck) : '') + ' · 출처: ' +
+        (p.source ? linkifyUrl(p.source) : '<span class="badge empty">—</span>') + '</div>' +
+      body +
+      (p.note ? '<div class="mtx-ticket-note">' + escapeHtml(p.note) + '</div>' : '') +
+      '</div>';
+  }
+
+  // 항공사 1개의 "보딩패스" 카드 HTML(로고/코드/핵심수치 + 위탁/기내/초과요금/부가서비스/기타 섹션)을 만든다.
   // 모달과 비교 화면이 완전히 같은 렌더링을 쓰도록 공용 함수로 뺐다.
   function airlineDetailHtml(a){
     var consignRows = a.rows.filter(function(r){ return r[COL.BAG_TYPE] === '위탁수하물'; });
@@ -1126,6 +1269,8 @@
     var bodyHtml =
       buildSection('🧳', '위탁수하물', consignRows) +
       buildSection('🎒', '기내수하물', cabinRows) +
+      buildFeeSection(a) +
+      buildPolicySection(a) +
       buildSection('📦', '기타', otherRows);
 
     var logoUrl = airlineLogoUrl(a.code);
@@ -1179,42 +1324,52 @@
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape') hideCellPopover(); });
 
   var jsonpTimeout = null;
-  var jsonpCallbackName = '__baggageTrackerCallback';
 
-  window[jsonpCallbackName] = function(response){
-    if(jsonpTimeout){ clearTimeout(jsonpTimeout); jsonpTimeout = null; }
-    if(!response || response.status !== 'ok'){
-      showLoadError('시트 응답 상태: ' + (response && response.status));
-      return;
+  function cellToString(v){
+    if(v == null) return '';
+    var s = String(v);
+    // gviz는 날짜 셀을 "Date(2026,8,7)" 형태(월은 0-indexed)의 문자열로 내려준다 — YYYY-MM-DD로 변환.
+    // 셀이 날짜+시간 형식이면 "Date(2026,8,7,0,0,0)"처럼 시:분:초가 붙어 오므로 그 부분은 무시한다.
+    var m = s.match(/^Date\((\d+),(\d+),(\d+)(?:,\d+,\d+,\d+)?\)$/);
+    if(m){
+      var mm = String(parseInt(m[2], 10) + 1).padStart(2, '0');
+      var dd = String(parseInt(m[3], 10)).padStart(2, '0');
+      return m[1] + '-' + mm + '-' + dd;
     }
+    return s;
+  }
 
-    function cellToString(v){
-      if(v == null) return '';
-      var s = String(v);
-      // gviz는 날짜 셀을 "Date(2026,8,7)" 형태(월은 0-indexed)의 문자열로 내려준다 — YYYY-MM-DD로 변환.
-      // 셀이 날짜+시간 형식이면 "Date(2026,8,7,0,0,0)"처럼 시:분:초가 붙어 오므로 그 부분은 무시한다.
-      var m = s.match(/^Date\((\d+),(\d+),(\d+)(?:,\d+,\d+,\d+)?\)$/);
-      if(m){
-        var mm = String(parseInt(m[2], 10) + 1).padStart(2, '0');
-        var dd = String(parseInt(m[3], 10)).padStart(2, '0');
-        return m[1] + '-' + mm + '-' + dd;
-      }
-      return s;
-    }
+  // 시트에서 "위탁수화물"/"위탁 수화물"처럼 표기가 흔들려도 위탁/기내로 분류되도록 정규화
+  function normalizeBagType(s){
+    var t = String(s || '').replace(/\s+/g, '').replace(/수화물/g, '수하물');
+    if(t === '위탁수하물' || t === '기내수하물') return t;
+    return String(s || '');
+  }
 
-    // 시트에서 "위탁수화물"/"위탁 수화물"처럼 표기가 흔들려도 위탁/기내로 분류되도록 정규화
-    function normalizeBagType(s){
-      var t = String(s || '').replace(/\s+/g, '').replace(/수화물/g, '수하물');
-      if(t === '위탁수하물' || t === '기내수하물') return t;
-      return String(s || '');
-    }
-
-    var raw = response.table.rows.map(function(r){
+  function sheetToRows(response){
+    return response.table.rows.map(function(r){
       var arr = r.c.map(function(cell){ return cell ? cellToString(cell.v) : ''; });
       arr[COL.BAG_TYPE] = normalizeBagType(arr[COL.BAG_TYPE]);
       return arr;
     });
+  }
 
+  // 세 탭(메인매트릭스/사본/공통정책)을 병렬로 불러온 뒤 코드로 조인한다. 하나라도 실패하면 전체를 에러 처리.
+  var loadState = { main:false, fee:false, policy:false, failed:false };
+  var feeByCode = {}, policyByCode = {};
+
+  function onSheetError(label, response){
+    if(loadState.failed) return;
+    loadState.failed = true;
+    if(jsonpTimeout){ clearTimeout(jsonpTimeout); jsonpTimeout = null; }
+    showLoadError(label + ' 응답 상태: ' + (response && response.status));
+  }
+
+  window.__baggageTrackerMain = function(response){
+    if(loadState.failed) return;
+    if(!response || response.status !== 'ok'){ onSheetError('메인매트릭스', response); return; }
+
+    var raw = sheetToRows(response);
     var byCode = {}; var order = [];
     raw.forEach(function(arr){
       var code = arr[COL.CODE];
@@ -1248,13 +1403,80 @@
       a.status = checked === a.total ? '확인완료' : (checked === 0 ? '조사중' : '일부확인');
     });
 
-    metaLine.innerHTML = '<span class="dot"></span>마지막 불러오기: ' + new Date().toLocaleString('ko-KR') + ' · 구글시트 "메인매트릭스" 탭에서 직접 읽어옵니다';
+    loadState.main = true;
+    checkAllLoaded();
+  };
+
+  // 초과요금(AD~AG)은 "메인매트릭스의 사본" 탭이 원본 행보다 노선×클래스×운임으로 더 세분화돼 있어서,
+  // 같은 (노선, 클래스)에 값이 같은 운임브랜드 행이 여러 개 겹친다 — 코드+노선+클래스+금액 4종 조합으로
+  // 중복 제거해 항공사 상세 카드에 보여줄 수 있는 크기로 줄인다.
+  window.__baggageTrackerFee = function(response){
+    if(loadState.failed) return;
+    if(!response || response.status !== 'ok'){ onSheetError('메인매트릭스의 사본', response); return; }
+
+    var raw = sheetToRows(response);
+    var seen = {}; var byCode = {};
+    raw.forEach(function(arr){
+      var code = arr[COL.CODE];
+      if(!code) return;
+      var w = arr[COL.EXCESS_WEIGHT] || '-', c = arr[COL.EXCESS_COUNT] || '-',
+          s = arr[COL.EXCESS_SIZE] || '-', pre = arr[COL.PREBUY] || '-';
+      var route = arr[COL.ROUTE], cls = arr[COL.CLASS];
+      var key = code + '|' + route + '|' + cls + '|' + w + '|' + c + '|' + s + '|' + pre;
+      if(seen[key]) return;
+      seen[key] = true;
+      if(!byCode[code]) byCode[code] = [];
+      byCode[code].push({
+        route: route, cls: cls, w: w, c: c, s: s, pre: pre,
+        hasFee: [w, c, s].some(function(v){ return v && v !== '-'; })
+      });
+    });
+    feeByCode = byCode;
+
+    loadState.fee = true;
+    checkAllLoaded();
+  };
+
+  window.__baggageTrackerPolicy = function(response){
+    if(loadState.failed) return;
+    if(!response || response.status !== 'ok'){ onSheetError('항공사별 공통정책', response); return; }
+
+    var raw = sheetToRows(response);
+    var byCode = {};
+    raw.forEach(function(arr){
+      var code = arr[PCOL.CODE];
+      if(!code) return;
+      byCode[code] = {
+        golf: arr[PCOL.GOLF], ski: arr[PCOL.SKI], bike: arr[PCOL.BIKE], surf: arr[PCOL.SURF],
+        instCabin: arr[PCOL.INST_CABIN], instSeat: arr[PCOL.INST_SEAT],
+        petCabin: arr[PCOL.PET_CABIN], petHold: arr[PCOL.PET_HOLD], petFee: arr[PCOL.PET_FEE],
+        stroller: arr[PCOL.STROLLER], carseat: arr[PCOL.CARSEAT],
+        status: arr[PCOL.STATUS], lastCheck: arr[PCOL.LAST_CHECK], source: arr[PCOL.SOURCE], note: arr[PCOL.NOTE]
+      };
+    });
+    policyByCode = byCode;
+
+    loadState.policy = true;
+    checkAllLoaded();
+  };
+
+  function checkAllLoaded(){
+    if(loadState.failed || !loadState.main || !loadState.fee || !loadState.policy) return;
+    if(jsonpTimeout){ clearTimeout(jsonpTimeout); jsonpTimeout = null; }
+
+    airlines.forEach(function(a){
+      a.fees = feeByCode[a.code] || [];
+      a.policy = policyByCode[a.code] || null;
+    });
+
+    metaLine.innerHTML = '<span class="dot"></span>마지막 불러오기: ' + new Date().toLocaleString('ko-KR') +
+      ' · 구글시트 "메인매트릭스"·"메인매트릭스의 사본"·"항공사별 공통정책" 탭에서 직접 읽어옵니다';
     renderStats();
     render();
     renderCompareChips();
     renderCompare();
     renderExport();
-  };
+  }
 
   function showLoadError(detail){
     frame.innerHTML =
@@ -1268,16 +1490,28 @@
     frame.innerHTML = '<div class="state">불러오는 중…</div>';
     metaLine.innerHTML = '<span class="dot" style="background:var(--wait);box-shadow:0 0 0 3px var(--wait-soft);"></span>데이터 불러오는 중…';
 
-    var old = document.getElementById('gviz-jsonp');
-    if(old){ old.parentNode.removeChild(old); }
+    loadState = { main:false, fee:false, policy:false, failed:false };
+    feeByCode = {}; policyByCode = {};
 
-    var script = document.createElement('script');
-    script.id = 'gviz-jsonp';
-    script.src = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID +
-      '/gviz/tq?tqx=out:json;responseHandler:' + jsonpCallbackName +
-      '&sheet=' + encodeURIComponent(SHEET_NAME) + '&headers=1&_=' + Date.now();
-    script.onerror = function(){ showLoadError('스크립트 로드 실패 (네트워크 또는 접근 권한 문제)'); };
-    document.body.appendChild(script);
+    ['gviz-jsonp-main', 'gviz-jsonp-fee', 'gviz-jsonp-policy'].forEach(function(id){
+      var old = document.getElementById(id);
+      if(old){ old.parentNode.removeChild(old); }
+    });
+
+    var sheets = [
+      { id: 'gviz-jsonp-main', name: SHEET_NAME, cb: '__baggageTrackerMain', label: '메인매트릭스' },
+      { id: 'gviz-jsonp-fee', name: SHEET_NAME_FEE, cb: '__baggageTrackerFee', label: '메인매트릭스의 사본' },
+      { id: 'gviz-jsonp-policy', name: SHEET_NAME_POLICY, cb: '__baggageTrackerPolicy', label: '항공사별 공통정책' }
+    ];
+    sheets.forEach(function(s){
+      var script = document.createElement('script');
+      script.id = s.id;
+      script.src = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID +
+        '/gviz/tq?tqx=out:json;responseHandler:' + s.cb +
+        '&sheet=' + encodeURIComponent(s.name) + '&headers=1&_=' + Date.now();
+      script.onerror = function(){ onSheetError(s.label, { status: '스크립트 로드 실패(네트워크/접근 권한)' }); };
+      document.body.appendChild(script);
+    });
 
     jsonpTimeout = setTimeout(function(){ showLoadError('응답 시간 초과(10초)'); }, 10000);
   }
