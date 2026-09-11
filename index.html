@@ -1191,8 +1191,9 @@
     function cellToString(v){
       if(v == null) return '';
       var s = String(v);
-      // gviz는 날짜 셀을 "Date(2026,8,7)" 형태(월은 0-indexed)의 문자열로 내려준다 — YYYY-MM-DD로 변환
-      var m = s.match(/^Date\((\d+),(\d+),(\d+)\)$/);
+      // gviz는 날짜 셀을 "Date(2026,8,7)" 형태(월은 0-indexed)의 문자열로 내려준다 — YYYY-MM-DD로 변환.
+      // 셀이 날짜+시간 형식이면 "Date(2026,8,7,0,0,0)"처럼 시:분:초가 붙어 오므로 그 부분은 무시한다.
+      var m = s.match(/^Date\((\d+),(\d+),(\d+)(?:,\d+,\d+,\d+)?\)$/);
       if(m){
         var mm = String(parseInt(m[2], 10) + 1).padStart(2, '0');
         var dd = String(parseInt(m[3], 10)).padStart(2, '0');
