@@ -581,7 +581,7 @@
       <span class="hero-badge"><span class="b-dot"></span>BD OPS · BAGGAGE INTELLIGENCE</span>
     </div>
     <h1 class="hero-title">항공사 <em>수하물 정책</em> 트래커</h1>
-    <p class="hero-sub">구글시트 "메인매트릭스" 탭에 값을 입력하면 이 페이지를 새로고침할 때 자동으로 반영됩니다. 항공사별로 노선구간 · 클래스 · 운임브랜드 조합까지 세분화된 무료 수하물 조건을 추적합니다.</p>
+    <p class="hero-sub">구글시트 "메인매트릭스의 사본" 탭에 값을 입력하면 이 페이지를 새로고침할 때 자동으로 반영됩니다. 항공사별로 노선구간 · 클래스 · 운임브랜드 조합까지 세분화된 무료 수하물 조건을 추적합니다.</p>
     <p class="meta" id="meta-line"><span class="dot"></span>데이터 불러오는 중…</p>
   </div>
   <div class="hero-shelf"></div>
@@ -663,11 +663,13 @@
 <script>
 (function(){
   var SHEET_ID = '12WL67NcJZq09hT_nx07y-zZKCOP5AyZAHgqjZAy8nSo';
-  var SHEET_NAME = '메인매트릭스';
+  // 기본 데이터도 "메인매트릭스의 사본"에서 읽는다 — 2차 검수가 이 탭에서 진행되고 있어
+  // (메인은 1차검수완료에서 멈춰 있음) 메인을 읽으면 검수 진행 상황이 보이지 않는다.
+  // 초과요금 컬럼(AD~AG)도 같은 탭에 있으므로 한 번만 불러 양쪽에 쓴다.
+  var SHEET_NAME = '메인매트릭스의 사본';
   // 초과요금·사전구매(AD~AG)는 아직 "메인매트릭스"엔 없고 "메인매트릭스의 사본" 탭에만 있다(2026-09-11
   // 리서치 결과, 운임브랜드까지 세분화된 별도 작업본). 부가서비스(스포츠/악기/반려동물/유아용품)는
   // "항공사별 공통정책" 탭에 항공사당 1행으로 있다. 셋 다 항공사 코드로 조인해서 같이 보여준다.
-  var SHEET_NAME_FEE = '메인매트릭스의 사본';
   var SHEET_NAME_POLICY = '항공사별 공통정책';
 
   // 메인매트릭스 탭 컬럼 인덱스(A=0 ... W=22)
@@ -1384,7 +1386,7 @@
 
   window.__baggageTrackerMain = function(response){
     if(loadState.failed) return;
-    if(!response || response.status !== 'ok'){ onSheetError('메인매트릭스', response); return; }
+    if(!response || response.status !== 'ok'){ onSheetError(SHEET_NAME, response); return; }
 
     var raw = sheetToRows(response);
     var byCode = {}; var order = [];
@@ -1429,15 +1431,16 @@
     });
 
     loadState.main = true;
+    window.__baggageTrackerFee(response);   // 같은 탭에 초과요금 컬럼이 있으므로 재사용
     checkAllLoaded();
   };
 
-  // 초과요금(AD~AG)은 "메인매트릭스의 사본" 탭이 원본 행보다 노선×클래스×운임으로 더 세분화돼 있어서,
+  // 초과요금(AD~AG)은 원본 행보다 노선×클래스×운임으로 더 세분화돼 있어서,
   // 같은 (노선, 클래스)에 값이 같은 운임브랜드 행이 여러 개 겹친다 — 코드+노선+클래스+금액 4종 조합으로
   // 중복 제거해 항공사 상세 카드에 보여줄 수 있는 크기로 줄인다.
   window.__baggageTrackerFee = function(response){
     if(loadState.failed) return;
-    if(!response || response.status !== 'ok'){ onSheetError('메인매트릭스의 사본', response); return; }
+    if(!response || response.status !== 'ok'){ onSheetError(SHEET_NAME, response); return; }
 
     var raw = sheetToRows(response);
     var seen = {}; var byCode = {};
@@ -1516,7 +1519,7 @@
     });
 
     metaLine.innerHTML = '<span class="dot"></span>마지막 불러오기: ' + new Date().toLocaleString('ko-KR') +
-      ' · 구글시트 "메인매트릭스"·"메인매트릭스의 사본"·"항공사별 공통정책" 탭에서 직접 읽어옵니다';
+      ' · 구글시트 "메인매트릭스의 사본"·"항공사별 공통정책" 탭에서 직접 읽어옵니다';
     fillStatusFilters();
     renderStats();
     render();
@@ -1540,15 +1543,14 @@
     loadState = { main:false, fee:false, policy:false, failed:false };
     feeByCode = {}; policyByCode = {};
 
-    ['gviz-jsonp-main', 'gviz-jsonp-fee', 'gviz-jsonp-policy'].forEach(function(id){
+    ['gviz-jsonp-main', 'gviz-jsonp-policy'].forEach(function(id){
       var old = document.getElementById(id);
       if(old){ old.parentNode.removeChild(old); }
     });
 
     var sheets = [
-      { id: 'gviz-jsonp-main', name: SHEET_NAME, cb: '__baggageTrackerMain', label: '메인매트릭스' },
-      { id: 'gviz-jsonp-fee', name: SHEET_NAME_FEE, cb: '__baggageTrackerFee', label: '메인매트릭스의 사본' },
-      { id: 'gviz-jsonp-policy', name: SHEET_NAME_POLICY, cb: '__baggageTrackerPolicy', label: '항공사별 공통정책' }
+      { id: 'gviz-jsonp-main', name: SHEET_NAME, cb: '__baggageTrackerMain', label: SHEET_NAME },
+      { id: 'gviz-jsonp-policy', name: SHEET_NAME_POLICY, cb: '__baggageTrackerPolicy', label: SHEET_NAME_POLICY }
     ];
     sheets.forEach(function(s){
       var script = document.createElement('script');
