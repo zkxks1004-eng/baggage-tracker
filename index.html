@@ -594,9 +594,6 @@
     <input type="search" id="filter-input" placeholder="코드·항공사명 검색…" autocomplete="off">
     <select id="status-filter">
       <option value="">확인상태 전체</option>
-      <option value="확인완료">확인완료</option>
-      <option value="일부확인">일부확인</option>
-      <option value="조사중">조사중</option>
     </select>
   </div>
   <div class="toolbar-left">
@@ -637,9 +634,6 @@
       <input type="search" id="export-filter-input" placeholder="코드·항공사명 검색…" autocomplete="off">
       <select id="export-status-filter">
         <option value="">확인상태 전체</option>
-        <option value="확인완료">확인완료</option>
-        <option value="일부확인">일부확인</option>
-        <option value="조사중">조사중</option>
       </select>
     </div>
     <div class="toolbar-left">
@@ -729,11 +723,29 @@
     return '<a href="' + escapeHtml(href) + '" target="_blank" rel="noopener">' + escapeHtml(u) + '</a>';
   }
 
+  // 검수는 단계로 올라간다 — "2차검수중"은 1차가 끝났다는 뜻이므로 미검증으로 세면 안 된다.
+  // 시트의 상태값 문구는 운영하며 바뀌므로(검토중 -> 1차검수완료 -> 2차검수중 ...) 정확히
+  // 일치시키지 않고 키워드로 단계를 추정하고, 모르는 값은 0단계로 둔다.
+  var STATUS_STAGES = [
+    { stage: 3, test: function(v){ return /2차.*완료|최종.*완료|^확인완료$/.test(v); }, cls: 'done' },
+    { stage: 2, test: function(v){ return /2차/.test(v); },                            cls: 'partial' },
+    // 1차검수완료와 일부확인은 "적어도 한 번은 검증됨" — 공통정책 탭은 후자를 쓴다
+    { stage: 1, test: function(v){ return /1차.*완료|일부확인|부분확인/.test(v); },     cls: 'partial' },
+    { stage: 0, test: function(v){ return true; },                                     cls: 'wip' }
+  ];
+  var STAGE_DONE = 3, STAGE_FIRST_PASS = 1;
+
+  function statusStage(v){
+    var text = (v || '').replace(/\s/g, '');
+    for(var i = 0; i < STATUS_STAGES.length; i++){
+      if(STATUS_STAGES[i].test(text)) return STATUS_STAGES[i];
+    }
+    return STATUS_STAGES[STATUS_STAGES.length - 1];
+  }
+
   function statusBadge(v){
-    if(v === '확인완료') return '<span class="badge done">확인완료</span>';
-    if(v === '일부확인') return '<span class="badge partial">일부확인</span>';
-    if(v === '검토진행중') return '<span class="badge wip">검토진행중</span>';
-    return '<span class="badge wip">조사중</span>';
+    if(!v) return '<span class="badge wip">미확인</span>';
+    return '<span class="badge ' + statusStage(v).cls + '">' + escapeHtml(v) + '</span>';
   }
 
   function countChip(n){
@@ -943,20 +955,25 @@
 
   // ---- 상단 통계 카드 ----
   function renderStats(){
-    var done = 0, partial = 0, wip = 0, totalRows = 0, routeSet = {};
-    var feeConfirmed = 0, policyConfirmed = 0;
+    var firstPass = 0, fullyDone = 0, totalRows = 0, routeSet = {};
+    var feeConfirmed = 0, policyConfirmed = 0, stageLabels = {};
     airlines.forEach(function(a){
       totalRows += a.total;
-      if(a.status === '확인완료') done++;
-      else if(a.status === '일부확인') partial++;
-      else wip++;
+      if(a.stage >= STAGE_FIRST_PASS) firstPass++;
+      if(a.stage >= STAGE_DONE) fullyDone++;
+      Object.keys(a.statusCounts || {}).forEach(function(s){ stageLabels[s] = 1; });
       if((a.fees || []).some(function(f){ return f.hasFee; })) feeConfirmed++;
-      if(a.policy && (a.policy.status || '').indexOf('확인') !== -1) policyConfirmed++;
+      // '확인' 문자열 매칭은 상태 문구가 '1차검수완료'로 바뀌자 10건을 놓쳤다 — 단계로 판정한다
+      if(a.policy && a.policy.status && statusStage(a.policy.status).stage >= STAGE_FIRST_PASS) policyConfirmed++;
+    });
+    // 시트에 실제로 쓰인 상태 문구를 그대로 보여준다 (문구가 바뀌어도 코드 수정 불필요)
+    var labelList = Object.keys(stageLabels).sort(function(x, y){
+      return statusStage(y).stage - statusStage(x).stage;
     });
     var cards = [
       { cls:'', label:'항공사', value: airlines.length + '개', sub:'추적 중인 전체' },
-      { cls:'ok', label:'확인완료', value: done + '개', sub:'모든 조건행 확인됨' },
-      { cls:'accent', label:'일부확인 · 조사중', value: (partial + wip) + '개', sub:'검증 진행 중' },
+      { cls:'ok', label:'1차검수 이상', value: firstPass + '개', sub: labelList.join(' · ') || '검수 단계' },
+      { cls:'accent', label:'최종검수 완료', value: fullyDone + '개', sub:'2차검수까지 완료' },
       { cls:'wait', label:'조건행', value: totalRows.toLocaleString('ko-KR') + '개', sub:'노선·클래스·운임 조합' },
       { cls:'accent', label:'초과요금 확인', value: feeConfirmed + '개사', sub:'중량·개수·규격 중 1개 이상' },
       { cls:'plane', label:'부가서비스 확인', value: policyConfirmed + '개사', sub:'스포츠·악기·반려동물·유아용품' }
@@ -1384,9 +1401,13 @@
     airlines = order.map(function(c){ return byCode[c]; });
     airlines.forEach(function(a){
       var checked = 0, lastDate = '', source = '', consignCount = 0, cabinCount = 0;
-      var routeSet = {};
+      var routeSet = {}, minStage = null, statusCounts = {};
       a.rows.forEach(function(r){
-        if((r[COL.STATUS] || '').indexOf('확인완료') !== -1) checked++;
+        var raw = r[COL.STATUS] || '';
+        var stage = statusStage(raw).stage;
+        if(minStage === null || stage < minStage) minStage = stage;
+        if(raw) statusCounts[raw] = (statusCounts[raw] || 0) + 1;
+        if(stage >= STAGE_DONE) checked++;
         if(r[COL.LAST_CHECK] && r[COL.LAST_CHECK] > lastDate) lastDate = r[COL.LAST_CHECK];
         if(!source && r[COL.SOURCE]) source = r[COL.SOURCE];
         if(r[COL.ROUTE]) routeSet[r[COL.ROUTE]] = 1;
@@ -1400,7 +1421,11 @@
       a.routeCount = Object.keys(routeSet).length;
       a.consignCount = consignCount;
       a.cabinCount = cabinCount;
-      a.status = checked === a.total ? '확인완료' : (checked === 0 ? '조사중' : '일부확인');
+      a.stage = minStage === null ? 0 : minStage;   // 가장 덜 검수된 행 기준
+      // 행마다 상태가 다르면 "일부확인", 같으면 시트 문구를 그대로 보여준다
+      var distinct = Object.keys(statusCounts);
+      a.status = distinct.length === 1 ? distinct[0] : (distinct.length === 0 ? '미확인' : '일부확인');
+      a.statusCounts = statusCounts;
     });
 
     loadState.main = true;
@@ -1460,6 +1485,27 @@
     checkAllLoaded();
   };
 
+  // 확인상태 드롭다운은 시트에 실제로 존재하는 값으로 채운다 — 상태 문구가 바뀌어도
+  // (검토중 -> 1차검수완료 -> 2차검수중) 코드를 고치지 않아도 되도록.
+  function fillStatusFilters(){
+    var seen = {};
+    airlines.forEach(function(a){
+      if(a.status) seen[a.status] = 1;
+      Object.keys(a.statusCounts || {}).forEach(function(s){ seen[s] = 1; });
+    });
+    var values = Object.keys(seen).sort(function(x, y){
+      return statusStage(y).stage - statusStage(x).stage;
+    });
+    [statusFilter, document.getElementById('export-status-filter')].forEach(function(sel){
+      if(!sel) return;
+      var current = sel.value;
+      sel.innerHTML = '<option value="">확인상태 전체</option>' + values.map(function(v){
+        return '<option value="' + escapeHtml(v) + '">' + escapeHtml(v) + '</option>';
+      }).join('');
+      if(values.indexOf(current) !== -1) sel.value = current;
+    });
+  }
+
   function checkAllLoaded(){
     if(loadState.failed || !loadState.main || !loadState.fee || !loadState.policy) return;
     if(jsonpTimeout){ clearTimeout(jsonpTimeout); jsonpTimeout = null; }
@@ -1471,6 +1517,7 @@
 
     metaLine.innerHTML = '<span class="dot"></span>마지막 불러오기: ' + new Date().toLocaleString('ko-KR') +
       ' · 구글시트 "메인매트릭스"·"메인매트릭스의 사본"·"항공사별 공통정책" 탭에서 직접 읽어옵니다';
+    fillStatusFilters();
     renderStats();
     render();
     renderCompareChips();
