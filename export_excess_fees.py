@@ -28,10 +28,20 @@ SHEET_NAME = "메인매트릭스의 사본"
 # index.html의 COL 매핑과 동일한 열 순서(A=0 기준)
 COL = {
     "CODE": 1, "NAME_EN": 2, "NAME_KR": 3,
-    "ROUTE": 7, "CLASS": 8, "BRAND": 9,
+    "TICKET_DATE": 4, "AIRCRAFT": 5, "BAG_TYPE": 6, "ROUTE": 7, "CLASS": 8, "BRAND": 9,
+    "PAX": 10, "TIER": 11, "CODESHARE": 12, "CONCEPT": 13,
     "STATUS": 25, "LAST_CHECK": 26, "SOURCE": 27, "NOTE": 28,
     "EXCESS_WEIGHT": 29, "EXCESS_COUNT": 30, "EXCESS_SIZE": 31, "PREBUY": 32,
 }
+
+# (code, route, class, fare_brand)만으로는 행이 안 겹친다는 보장이 없다 — 실측 확인(2026-09-16):
+# 같은 노선·클래스·브랜드라도 발권일 구간(ticket_date, 예: VN·TW), 기내/위탁 구분(bag_type, 예:
+# LH·CX·JL), 기종(aircraft, VN만 사용)이 다르면 별개 행이다. 아래 11개 필드를 전부 합쳐야
+# 1,691행 전체에서 중복이 0건이 된다 — 일부만 키로 쓰면 서로 다른 행이 덮어써진다.
+IDENTITY_FIELDS = (
+    "airline_code", "route", "class", "fare_brand",
+    "ticket_date", "aircraft", "bag_type", "passenger_type", "tier", "codeshare", "concept",
+)
 
 TIER_RE = re.compile(r"^(?P<segment>.*?)\s*(?P<amount>[0-9][0-9,]*(?:\.[0-9]+)?)\s*(?P<currency>[A-Za-z가-힣]+)\s*$")
 FREE_RE = re.compile(r"무료\s*$")
@@ -108,6 +118,15 @@ def build_records():
             "route": row[COL["ROUTE"]].strip(),
             "class": row[COL["CLASS"]].strip(),
             "fare_brand": row[COL["BRAND"]].strip(),
+            # 식별용 — IDENTITY_FIELDS 설명 참고. 대부분 빈 문자열("")이고, 값이 있을 때만 진짜
+            # 별개 행을 구분한다(예: VN 기종별, TW/VN 발권일 구간별, LH/CX/JL 기내·위탁 구분).
+            "ticket_date": row[COL["TICKET_DATE"]].strip(),
+            "aircraft": row[COL["AIRCRAFT"]].strip(),
+            "bag_type": row[COL["BAG_TYPE"]].strip(),
+            "passenger_type": row[COL["PAX"]].strip(),
+            "tier": row[COL["TIER"]].strip(),
+            "codeshare": row[COL["CODESHARE"]].strip(),
+            "concept": row[COL["CONCEPT"]].strip(),
             "excess_weight_fee": parse_fee_cell(row[COL["EXCESS_WEIGHT"]]),
             "excess_count_fee": parse_fee_cell(row[COL["EXCESS_COUNT"]]),
             "excess_size_fee": parse_fee_cell(row[COL["EXCESS_SIZE"]]),
