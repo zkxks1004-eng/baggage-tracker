@@ -47,6 +47,25 @@ IDENTITY_FIELDS = (
 TIER_RE = re.compile(r"^(?P<segment>.*?)\s*(?P<amount>[0-9][0-9,]*(?:\.[0-9]+)?)\s*(?P<currency>[A-Za-z가-힣]+)\s*$")
 FREE_RE = re.compile(r"무료\s*$")
 
+# "최종확인일" 셀은 구글시트가 날짜/날짜+시간을 섞어서 gviz로 내려준다 — 형식이 하나가 아니라
+# "2026-09-07 0:00:00"(시분초 포함, 시가 한 자리일 수 있어 ISO 8601이 아님) / "2026-09-09"
+# (이미 깨끗함) / "2026. 9. 15"(점 표기, 0-padding 없음) 셋이 실측 확인됨(2026-09-16, 전체
+# 1,691건 스캔 — 이 두 정규식 밖의 형식은 없었음). 날짜만 남기고 시:분:초는 버린다(항상
+# 0:00:00이라 의미 없음). 매칭 안 되면 억지로 짜맞추지 않고 None으로 보낸다.
+DATE_DASH_RE = re.compile(r"^(\d{4})-(\d{1,2})-(\d{1,2})")
+DATE_DOT_RE = re.compile(r"^(\d{4})\.\s*(\d{1,2})\.\s*(\d{1,2})")
+
+
+def normalize_date(raw):
+    raw = (raw or "").strip()
+    if not raw:
+        return None
+    m = DATE_DASH_RE.match(raw) or DATE_DOT_RE.match(raw)
+    if not m:
+        return None
+    y, mo, d = m.groups()
+    return f"{int(y):04d}-{int(mo):02d}-{int(d):02d}"
+
 
 def fetch_rows():
     url = ("https://docs.google.com/spreadsheets/d/{}/gviz/tq"
@@ -134,7 +153,7 @@ def build_records():
             # AG는 표기규칙을 안 따르는 자유서술이라 구조화하지 않고 원문만 담는다.
             "prebuy_discount_raw": row[COL["PREBUY"]].strip(),
             "confidence_status": row[COL["STATUS"]].strip(),
-            "last_checked": row[COL["LAST_CHECK"]].strip(),
+            "last_checked": normalize_date(row[COL["LAST_CHECK"]]),
             "source_url": row[COL["SOURCE"]].strip(),
             "note": row[COL["NOTE"]].strip(),
         })
