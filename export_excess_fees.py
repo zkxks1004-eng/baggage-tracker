@@ -19,6 +19,7 @@ import json
 import os
 import re
 import sys
+import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -149,14 +150,17 @@ def unparsed_count(records):
     return n
 
 
-def send(records, endpoint_url):
+def send(records, endpoint_url, api_key=None):
     payload = json.dumps({"records": records}, ensure_ascii=False).encode("utf-8")
-    req = urllib.request.Request(
-        endpoint_url, data=payload, method="POST",
-        headers={"Content-Type": "application/json"},
-    )
-    with urllib.request.urlopen(req, timeout=60) as resp:
-        return resp.status, resp.read().decode("utf-8")
+    headers = {"Content-Type": "application/json"}
+    if api_key:
+        headers["X-API-Key"] = api_key
+    req = urllib.request.Request(endpoint_url, data=payload, method="POST", headers=headers)
+    try:
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            return resp.status, resp.read().decode("utf-8")
+    except urllib.error.HTTPError as e:
+        return e.code, e.read().decode("utf-8")
 
 
 if __name__ == "__main__":
@@ -164,13 +168,14 @@ if __name__ == "__main__":
     bad = unparsed_count(records)
 
     endpoint = os.environ.get("EXCESS_FEE_ENDPOINT")
+    api_key = os.environ.get("EXCESS_FEE_API_KEY")
     if not endpoint:
         out_path = os.path.join(os.path.dirname(__file__), "excess_fees_export.json")
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(records, f, ensure_ascii=False, indent=2)
         print(f"--- [DRY RUN] EXCESS_FEE_ENDPOINT 미설정, 파일로 저장: {out_path} ---")
     else:
-        status, body = send(records, endpoint)
+        status, body = send(records, endpoint, api_key)
         print(status, body[:300])
 
     print(f"{len(records)}행 처리, 셀 단위 파싱 실패(unparsed) {bad}건 — "
