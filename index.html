@@ -12,7 +12,7 @@
 <style>
   :root{
     color-scheme: light;
-    /* NUUA 브랜드 컬러 (nuua.ai 실제 팔레트 기준) — 시스템 설정과 무관하게 항상 라이트(흰 배경) 고정 */
+    /* NUUA 브랜드 컬러 — 시스템 설정과 무관하게 항상 라이트 고정 */
     --bg:#f3f4f9; --surface:#ffffff; --surface-2:#f3f8fd; --surface-raised:#ffffff;
     --ink:#111d2d; --ink-dim:#767d94; --ink-faint:#868da3; --line:#e8eaf0;
     --accent:#bd6f16; --accent-ink:#7a480b; --accent-soft:#f3e2c6;
@@ -20,18 +20,19 @@
     --ok:#1f8f5b; --ok-soft:#dcf0e4;
     --wait:#8a91a8; --wait-soft:#eceff3;
     --partial:#b8860b; --partial-soft:#faf1d9;
+    --danger:#b42318; --danger-soft:#fdecec;
     --plane:#6d5bd0; --plane-soft:#ece8fb;
+    --one:#8a1f4d; --one-soft:#f7e6ee;
     --shadow: 0 1px 2px rgba(17,29,45,.05), 0 10px 28px -14px rgba(17,29,45,.18);
     --shadow-lg: 0 24px 60px -20px rgba(17,29,45,.35);
-    --grad-brand: linear-gradient(135deg, var(--accent2), var(--accent2-ink));
     --spring: cubic-bezier(.34,1.56,.64,1);
   }
   *{box-sizing:border-box;}
-  body{ margin:0; background:var(--bg); color:var(--ink); font-family:"Pretendard",-apple-system,BlinkMacSystemFont,system-ui,sans-serif; line-height:1.6; transition:background .25s ease,color .25s ease; }
+  body{ margin:0; background:var(--bg); color:var(--ink); font-family:"Pretendard",-apple-system,BlinkMacSystemFont,system-ui,sans-serif; line-height:1.6; }
   .meta{ font-family:"IBM Plex Mono"; font-size:11.5px; color:var(--ink-faint); margin-top:14px; display:flex; align-items:center; gap:7px; }
   .meta .dot{ width:6px; height:6px; border-radius:50%; background:var(--ok); flex-shrink:0; box-shadow:0 0 0 3px var(--ok-soft); }
 
-  /* ---- hero masthead (NUUA 브랜드: 창문 모티프를 다크 대신 라이트 파스텔 글로우로) ---- */
+  /* ---- hero (라이트 파스텔 글로우 + 비행기 창문 모티프) ---- */
   .hero{
     position:relative; overflow:hidden; isolation:isolate;
     background:
@@ -42,7 +43,6 @@
     padding:0 0 76px;
   }
   .hero::before{
-    /* 비행기 창문 모티프: 파스텔 톤 원형 실루엣 */
     content:''; position:absolute; z-index:0; pointer-events:none;
     top:-160px; right:-160px; width:560px; height:560px; border-radius:50%;
     background: conic-gradient(from 210deg at 50% 55%, #ffe6bf 0deg, #ffd1de 60deg, #e3d6ff 130deg, #cfe0ff 200deg, #eef1fb 280deg, #ffe6bf 360deg);
@@ -62,19 +62,13 @@
     display:inline-flex; align-items:center; gap:8px; padding:6px 13px 6px 11px; border-radius:999px;
   }
   .hero-badge .b-dot{ width:5px; height:5px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 3px rgba(189,111,22,.18); }
-  .hero-title{
-    font-family:"Pretendard",sans-serif; font-weight:800; letter-spacing:-.02em;
-    font-size:clamp(30px,4.4vw,46px); line-height:1.16; color:var(--ink); margin:26px 0 12px; max-width:16ch;
-  }
-  .hero-title em{
-    font-style:normal; background:linear-gradient(100deg,var(--accent-ink),var(--accent2));
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-  }
-  .hero-sub{ color:var(--ink-dim); font-size:15px; max-width:62ch; margin:0 0 22px; line-height:1.65; }
+  .hero-title{ font-weight:800; letter-spacing:-.02em; font-size:clamp(30px,4.4vw,46px); line-height:1.16; color:var(--ink); margin:26px 0 12px; max-width:16ch; }
+  .hero-title em{ font-style:normal; background:linear-gradient(100deg,var(--accent-ink),var(--accent2)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .hero-sub{ color:var(--ink-dim); font-size:15px; max-width:66ch; margin:0 0 22px; line-height:1.65; }
   .hero .meta{
     font-family:"IBM Plex Mono"; font-size:11.5px; color:var(--ink-dim);
     display:inline-flex; align-items:center; gap:8px; background:var(--surface-2);
-    border:1px solid var(--line); padding:7px 13px; border-radius:999px;
+    border:1px solid var(--line); padding:7px 13px; border-radius:999px; flex-wrap:wrap;
   }
   .hero-shelf{ height:30px; }
   @media (max-width:640px){
@@ -83,16 +77,10 @@
     .hero-title{ max-width:none; }
   }
 
-  /* ---- stat dashboard: 카드 6개를 하나의 패널로 통합, 항공사 62개 대비 비율 링 게이지 ---- */
+  /* ---- stat dashboard ---- */
   .dash-wrap{ max-width:2200px; margin:-52px auto 0; padding:0 24px; position:relative; z-index:2; }
-  .dash-panel{
-    background:var(--surface); border:1px solid var(--line); border-radius:20px;
-    box-shadow:var(--shadow-lg); display:grid; grid-template-columns:repeat(6,1fr); overflow:hidden;
-  }
-  .dash-cell{
-    padding:20px 20px 18px; position:relative; border-right:1px solid var(--line);
-    display:flex; flex-direction:column; gap:10px; transition:background .15s ease;
-  }
+  .dash-panel{ background:var(--surface); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow-lg); display:grid; grid-template-columns:repeat(6,1fr); overflow:hidden; }
+  .dash-cell{ padding:20px 20px 18px; position:relative; border-right:1px solid var(--line); display:flex; flex-direction:column; gap:10px; transition:background .15s ease; min-width:0; }
   .dash-cell:last-child{ border-right:none; }
   .dash-cell:hover{ background:var(--surface-2); }
   .dash-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
@@ -104,7 +92,7 @@
   .ring::after{ content:''; position:absolute; inset:4px; border-radius:50%; background:var(--surface); transition:background .15s ease; }
   .dash-cell:hover .ring::after{ background:var(--surface-2); }
   .ring span{ position:relative; z-index:1; font-family:"IBM Plex Mono"; font-size:8.5px; font-weight:700; color:var(--ink-dim); }
-  @media (max-width:1000px){
+  @media (max-width:1100px){
     .dash-panel{ grid-template-columns:repeat(3,1fr); }
     .dash-cell:nth-child(3){ border-right:none; }
     .dash-cell:nth-child(n+4){ border-top:1px solid var(--line); }
@@ -116,6 +104,7 @@
     .dash-cell:nth-child(n+3){ border-top:1px solid var(--line); }
   }
 
+  /* ---- toolbar ---- */
   .toolbar{ max-width:2200px; margin:28px auto 0; padding:0 24px 16px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; }
   .toolbar-left{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
   .search-wrap{ position:relative; }
@@ -125,30 +114,28 @@
     color:var(--ink); font-family:"Pretendard"; font-size:13.5px; width:240px; outline:none;
     transition:width .22s var(--spring), border-color .15s ease, box-shadow .15s ease;
   }
-  input[type="search"]:focus{ width:300px; border-color:var(--accent2); box-shadow:0 0 0 4px var(--accent2-soft); }
+  input[type="search"]:focus{ border-color:var(--accent2); box-shadow:0 0 0 4px var(--accent2-soft); }
+  .toolbar input[type="search"]{ width:260px; }
   .search-ico{ position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:13px; color:var(--ink-faint); pointer-events:none; }
   select{
     -webkit-appearance:none; appearance:none;
-    padding:9px 12px; border-radius:10px; border:1px solid var(--line); background:var(--surface);
+    padding:9px 30px 9px 12px; border-radius:10px; border:1px solid var(--line);
+    background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23868da3' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 11px center;
     color:var(--ink); font-family:"Pretendard"; font-size:13.5px; cursor:pointer;
-    transition:border-color .15s ease;
   }
-  /* ---- iOS 스타일 세그먼트 토글 (확인상태 필터) ---- */
-  .seg{
-    position:relative; display:inline-flex; background:var(--surface-2); border:1px solid var(--line);
-    border-radius:10px; padding:3px; gap:2px; max-width:100%; overflow-x:auto;
-  }
+  .seg{ position:relative; display:inline-flex; align-items:center; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:3px; gap:2px; max-width:100%; overflow-x:auto; scrollbar-width:none; }
+  .seg::-webkit-scrollbar{ display:none; }
+  .seg-label{ font-size:11px; font-weight:700; color:var(--ink-faint); padding:0 8px 0 7px; white-space:nowrap; position:relative; z-index:1; }
   .seg button{
-    position:relative; z-index:1; border:none; background:transparent; padding:6px 13px; border-radius:8px;
+    position:relative; z-index:1; border:none; background:transparent; height:28px; padding:0 12px; border-radius:8px;
+    display:inline-flex; align-items:center; gap:5px;
     font-family:"Pretendard"; font-size:12.5px; font-weight:600; color:var(--ink-dim); cursor:pointer;
     white-space:nowrap; transition:color .2s ease; -webkit-tap-highlight-color:transparent;
   }
   .seg button.active{ color:var(--ink); }
-  .seg-thumb{
-    position:absolute; top:3px; bottom:3px; left:3px;
-    background:var(--surface); border-radius:8px; box-shadow:0 1px 3px rgba(17,29,45,.12), 0 1px 1px rgba(17,29,45,.06);
-    transition:transform .32s var(--spring), width .2s ease; z-index:0;
-  }
+  .seg button .seg-n{ font-family:"IBM Plex Mono"; font-size:10px; font-weight:700; color:var(--ink-faint); background:rgba(17,29,45,.05); border-radius:999px; padding:1px 6px; line-height:1.5; }
+  .seg button.active .seg-n{ color:var(--accent2-ink); background:var(--accent2-soft); }
+  .seg-thumb{ position:absolute; top:3px; height:28px; left:0; width:0; background:var(--surface); border-radius:8px; box-shadow:0 1px 3px rgba(17,29,45,.12), 0 1px 1px rgba(17,29,45,.06); transition:transform .32s var(--spring), width .25s ease; z-index:0; }
   .btn{
     padding:9px 16px; border-radius:10px; border:1px solid var(--line); background:var(--surface);
     color:var(--ink); font-weight:600; font-size:13px; cursor:pointer; font-family:"Pretendard";
@@ -157,442 +144,308 @@
   .btn:hover{ background:var(--surface-2); }
   .btn:active{ transform:scale(.94) rotate(-.3deg); }
   .btn.primary{ background:var(--accent2); border-color:var(--accent2); color:#fff; box-shadow:0 6px 16px -8px rgba(0,105,228,.55); }
-  .btn.primary:hover{ opacity:.92; box-shadow:0 8px 20px -6px rgba(0,105,228,.6); }
-  .btn.primary:active{ transform:scale(.93); box-shadow:0 2px 8px -4px rgba(0,105,228,.5); }
+  .btn.primary:hover{ opacity:.92; }
   .btn .spin-ico{ display:inline-block; transition:transform .5s var(--spring); }
   .stat{ font-family:"IBM Plex Mono"; font-size:12px; color:var(--ink-dim); }
 
-  .table-wrap{
-    max-width:2200px; margin:0 auto 60px; padding:0 24px;
-  }
-  .table-frame{
-    background:var(--surface); border:1px solid var(--line); border-radius:20px;
-    overflow:auto; height:75vh; box-shadow:var(--shadow-lg); scrollbar-gutter:stable;
-  }
-  /* ---- list view: CSS Grid rows (not <table>) so header/body columns can never drift apart ---- */
-  .gtable{ font-size:13.5px; min-width:900px; }
-  .grow{ display:grid; grid-template-columns: 68px 268px 92px 92px 108px 112px 116px minmax(140px,1fr); align-items:center; column-gap:6px; }
-  .grow .gcell{ padding:16px 14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+  /* ---- list view (CSS Grid rows) ---- */
+  .table-wrap{ max-width:2200px; margin:0 auto 60px; padding:0 24px; }
+  .table-frame{ background:var(--surface); border:1px solid var(--line); border-radius:20px; overflow:auto; height:75vh; box-shadow:var(--shadow-lg); scrollbar-gutter:stable; }
+  .gtable{ font-size:13.5px; min-width:1180px; }
+  .grow{ display:grid; grid-template-columns: 64px 212px 124px 64px 64px 82px 82px 146px 70px 108px minmax(108px,1fr); align-items:center; column-gap:6px; }
+  .grow .gcell{ padding:15px 10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
   .grow .gcell:first-child{ padding-left:22px; overflow:visible; text-overflow:clip; }
   .grow .gcell.center{ text-align:center; }
-  .ghead{
-    position:sticky; top:0; background:var(--surface); z-index:1;
-    border-bottom:1px solid var(--line);
-  }
-  .ghead .gcell{
-    color:var(--ink-faint); font-family:"Pretendard"; font-size:11.5px; font-weight:700; letter-spacing:.01em;
-    cursor:pointer; user-select:none; padding-top:15px; padding-bottom:15px;
-    transition:color .15s ease;
-  }
+  .ghead{ position:sticky; top:0; background:var(--surface); z-index:1; border-bottom:1px solid var(--line); }
+  .ghead .gcell{ color:var(--ink-faint); font-size:11.5px; font-weight:700; cursor:pointer; user-select:none; transition:color .15s ease; }
   .ghead .gcell:hover{ color:var(--accent2); }
   .ghead .gcell .arrow{ margin-left:4px; opacity:.45; font-size:10px; }
   .ghead .gcell.sorted{ color:var(--ink); }
   .ghead .gcell.sorted .arrow{ opacity:1; color:var(--accent2); }
-  .gbody .grow{ border-bottom:1px solid var(--line); transition:background .15s ease; position:relative; }
+  .gbody .grow{ border-bottom:1px solid var(--line); transition:background .15s ease; position:relative; cursor:pointer; }
   .gbody .grow:last-child{ border-bottom:none; }
   .gbody .grow:hover{ background:var(--surface-2); }
-  .gbody .grow.row-click:active{ background:var(--accent2-soft); }
-  .gbody .grow.row-click::before{
+  .gbody .grow::before{
     content:''; position:absolute; left:0; top:10px; bottom:10px; width:3px; border-radius:0 3px 3px 0;
-    background:linear-gradient(180deg,var(--accent2),#5a4fc7);
-    transform:scaleY(0); transform-origin:center; transition:transform .18s cubic-bezier(.2,.8,.2,1);
+    background:linear-gradient(180deg,var(--accent2),#5a4fc7); transform:scaleY(0); transition:transform .18s cubic-bezier(.2,.8,.2,1);
   }
-  .gbody .grow.row-click:hover::before{ transform:scaleY(1); }
-  .code-badge{
-    display:inline-block;
-    font-family:"IBM Plex Mono"; font-weight:700; font-size:11.5px; letter-spacing:.02em;
-    color:var(--accent-ink); background:var(--accent-soft); border-radius:7px; text-align:center;
-    padding:5px 10px; width:fit-content;
-  }
-  .gbody .grow[hidden]{ display:none; }
+  .gbody .grow:hover::before{ transform:scaleY(1); }
+  .code-badge{ display:inline-block; font-family:"IBM Plex Mono"; font-weight:700; font-size:11.5px; letter-spacing:.02em; color:var(--accent-ink); background:var(--accent-soft); border-radius:7px; padding:5px 10px; width:fit-content; }
   .al-cell{ display:flex; align-items:center; gap:11px; }
-  .al-logo{
-    width:30px; height:30px; border-radius:9px; background:var(--surface-2); border:1px solid var(--line);
-    flex-shrink:0; display:flex; align-items:center; justify-content:center; overflow:hidden;
-    box-shadow:0 1px 2px rgba(17,29,45,.04);
-  }
+  .al-logo{ width:30px; height:30px; border-radius:9px; background:var(--surface-2); border:1px solid var(--line); flex-shrink:0; display:flex; align-items:center; justify-content:center; overflow:hidden; }
   .al-logo img{ width:76%; height:76%; object-fit:contain; display:block; }
-  .al-name{ font-weight:650; }
-  .al-name .al-en{ color:var(--ink-faint); font-size:11px; margin-top:2px; font-weight:500; }
-  .gcell.center > *{ display:inline-flex; }
-  .count-chip{
-    display:inline-flex; align-items:center; justify-content:center; min-width:30px; padding:4px 9px;
-    border-radius:999px; font-family:"IBM Plex Mono"; font-size:12px; font-weight:700;
-    background:var(--surface-2); color:var(--ink-dim);
-  }
+  .al-name{ font-weight:650; min-width:0; overflow:hidden; text-overflow:ellipsis; }
+  .al-name .al-en{ color:var(--ink-faint); font-size:11px; margin-top:2px; font-weight:500; overflow:hidden; text-overflow:ellipsis; }
+  .count-chip{ display:inline-flex; align-items:center; justify-content:center; min-width:30px; padding:4px 9px; border-radius:999px; font-family:"IBM Plex Mono"; font-size:12px; font-weight:700; background:var(--surface-2); color:var(--ink-dim); }
   .count-chip.zero{ background:transparent; color:var(--ink-faint); font-weight:500; }
+  .count-chip.warn{ background:var(--partial-soft); color:var(--partial); }
 
-  .badge{ display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:999px; font-size:11px; font-weight:700; font-family:"Pretendard"; letter-spacing:.01em; }
+  /* 동맹·위험도·검증 칩 */
+  .alli{ display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:700; white-space:nowrap; }
+  .alli.star{ background:#eef0f5; color:#1b2433; }
+  .alli.sky{ background:var(--accent2-soft); color:var(--accent2-ink); }
+  .alli.one{ background:var(--one-soft); color:var(--one); }
+  .alli.none{ background:transparent; color:var(--ink-faint); font-weight:600; border:1px dashed var(--line); }
+  .alli.check{ background:var(--partial-soft); color:var(--partial); }
+  .alli .unverified{ font-family:"IBM Plex Mono"; font-size:9.5px; opacity:.75; }
+  .risk{ display:inline-flex; align-items:center; justify-content:center; min-width:30px; padding:3px 9px; border-radius:7px; font-size:11.5px; font-weight:800; }
+  .risk.hi{ background:var(--danger-soft); color:var(--danger); }
+  .risk.mid{ background:var(--partial-soft); color:var(--partial); }
+  .risk.lo{ background:var(--ok-soft); color:var(--ok); }
+  .vbar{ display:flex; align-items:center; gap:8px; }
+  .vbar-track{ flex:1; height:7px; border-radius:99px; background:var(--line); overflow:hidden; display:flex; min-width:60px; }
+  .vbar-track i{ display:block; height:100%; }
+  .vbar-track .o{ background:var(--ok); } .vbar-track .p{ background:#e3b341; } .vbar-track .x{ background:#e5484d; } .vbar-track .n{ background:#cfd4df; }
+  .vbar-pct{ font-family:"IBM Plex Mono"; font-size:11px; font-weight:700; color:var(--ink-dim); min-width:34px; text-align:right; }
+  .vb{ display:inline-flex; align-items:center; justify-content:center; min-width:22px; height:20px; padding:0 6px; border-radius:6px; font-family:"IBM Plex Mono"; font-size:11px; font-weight:700; }
+  .vb.o{ background:var(--ok-soft); color:var(--ok); }
+  .vb.p{ background:var(--partial-soft); color:var(--partial); }
+  .vb.x{ background:var(--danger-soft); color:var(--danger); }
+  .vb.n{ background:var(--wait-soft); color:var(--ink-dim); }
+
+  .badge{ display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:999px; font-size:11px; font-weight:700; letter-spacing:.01em; }
   .badge::before{ content:''; width:5px; height:5px; border-radius:50%; background:currentColor; flex-shrink:0; }
   .badge.done{ color:var(--ok); background:var(--ok-soft); }
   .badge.wip{ color:var(--wait); background:var(--wait-soft); }
   .badge.partial{ color:var(--partial); background:var(--partial-soft); }
-  .badge.yes{ color:var(--accent2); background:var(--accent2-soft); }
   .badge.empty{ color:var(--ink-dim); }
   .badge.empty::before{ display:none; }
   .pill{ display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:600; background:var(--surface-2); color:var(--ink-dim); margin-right:4px; }
+  .pill.warn{ background:var(--partial-soft); color:var(--partial); }
+  .pill.info{ background:var(--accent2-soft); color:var(--accent2-ink); }
 
-  .src-btn{
-    display:inline-flex; align-items:center; gap:6px; padding:6px 12px 6px 13px; border-radius:999px;
-    background:var(--accent2-soft); color:var(--accent2-ink); font-family:"Pretendard"; font-size:12px; font-weight:600;
-    text-decoration:none; white-space:nowrap; transition:background .15s ease, transform .1s ease;
-    flex-shrink:0;
-  }
+  .src-btn{ display:inline-flex; align-items:center; gap:6px; padding:6px 12px 6px 13px; border-radius:999px; background:var(--accent2-soft); color:var(--accent2-ink); font-size:12px; font-weight:600; text-decoration:none; white-space:nowrap; transition:background .15s ease, transform .1s ease; flex-shrink:0; }
   .src-btn:hover{ background:var(--accent2); color:#fff; }
-  .src-btn:active{ transform:scale(.96); }
-  .src-btn .src-arrow{ font-size:12px; transition:transform .15s ease; }
-  .src-btn:hover .src-arrow{ transform:translate(1px,-1px); }
-  .gcell.src-gcell{ overflow:visible; white-space:normal; }
   .src-cell{ display:flex; align-items:center; gap:10px; min-width:0; }
-  .src-domain{
-    font-family:"IBM Plex Mono"; font-size:11px; color:var(--ink-faint); opacity:.68;
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; letter-spacing:.01em;
-    transition:opacity .15s ease, color .15s ease;
-  }
-  .grow.row-click:hover .src-domain{ opacity:1; color:var(--ink-dim); }
-  .src-domain::before{ content:'·'; margin-right:8px; color:var(--line); font-weight:700; }
+  .src-domain{ font-family:"IBM Plex Mono"; font-size:11px; color:var(--ink-faint); opacity:.68; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+  .grow:hover .src-domain{ opacity:1; color:var(--ink-dim); }
 
   .state{ max-width:2200px; margin:0 auto; padding:70px 24px; text-align:center; color:var(--ink-dim); font-size:14px; }
-  .state code{ font-family:"IBM Plex Mono"; background:var(--surface-2); padding:2px 6px; border-radius:4px; }
-  .state .spinner{
-    width:26px; height:26px; margin:0 auto 16px; border-radius:50%;
-    border:3px solid var(--line); border-top-color:var(--accent2); animation:spin .8s linear infinite;
-  }
+  .state .spinner{ width:26px; height:26px; margin:0 auto 16px; border-radius:50%; border:3px solid var(--line); border-top-color:var(--accent2); animation:spin .8s linear infinite; }
   @keyframes spin{ to{ transform:rotate(360deg); } }
   footer{ max-width:2200px; margin:0 auto; padding:0 24px 50px; color:var(--ink-faint); font-size:12px; }
   footer a{ color:var(--accent2); }
 
-  tbody tr.row-click{ cursor:pointer; }
-
-  .modal-overlay{
-    position:fixed; inset:0; background:rgba(9,13,24,.55); backdrop-filter:blur(2px);
-    display:flex; align-items:center; justify-content:center; padding:24px; z-index:60;
-    animation:overlayIn .18s ease;
-  }
+  /* ---- 모달 (보딩패스 카드) ---- */
+  .modal-overlay{ position:fixed; inset:0; background:rgba(243,244,249,.62); -webkit-backdrop-filter:blur(10px) saturate(140%); backdrop-filter:blur(10px) saturate(140%); display:flex; align-items:center; justify-content:center; padding:24px; z-index:60; animation:overlayIn .18s ease; }
   .modal-overlay[hidden]{ display:none; }
-  .modal{
-    background:var(--surface); border:1px solid var(--line); border-radius:16px;
-    max-width:1040px; width:100%; max-height:88vh; overflow-y:auto; overflow-x:hidden;
-    padding:0; box-shadow:var(--shadow-lg);
-    animation:modalIn .22s cubic-bezier(.2,.8,.2,1);
-  }
+  .modal{ background:var(--surface); border:1px solid var(--line); border-radius:18px; max-width:1120px; width:100%; max-height:90vh; overflow-y:auto; overflow-x:hidden; box-shadow:var(--shadow-lg); animation:modalIn .22s cubic-bezier(.2,.8,.2,1); position:relative; }
   @keyframes overlayIn{ from{opacity:0;} to{opacity:1;} }
   @keyframes modalIn{ from{opacity:0; transform:translateY(10px) scale(.98);} to{opacity:1; transform:none;} }
-
-  /* ---- boarding-pass style header ---- */
-  .tk-header{
-    position:relative; padding:24px 28px 20px;
-    display:flex; align-items:center; gap:16px;
-    background:
-      radial-gradient(circle at 12% 20%, rgba(255,255,255,.10) 0, transparent 45%),
-      linear-gradient(135deg, var(--accent2), #0a2f5c);
-    color:#fff;
-  }
-  .tk-logo{
-    width:56px; height:56px; flex-shrink:0; border-radius:14px; background:#fff;
-    display:flex; align-items:center; justify-content:center; padding:8px;
-    box-shadow:0 4px 14px rgba(0,0,0,.18);
-  }
+  .tk-header{ position:relative; padding:24px 28px 20px; display:flex; align-items:center; gap:16px; background: radial-gradient(circle at 12% 20%, rgba(255,255,255,.12) 0, transparent 45%), linear-gradient(135deg, var(--accent2), #0a2f5c); color:#fff; }
+  .tk-logo{ width:56px; height:56px; flex-shrink:0; border-radius:14px; background:#fff; display:flex; align-items:center; justify-content:center; padding:8px; box-shadow:0 4px 14px rgba(0,0,0,.18); }
   .tk-logo img{ max-width:100%; max-height:100%; object-fit:contain; display:block; }
   .tk-text{ min-width:0; }
-  .tk-header .tk-eyebrow{
-    font-family:"IBM Plex Mono"; font-size:10px; font-weight:600; letter-spacing:.18em;
-    text-transform:uppercase; opacity:.8; margin:0 0 8px;
-  }
-  .tk-header .tk-code{
-    font-family:"IBM Plex Mono"; font-size:32px; font-weight:700; letter-spacing:.02em; line-height:1;
-  }
-  .tk-header .tk-name{ font-size:14.5px; opacity:.92; margin-top:6px; font-weight:500; }
-  .modal-close{
-    position:absolute; top:16px; right:16px;
-    background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); color:#fff;
-    border-radius:8px; width:30px; height:30px; flex-shrink:0; cursor:pointer; font-size:14px; line-height:1;
-  }
-  .modal-close:hover{ background:rgba(255,255,255,.26); }
-
-  /* ---- key facts strip (like FLIGHT / GATE / SEAT) ---- */
-  .tk-facts{
-    display:grid; grid-template-columns:repeat(auto-fit, minmax(110px,1fr));
-    gap:14px 18px; padding:18px 28px;
-  }
-  .tk-facts .tf-label{ font-family:"IBM Plex Mono"; font-size:9.5px; font-weight:700; letter-spacing:.1em; color:var(--ink-dim); margin-bottom:4px; }
-  .tk-facts .tf-value{ font-family:"IBM Plex Mono"; font-size:15px; font-weight:700; color:var(--ink); word-break:break-word; }
-  .tk-facts .tf-value.empty{ color:var(--ink-dim); font-weight:500; }
-  .tk-facts .tf-value a{ color:var(--accent2); text-decoration:underline; font-size:12.5px; }
-
-  /* ---- perforated tear line ---- */
+  .tk-eyebrow{ font-family:"IBM Plex Mono"; font-size:10px; font-weight:600; letter-spacing:.18em; text-transform:uppercase; opacity:.8; margin:0 0 8px; }
+  .tk-code{ font-family:"IBM Plex Mono"; font-size:32px; font-weight:700; letter-spacing:.02em; line-height:1; }
+  .tk-name{ font-size:14.5px; opacity:.92; margin-top:6px; font-weight:500; }
+  .modal-close{ position:absolute; top:16px; right:16px; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.34); color:#fff; border-radius:8px; width:30px; height:30px; cursor:pointer; font-size:14px; line-height:1; z-index:3; }
+  .modal-close:hover{ background:rgba(255,255,255,.3); }
+  .tk-facts{ display:grid; grid-template-columns:repeat(auto-fit, minmax(120px,1fr)); gap:14px 18px; padding:18px 28px; }
+  .tf-label{ font-family:"IBM Plex Mono"; font-size:9.5px; font-weight:700; letter-spacing:.1em; color:var(--ink-dim); margin-bottom:5px; }
+  .tf-value{ font-size:13.5px; font-weight:700; color:var(--ink); word-break:keep-all; }
+  .tf-value.mono{ font-family:"IBM Plex Mono"; font-size:15px; }
+  .tf-value.empty{ color:var(--ink-faint); font-weight:500; }
+  .tf-sub{ font-size:10.5px; color:var(--ink-faint); font-weight:500; margin-top:2px; }
   .tk-perf{ position:relative; margin:0 28px; border-top:2px dashed var(--line); }
-  .tk-perf::before, .tk-perf::after{
-    content:''; position:absolute; top:-10px; width:20px; height:20px; border-radius:50%;
-    background:var(--bg); border:1px solid var(--line);
-  }
+  .tk-perf::before, .tk-perf::after{ content:''; position:absolute; top:-10px; width:20px; height:20px; border-radius:50%; background:var(--bg); border:1px solid var(--line); }
   .tk-perf::before{ left:-38px; }
   .tk-perf::after{ right:-38px; }
-
-  /* ---- granular matrix body ---- */
   .tk-body{ padding:20px 28px 28px; }
-  .mtx-section{ margin-bottom:22px; }
+  .tk-nav{ display:flex; flex-wrap:wrap; gap:6px; margin:0 0 18px; }
+  .tk-nav a{ font-size:12px; font-weight:600; color:var(--ink-dim); background:var(--surface-2); border:1px solid var(--line); padding:5px 11px; border-radius:999px; text-decoration:none; }
+  .tk-nav a:hover{ color:var(--accent2); border-color:var(--accent2-soft); }
+  .tk-nav a .n{ font-family:"IBM Plex Mono"; font-size:10.5px; color:var(--ink-faint); margin-left:4px; }
+
+  .mtx-section{ margin-bottom:26px; scroll-margin-top:12px; }
   .mtx-section:last-child{ margin-bottom:0; }
-  .mtx-section-title{
-    display:flex; align-items:center; gap:8px; font-weight:700; font-size:14.5px;
-    color:var(--ink); margin-bottom:10px; padding-bottom:6px; border-bottom:2px solid var(--line);
-  }
+  .mtx-section-title{ display:flex; align-items:center; gap:8px; font-weight:700; font-size:14.5px; color:var(--ink); margin-bottom:10px; padding-bottom:6px; border-bottom:2px solid var(--line); }
   .mtx-section-title .icon{ font-size:16px; }
   .mtx-section-title .count{ font-family:"IBM Plex Mono"; font-size:11px; font-weight:600; color:var(--ink-dim); margin-left:auto; }
-  .mtx-section-source{ font-size:11.5px; color:var(--ink-dim); margin:-4px 0 12px; }
-  .mtx-section-source a{ color:var(--accent2); }
-  /* 기준일자(E열) 소구역: "발권일 2026-04-23 이후 위탁수하물" / "탑승일 2026-10-24 까지 ..." */
+  .mtx-section-note{ font-size:11.5px; color:var(--ink-dim); margin:-4px 0 12px; line-height:1.5; }
+  .mtx-empty{ font-size:12.5px; color:var(--ink-faint); padding:12px 14px; border:1px dashed var(--line); border-radius:10px; }
   .mtx-ticket-group{ margin:6px 0 18px; padding:12px 14px 4px; border-radius:12px; border:1px dashed var(--line); background:rgba(255,255,255,.5); }
-  .mtx-ticket-title{
-    display:flex; align-items:center; gap:7px; font-weight:800; font-size:13px; margin-bottom:10px;
-    padding:6px 12px; border-radius:8px; width:fit-content;
-  }
+  .mtx-ticket-title{ display:flex; align-items:center; gap:7px; font-weight:800; font-size:13px; margin-bottom:10px; padding:6px 12px; border-radius:8px; width:fit-content; flex-wrap:wrap; }
   .mtx-ticket-title.after{ background:var(--ok-soft); color:var(--ok); }
   .mtx-ticket-title.before{ background:var(--partial-soft); color:var(--partial); }
   .mtx-ticket-title.plain{ background:var(--wait-soft); color:var(--ink-dim); font-weight:700; font-size:12px; }
-  .mtx-ticket-title .tk-ico{ flex-shrink:0; display:block; }
-  .mtx-ticket-title .tk-kicker{
-    font-family:"IBM Plex Mono"; font-size:9.5px; font-weight:700; letter-spacing:.08em;
-    padding:2px 6px; border-radius:5px; background:rgba(255,255,255,.7); border:1px solid currentColor; opacity:.85;
-  }
-  .mtx-ticket-title .tk-what{ font-weight:600; opacity:.8; }
-  .mtx-ticket-note{ font-size:11.5px; color:var(--ink-dim); margin:-4px 0 10px 4px; line-height:1.45; }
+  .mtx-ticket-title .tk-kicker{ font-family:"IBM Plex Mono"; font-size:9.5px; font-weight:700; letter-spacing:.08em; padding:2px 6px; border-radius:5px; background:rgba(255,255,255,.7); border:1px solid currentColor; opacity:.85; }
   .mtx-ticket-title .tk-count{ font-family:"IBM Plex Mono"; font-size:10.5px; font-weight:600; opacity:.75; margin-left:4px; }
+  .mtx-ticket-note{ font-size:11.5px; color:var(--ink-dim); margin:-4px 0 10px 4px; line-height:1.45; }
   .mtx-route{ margin-bottom:14px; }
   .mtx-route:last-child{ margin-bottom:0; }
-  .mtx-route-title{
-    font-family:"IBM Plex Mono"; font-size:11px; font-weight:700; color:var(--accent2);
-    background:var(--accent2-soft); display:inline-block; padding:3px 9px; border-radius:5px; margin-bottom:7px;
-  }
-  /* 노선구간 안에서 기종(F열)별로 한 번 더 나뉘는 소구역 — 현재는 VN만 사용.
-     카드 배경으로 감싸서 위 노선 칩(파랑)·아래 표(흰색)와 구분되는 하나의 계층으로 보이게 한다. */
+  .mtx-route-title{ font-family:"IBM Plex Mono"; font-size:11px; font-weight:700; color:var(--accent2); background:var(--accent2-soft); display:inline-block; padding:3px 9px; border-radius:5px; margin-bottom:7px; }
   .mtx-aircraft{ margin:10px 0 14px; padding:10px 12px 12px; border-radius:10px; background:var(--surface-2); border:1px solid var(--line); }
-  .mtx-aircraft:last-child{ margin-bottom:0; }
-  .mtx-aircraft-title{
-    display:flex; align-items:center; gap:6px; font-family:"IBM Plex Mono"; font-size:11px; font-weight:700;
-    color:var(--plane); background:var(--plane-soft); width:fit-content; padding:4px 10px 4px 8px;
-    border-radius:7px; margin-bottom:10px;
-  }
-  .mtx-aircraft-title .ac-ico{ flex-shrink:0; display:block; }
+  .mtx-aircraft-title{ display:flex; align-items:center; gap:6px; font-family:"IBM Plex Mono"; font-size:11px; font-weight:700; color:var(--plane); background:var(--plane-soft); width:fit-content; padding:4px 10px 4px 8px; border-radius:7px; margin-bottom:10px; }
 
-  /* ---- 초과 수하물 요금 (AD~AG, 존:구간 금액 통화 표기규칙을 칩으로 풀어서 보여줌) ---- */
-  .fee-row{ margin-bottom:14px; padding:12px 14px; border-radius:10px; background:var(--surface-2); border:1px solid var(--line); }
-  .fee-row:last-child{ margin-bottom:0; }
-  .fee-route{
-    font-family:"IBM Plex Mono"; font-size:11px; font-weight:700; color:var(--accent-ink);
-    background:var(--accent-soft); display:inline-block; padding:3px 9px; border-radius:5px; margin-bottom:10px;
-  }
-  .fee-route-sep{ opacity:.5; }
-  .fee-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
-  @media (max-width:640px){ .fee-grid{ grid-template-columns:repeat(2,1fr); } }
-  .fee-cell{ min-width:0; }
-  .fee-cell-label{ font-size:10.5px; font-weight:700; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.04em; margin-bottom:5px; }
-  .fee-cell-value{ font-size:12px; line-height:1.5; color:var(--ink); }
-  .fee-zone{ margin-bottom:6px; }
-  .fee-zone:last-child{ margin-bottom:0; }
-  .fee-tier{ padding:1px 0; word-break:keep-all; }
-  .fee-empty{ color:var(--ink-faint); font-style:normal; }
-
-  /* ---- 부가서비스(스포츠/악기/반려동물/유아용품 — 항공사별 공통정책 탭, 항공사당 1행) ---- */
-  .pol-group{ margin-bottom:14px; }
-  .pol-group:last-child{ margin-bottom:0; }
-  .pol-group-title{
-    font-family:"IBM Plex Mono"; font-size:11px; font-weight:700; color:var(--plane);
-    background:var(--plane-soft); display:inline-block; padding:3px 9px; border-radius:5px; margin-bottom:8px;
-  }
-  .pol-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:8px; }
-  .pol-item{
-    display:flex; align-items:flex-start; gap:9px; padding:9px 11px; border-radius:10px;
-    background:var(--surface-2); border:1px solid var(--line);
-  }
-  .pol-item.empty{ opacity:.55; }
-  .pol-icon{ font-size:16px; line-height:1; flex-shrink:0; margin-top:1px; }
-  .pol-body{ min-width:0; }
-  .pol-label{ font-size:10.5px; font-weight:700; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.03em; margin-bottom:3px; }
-  .pol-value{ font-size:12px; line-height:1.5; color:var(--ink); word-break:keep-all; }
-  .pol-item.empty .pol-value{ color:var(--ink-faint); }
-
-  /* CSS Grid rows (not <table>) — same fix as the list view: table-layout:fixed can drift
-     thead/tbody columns apart in Chrome, so per-route detail rows use a shared grid instead. */
-  /* 2026-09-09 리디자인: 행 높이를 균일하게(테두리를 셀이 아니라 행에, 세로 중앙 정렬),
-     클래스=색상 칩, 운임브랜드=작은 칩 목록, 허용량=큰 숫자 토큰으로 바꿔 한눈에 읽히게 한다. */
   .mtx-table{ font-size:12.5px; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--surface); }
-  .mtx-table .mrow{
-    display:grid; grid-template-columns: 150px minmax(170px,1fr) 250px minmax(240px,1.5fr);
-    column-gap:10px; align-items:center; min-height:50px;
-    border-bottom:1px solid var(--line);
-  }
+  .mtx-table .mrow{ display:grid; grid-template-columns: 140px minmax(150px,1fr) 230px minmax(150px,.9fr) minmax(150px,1fr) 92px; column-gap:10px; align-items:center; min-height:50px; border-bottom:1px solid var(--line); }
   .mtx-table .mrow:last-child{ border-bottom:none; }
   .mtx-table .mrow:not(.mhead):nth-child(even){ background:var(--surface-2); }
   .mtx-table .mrow:not(.mhead):hover{ background:var(--accent2-soft); }
   .mtx-table .mhead{ background:var(--surface-2); min-height:32px; }
-  .mtx-table .mhead .mcell{
-    text-align:left; font-family:"IBM Plex Mono"; font-size:9.5px; font-weight:700; color:var(--ink-dim);
-    letter-spacing:.06em; padding:6px 12px; white-space:nowrap; text-transform:uppercase;
-  }
-  .mtx-table .mcell{
-    padding:8px 12px; line-height:1.4; min-width:0;
-    white-space:normal; overflow:visible; word-break:keep-all; overflow-wrap:anywhere;
-  }
-  /* 클래스 칩: 색으로 등급이 바로 구분되게 */
-  .cls-chip{
-    display:inline-block; padding:3px 9px; border-radius:7px; font-weight:700; font-size:12px; line-height:1.35;
-    background:var(--wait-soft); color:var(--ink); border:1px solid transparent;
-  }
+  .mtx-table .mhead .mcell{ font-family:"IBM Plex Mono"; font-size:9.5px; font-weight:700; color:var(--ink-dim); letter-spacing:.06em; padding:6px 12px; white-space:nowrap; text-transform:uppercase; }
+  .mtx-table .mcell{ padding:8px 12px; line-height:1.4; min-width:0; white-space:normal; word-break:keep-all; overflow-wrap:anywhere; }
+  .mtx-table .note{ color:var(--ink-dim); font-size:11.5px; min-width:0; }
+  .mtx-table .note .popover-trigger{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; cursor:pointer; }
+  .cls-chip{ display:inline-block; padding:3px 9px; border-radius:7px; font-weight:700; font-size:12px; line-height:1.35; background:var(--wait-soft); color:var(--ink); }
   .cls-chip.eco{ background:#eef2f7; color:#2b3a4f; }
   .cls-chip.pe{ background:var(--accent2-soft); color:var(--accent2-ink); }
   .cls-chip.biz{ background:var(--accent-soft); color:var(--accent-ink); }
   .cls-chip.first{ background:#efe6fb; color:#4f2a86; }
   .cls-chip.all{ background:var(--ok-soft); color:var(--ok); }
+  .cls-code{ font-family:"IBM Plex Mono"; font-size:10px; font-weight:700; color:var(--ink-faint); margin-left:5px; }
   .cls-sub{ font-size:10.5px; color:var(--ink-faint); margin-top:3px; line-height:1.3; }
-  /* 운임브랜드 칩 */
   .brand-chips{ display:flex; flex-wrap:wrap; gap:4px; }
-  .brand-chip{
-    display:inline-block; padding:2px 8px; border-radius:999px; font-size:11.5px; font-weight:600;
-    background:var(--surface); border:1px solid var(--line); color:var(--ink-dim); white-space:nowrap;
-  }
+  .brand-chip{ display:inline-block; padding:2px 8px; border-radius:999px; font-size:11.5px; font-weight:600; background:var(--surface); border:1px solid var(--line); color:var(--ink-dim); }
   .brand-chip.common{ color:var(--ink-faint); font-weight:500; border-style:dashed; }
-  /* 허용량 토큰 */
-  .mtx-table .allow{ cursor:pointer; white-space:normal; overflow:visible; }
   .allow-tokens{ display:inline-flex; flex-wrap:wrap; align-items:center; gap:5px; vertical-align:middle; }
-  .tok{ white-space:nowrap; }
-  .tok{
-    display:inline-flex; align-items:baseline; gap:2px; padding:3px 9px; border-radius:8px;
-    font-family:"IBM Plex Mono"; font-size:11px; font-weight:600; color:var(--ink-dim); background:var(--surface);
-    border:1px solid var(--line); line-height:1.2;
-  }
+  .tok{ display:inline-flex; align-items:baseline; gap:2px; padding:3px 9px; border-radius:8px; font-family:"IBM Plex Mono"; font-size:11px; font-weight:600; color:var(--ink-dim); background:var(--surface); border:1px solid var(--line); line-height:1.2; white-space:nowrap; }
   .tok b{ font-size:15px; font-weight:700; color:var(--ink); letter-spacing:-.01em; }
   .tok.qty b{ color:var(--accent2); }
   .tok.wt b{ color:var(--accent-ink); }
+  .tok.dim b{ color:var(--plane); font-size:14px; }
   .tok.pi{ background:var(--surface-2); border-style:dashed; }
   .tok.pi b{ font-size:13px; color:var(--ink-dim); }
-  .tok.zero{ background:#fdecec; border-color:#f5c2c2; color:#b42318; }
-  .tok.zero b{ color:#b42318; }
+  .tok.zero{ background:var(--danger-soft); border-color:#f5c2c2; color:var(--danger); }
+  .tok.zero b{ color:var(--danger); }
+  .tok.raw{ font-family:"Pretendard"; font-size:11px; border-style:dashed; color:var(--partial); background:var(--partial-soft); border-color:#efd9a6; white-space:normal; }
   .tok .tok-extra{ font-family:"Pretendard"; font-size:10.5px; color:var(--ink-faint); margin-left:2px; }
-  .allow-suffix{ font-family:"Pretendard"; font-size:11px; color:var(--ink-faint); margin-left:2px; }
-  /* 비고: 유아/소아 태그 + 한 줄 말줄임 */
-  .note-tag{
-    display:inline-block; padding:1px 6px; border-radius:5px; font-size:10.5px; font-weight:700;
-    background:var(--accent-soft); color:var(--accent-ink); margin-right:3px; vertical-align:middle;
-  }
-  .note-tag.child{ background:var(--accent2-soft); color:var(--accent2-ink); }
-  .note-sep{ color:var(--ink-faint); margin:0 5px; }
-  .cell-popover{
-    position:fixed; z-index:80; max-width:360px; padding:8px 14px; border-radius:16px;
-    background:rgba(255,255,255,.82); -webkit-backdrop-filter:blur(24px) saturate(180%); backdrop-filter:blur(24px) saturate(180%);
-    border:1px solid rgba(0,0,0,.06);
-    color:#1c1c1e; font-size:13px; font-family:"Pretendard",-apple-system,sans-serif;
-    line-height:1.5; box-shadow:0 16px 40px -12px rgba(20,20,30,.28), 0 2px 8px rgba(20,20,30,.08);
-    white-space:pre-line; word-break:break-word;
-    animation:popIn .16s cubic-bezier(.2,.9,.3,1.2);
-  }
+  .dims-line{ font-family:"IBM Plex Mono"; font-size:10.5px; color:var(--ink-faint); margin-top:4px; }
+  .popover-trigger{ cursor:pointer; }
+  .tag{ display:inline-block; padding:1px 6px; border-radius:5px; font-size:10.5px; font-weight:700; margin-right:3px; vertical-align:middle; }
+  .tag.c{ background:var(--danger-soft); color:var(--danger); }
+  .tag.q{ background:var(--partial-soft); color:var(--partial); }
+  .tag.t{ background:var(--plane-soft); color:var(--plane); }
+  .vcell{ display:flex; flex-direction:column; align-items:flex-start; gap:3px; }
+  .vcell .d{ font-family:"IBM Plex Mono"; font-size:10px; color:var(--ink-faint); }
+
+  /* ---- 초과요금 ---- */
+  .fee-type{ margin-bottom:16px; }
+  .fee-type-title{ display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:800; color:var(--accent-ink); margin-bottom:8px; }
+  .fee-type-title .n{ font-family:"IBM Plex Mono"; font-size:10.5px; font-weight:600; color:var(--ink-faint); }
+  details.fee-group{ border:1px solid var(--line); border-radius:12px; background:var(--surface); margin-bottom:8px; overflow:hidden; }
+  details.fee-group > summary{ list-style:none; cursor:pointer; padding:10px 14px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:var(--surface-2); }
+  details.fee-group > summary::-webkit-details-marker{ display:none; }
+  details.fee-group > summary::before{ content:'›'; font-size:16px; color:var(--ink-faint); transition:transform .18s ease; line-height:1; }
+  details.fee-group[open] > summary::before{ transform:rotate(90deg); }
+  .fg-scope{ font-size:12px; font-weight:600; color:var(--ink); }
+  .fg-scope .more{ color:var(--ink-faint); font-weight:500; }
+  .fg-meta{ margin-left:auto; display:flex; gap:6px; align-items:center; }
+  .fee-table{ font-size:12px; }
+  .fee-table .frow{ display:grid; grid-template-columns: minmax(120px,1fr) 150px 170px 96px minmax(140px,1.2fr); column-gap:10px; align-items:center; padding:7px 14px; border-top:1px solid var(--line); }
+  .fee-table .frow.fhead{ font-family:"IBM Plex Mono"; font-size:9.5px; font-weight:700; color:var(--ink-dim); letter-spacing:.06em; text-transform:uppercase; background:var(--surface); }
+  .fee-amt{ font-family:"IBM Plex Mono"; font-weight:700; font-size:13px; color:var(--ink); white-space:nowrap; }
+  .fee-amt .cur{ font-size:10.5px; color:var(--ink-dim); margin-left:3px; }
+  .fee-amt.free{ color:var(--ok); }
+  .fee-amt.block{ color:var(--danger); font-size:12px; }
+  .fee-seg{ font-family:"IBM Plex Mono"; font-size:11.5px; color:var(--ink); }
+  .fee-seg .per{ display:block; font-family:"Pretendard"; font-size:10.5px; color:var(--ink-faint); }
+  .fee-memo{ font-size:11px; color:var(--ink-dim); word-break:keep-all; overflow-wrap:anywhere; }
+  .fee-src{ padding:8px 14px 10px; border-top:1px solid var(--line); font-size:11px; color:var(--ink-faint); }
+
+  /* ---- 회원등급·특수조건·유아소아 ---- */
+  .tier-prog{ margin-bottom:16px; }
+  .tier-prog-title{ display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:12.5px; font-weight:800; color:var(--ink); }
+  .tier-prog-title .kind{ font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:999px; background:var(--surface-2); color:var(--ink-dim); border:1px solid var(--line); }
+  .tier-list{ border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--surface); }
+  .trow{ display:grid; grid-template-columns: 170px 170px minmax(180px,1.2fr) minmax(150px,1fr) 118px; column-gap:10px; align-items:center; padding:9px 14px; border-top:1px solid var(--line); font-size:12.5px; }
+  .trow:first-child{ border-top:none; }
+  .trow.thead{ font-family:"IBM Plex Mono"; font-size:9.5px; font-weight:700; color:var(--ink-dim); letter-spacing:.06em; text-transform:uppercase; background:var(--surface-2); padding-top:6px; padding-bottom:6px; }
+  .tier-name{ font-weight:700; }
+  .tier-name .alli-eq{ display:block; font-size:10.5px; font-weight:600; color:var(--ink-faint); margin-top:2px; }
+  .eff{ display:inline-flex; align-items:baseline; gap:3px; padding:3px 9px; border-radius:8px; font-family:"IBM Plex Mono"; font-size:11px; font-weight:700; background:var(--ok-soft); color:var(--ok); white-space:nowrap; }
+  .eff b{ font-size:14px; }
+  .eff.rep{ background:var(--accent2-soft); color:var(--accent2-ink); }
+  .eff.none{ background:var(--wait-soft); color:var(--ink-dim); }
+  .eff.disc{ background:var(--accent-soft); color:var(--accent-ink); }
+  .eff.cond{ background:var(--plane-soft); color:var(--plane); }
+  .eff.unknown{ background:var(--partial-soft); color:var(--partial); }
+  .scope{ display:flex; flex-wrap:wrap; gap:4px; }
+  .scope .s{ font-size:11px; padding:1px 7px; border-radius:6px; background:var(--surface-2); border:1px solid var(--line); color:var(--ink-dim); white-space:nowrap; }
+  .tcond{ font-size:11.5px; color:var(--ink-dim); word-break:keep-all; overflow-wrap:anywhere; }
+  .tstat{ display:flex; flex-wrap:wrap; gap:4px; align-items:center; }
+  details.tier-rep{ border:1px solid var(--line); border-radius:12px; margin-bottom:8px; overflow:hidden; }
+  details.tier-rep > summary{ list-style:none; cursor:pointer; padding:10px 14px; background:var(--surface-2); display:flex; gap:10px; align-items:center; flex-wrap:wrap; font-size:12.5px; }
+  details.tier-rep > summary::-webkit-details-marker{ display:none; }
+  details.tier-rep > summary .tcond{ flex:1 1 200px; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  details.tier-rep > summary::before{ content:'›'; font-size:16px; color:var(--ink-faint); transition:transform .18s ease; }
+  details.tier-rep[open] > summary::before{ transform:rotate(90deg); }
+  .rep-row{ display:grid; grid-template-columns: minmax(160px,1fr) 150px minmax(120px,1fr) 200px 60px; column-gap:10px; align-items:center; padding:7px 14px; border-top:1px solid var(--line); font-size:12px; }
+  .rep-row.rhead{ font-family:"IBM Plex Mono"; font-size:9.5px; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:.06em; }
+  .spec-card{ border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:8px; background:var(--surface); display:grid; grid-template-columns: 96px 1fr; gap:6px 14px; }
+  .spec-type{ font-family:"IBM Plex Mono"; font-size:12px; font-weight:800; color:var(--plane); background:var(--plane-soft); border-radius:8px; padding:6px 8px; text-align:center; height:fit-content; }
+  .spec-type small{ display:block; font-family:"Pretendard"; font-size:10.5px; font-weight:700; }
+  .spec-body{ min-width:0; font-size:12.5px; }
+  .spec-elig{ font-weight:700; margin-bottom:4px; }
+  .spec-line{ color:var(--ink-dim); font-size:12px; margin-top:3px; }
+  .pax-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:760px){ .pax-grid{ grid-template-columns:1fr; } }
+  .pax-col-title{ font-size:12px; font-weight:800; margin-bottom:6px; }
+  .pax-item{ border:1px solid var(--line); border-radius:10px; padding:9px 12px; margin-bottom:6px; background:var(--surface); font-size:12.5px; }
+  .pax-item .flags{ display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
+  .pax-item .ref{ font-size:10.5px; color:var(--ink-faint); margin-top:5px; }
+
+  /* ---- 부가서비스 ---- */
+  .pol-group{ margin-bottom:14px; }
+  .pol-group-title{ font-family:"IBM Plex Mono"; font-size:11px; font-weight:700; color:var(--plane); background:var(--plane-soft); display:inline-block; padding:3px 9px; border-radius:5px; margin-bottom:8px; }
+  .pol-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:8px; }
+  .pol-item{ display:flex; align-items:flex-start; gap:9px; padding:9px 11px; border-radius:10px; background:var(--surface-2); border:1px solid var(--line); }
+  .pol-item.empty{ opacity:.55; }
+  .pol-icon{ font-size:16px; line-height:1; flex-shrink:0; margin-top:1px; }
+  .pol-label{ font-size:10.5px; font-weight:700; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.03em; margin-bottom:3px; }
+  .pol-value{ font-size:12px; line-height:1.5; color:var(--ink); word-break:keep-all; }
+  .src-list{ display:flex; flex-direction:column; gap:6px; }
+  .src-list a{ font-family:"IBM Plex Mono"; font-size:11.5px; color:var(--accent2); word-break:break-all; }
+  .src-list .n{ font-family:"IBM Plex Mono"; font-size:10.5px; color:var(--ink-faint); margin-left:6px; }
+
+  /* ---- 팝오버 (밝은 프로스티드 글라스) ---- */
+  .cell-popover{ position:fixed; z-index:80; max-width:380px; padding:8px 14px; border-radius:16px; background:rgba(255,255,255,.86); -webkit-backdrop-filter:blur(24px) saturate(180%); backdrop-filter:blur(24px) saturate(180%); border:1px solid rgba(0,0,0,.06); color:#1c1c1e; font-size:13px; line-height:1.5; box-shadow:0 16px 40px -12px rgba(20,20,30,.28), 0 2px 8px rgba(20,20,30,.08); white-space:pre-line; word-break:break-word; animation:popIn .16s cubic-bezier(.2,.9,.3,1.2); }
   .cell-popover[hidden]{ display:none; }
   @keyframes popIn{ from{opacity:0; transform:translateY(-3px) scale(.98);} to{opacity:1; transform:none;} }
   .cell-popover .cp-item{ padding:7px 0; border-bottom:1px solid rgba(60,60,67,.1); }
   .cell-popover .cp-item:last-child{ border-bottom:none; }
   .cell-popover .cp-label{ font-weight:700; margin-right:4px; color:#8e8e93; }
   .cell-popover .cp-item.accent .cp-label{ color:var(--accent-ink); }
-  .cell-popover .cp-text{ color:#1c1c1e; }
-  .mtx-table .note{
-    color:var(--ink-dim); font-size:11.5px;
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; cursor:pointer;
-  }
-  .mtx-table .note .popover-trigger{ display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .mf-value strong, .tf-value strong{ color:var(--accent2); font-weight:700; }
 
-  /* ---- app shell: left icon rail + slide-out menu ---- */
+  /* ---- app shell: 밝은 레일 + 프로스티드 메뉴 ---- */
   .app-shell{ display:flex; align-items:flex-start; }
-  .side-rail{
-    position:sticky; top:0; align-self:flex-start; height:100vh; flex-shrink:0;
-    width:64px; background:linear-gradient(180deg,#0b1220,#141b30);
-    display:flex; flex-direction:column; align-items:center; padding-top:20px; z-index:50;
-  }
-  .rail-toggle{
-    width:38px; height:38px; border-radius:11px; border:1px solid rgba(255,255,255,.14);
-    background:rgba(255,255,255,.06); color:#fff; font-size:16px; cursor:pointer;
-    display:flex; align-items:center; justify-content:center; transition:background .15s ease;
-  }
-  .rail-toggle:hover{ background:rgba(255,255,255,.16); }
-  .rail-menu{
-    position:fixed; top:0; left:64px; height:100vh; width:216px;
-    background:#101a30; border-right:1px solid rgba(255,255,255,.08);
-    padding:20px 10px; display:flex; flex-direction:column; gap:3px; z-index:49;
-    box-shadow:24px 0 60px -24px rgba(0,0,0,.45);
-    animation:railIn .15s cubic-bezier(.2,.8,.2,1);
-  }
+  .side-rail{ position:sticky; top:0; align-self:flex-start; height:100vh; flex-shrink:0; width:64px; background:rgba(255,255,255,.78); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px); border-right:1px solid var(--line); display:flex; flex-direction:column; align-items:center; padding-top:20px; z-index:50; }
+  .rail-toggle{ width:38px; height:38px; border-radius:11px; border:1px solid var(--line); background:var(--surface); color:var(--ink); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow); }
+  .rail-toggle:hover{ background:var(--surface-2); }
+  .rail-menu{ position:fixed; top:12px; left:74px; width:220px; background:rgba(255,255,255,.9); -webkit-backdrop-filter:blur(24px) saturate(160%); backdrop-filter:blur(24px) saturate(160%); border:1px solid rgba(0,0,0,.06); border-radius:16px; padding:8px; display:flex; flex-direction:column; gap:2px; z-index:49; box-shadow:0 20px 50px -18px rgba(17,29,45,.35); animation:railIn .15s cubic-bezier(.2,.8,.2,1); }
   .rail-menu[hidden]{ display:none; }
   @keyframes railIn{ from{opacity:0; transform:translateX(-8px);} to{opacity:1; transform:none;} }
-  .rail-item{
-    display:flex; align-items:center; gap:11px; padding:11px 12px; border-radius:10px;
-    color:rgba(255,255,255,.68); font-family:"Pretendard"; font-size:13.5px; font-weight:600;
-    background:none; border:none; cursor:pointer; text-align:left; width:100%;
-    transition:background .15s ease, color .15s ease;
-  }
-  .rail-item:hover{ background:rgba(255,255,255,.08); color:#fff; }
-  .rail-item.active{ background:rgba(255,255,255,.14); color:#fff; }
+  .rail-item{ display:flex; align-items:center; gap:11px; padding:10px 12px; border-radius:10px; color:var(--ink-dim); font-family:"Pretendard"; font-size:13.5px; font-weight:600; background:none; border:none; cursor:pointer; text-align:left; width:100%; }
+  .rail-item:hover{ background:var(--surface-2); color:var(--ink); }
+  .rail-item.active{ background:var(--accent2-soft); color:var(--accent2-ink); }
   .rail-item .ri-ico{ font-size:15px; flex-shrink:0; width:18px; text-align:center; }
   .app-main{ flex:1; min-width:0; }
   .view[hidden]{ display:none; }
 
-  /* ---- generic sub-page header (compare / export) ---- */
   .page-head{ max-width:2200px; margin:0 auto; padding:52px 24px 6px; }
-  .page-head h1{ font-size:26px; margin:0 0 8px; font-weight:800; letter-spacing:-.01em; color:var(--ink); }
-  .page-head p{ margin:0; color:var(--ink-dim); font-size:13.5px; max-width:640px; }
-
-  /* ---- 항공사 비교 ---- */
+  .page-head h1{ font-size:26px; margin:0 0 8px; font-weight:800; letter-spacing:-.01em; }
+  .page-head p{ margin:0; color:var(--ink-dim); font-size:13.5px; max-width:680px; }
   .compare-picker{ max-width:2200px; margin:22px auto 0; padding:0 24px; position:relative; }
-  .compare-picker input{
-    width:100%; max-width:440px; padding:12px 16px; border-radius:12px; border:1px solid var(--line);
-    background:var(--surface); font-family:"Pretendard"; font-size:14px; outline:none; box-shadow:var(--shadow);
-  }
-  .compare-picker input:focus{ border-color:var(--accent2); box-shadow:0 0 0 3px var(--accent2-soft); }
-  .compare-suggest{
-    position:absolute; top:calc(100% + 6px); left:24px; width:calc(100% - 48px); max-width:440px;
-    background:var(--surface); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow-lg);
-    max-height:280px; overflow-y:auto; z-index:20; padding:6px;
-  }
+  .compare-picker input{ width:100%; max-width:440px; padding:12px 16px; border-radius:12px; border:1px solid var(--line); background:var(--surface); font-family:"Pretendard"; font-size:14px; outline:none; box-shadow:var(--shadow); }
+  .compare-suggest{ position:absolute; top:calc(100% + 6px); left:24px; width:calc(100% - 48px); max-width:440px; background:var(--surface); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow-lg); max-height:280px; overflow-y:auto; z-index:20; padding:6px; }
   .compare-suggest[hidden]{ display:none; }
   .compare-suggest-item{ display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:9px; cursor:pointer; }
   .compare-suggest-item:hover{ background:var(--surface-2); }
-  .compare-suggest-item .cs-code{
-    font-family:"IBM Plex Mono"; font-weight:700; font-size:11px; color:var(--accent-ink);
-    background:var(--accent-soft); padding:2px 7px; border-radius:6px; flex-shrink:0;
-  }
+  .compare-suggest-item .cs-code{ font-family:"IBM Plex Mono"; font-weight:700; font-size:11px; color:var(--accent-ink); background:var(--accent-soft); padding:2px 7px; border-radius:6px; }
   .compare-suggest-empty{ padding:10px; font-size:12.5px; color:var(--ink-faint); }
   .compare-chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
-  .compare-chip{
-    display:inline-flex; align-items:center; gap:9px; padding:6px 8px 6px 8px; border-radius:999px;
-    background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow);
-  }
-  .compare-chip .code-badge{ margin:0; }
+  .compare-chip{ display:inline-flex; align-items:center; gap:9px; padding:6px 8px; border-radius:999px; background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow); }
   .compare-chip .cc-name{ font-weight:700; font-size:12.5px; }
-  .compare-chip .cc-remove{
-    width:20px; height:20px; border-radius:50%; border:none; background:var(--surface-2); color:var(--ink-dim);
-    cursor:pointer; font-size:11px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
-  }
-  .compare-chip .cc-remove:hover{ background:#fdecec; color:#b42318; }
-  .compare-hint{ max-width:2200px; margin:8px auto 0; padding:0 24px; font-size:12px; color:var(--ink-faint); }
+  .compare-chip .cc-remove{ width:20px; height:20px; border-radius:50%; border:none; background:var(--surface-2); color:var(--ink-dim); cursor:pointer; font-size:11px; }
   .compare-empty{ max-width:1040px; margin:70px auto; padding:0 24px; text-align:center; color:var(--ink-dim); font-size:14px; }
-  .compare-grid{
-    max-width:2200px; margin:26px auto 60px; padding:0 24px;
-    display:grid; grid-template-columns:repeat(auto-fit,minmax(min(380px,100%),1fr)); gap:20px; align-items:start;
-  }
-  .compare-col{
-    background:var(--surface); border:1px solid var(--line); border-radius:20px;
-    box-shadow:var(--shadow-lg); overflow:hidden; max-height:calc(100vh - 120px); display:flex; flex-direction:column;
-  }
+  .compare-grid{ max-width:2200px; margin:26px auto 60px; padding:0 24px; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr)); gap:20px; align-items:start; }
+  .compare-col{ background:var(--surface); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow-lg); overflow:hidden; max-height:calc(100vh - 120px); display:flex; flex-direction:column; }
   .compare-col .tk-body{ overflow-y:auto; }
-
-  /* ---- 내보내기 ---- */
   .export-toolbar{ max-width:2200px; margin:22px auto 0; padding:0 24px; }
   .export-summary{ max-width:2200px; margin:20px auto 60px; padding:0 24px; }
-  .export-list{
-    background:var(--surface); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow-lg);
-    overflow:hidden;
-  }
-  .export-list-item{
-    display:flex; align-items:center; gap:14px; padding:13px 20px; border-bottom:1px solid var(--line);
-  }
+  .export-list{ background:var(--surface); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow-lg); overflow:hidden; }
+  .export-list-item{ display:flex; align-items:center; gap:14px; padding:13px 20px; border-bottom:1px solid var(--line); }
   .export-list-item:last-child{ border-bottom:none; }
   .export-list-item .el-name{ font-weight:650; font-size:13.5px; }
   .export-list-item .el-count{ margin-left:auto; font-family:"IBM Plex Mono"; font-size:11.5px; color:var(--ink-dim); }
@@ -618,20 +471,19 @@
       <span class="hero-badge"><span class="b-dot"></span>BD OPS · BAGGAGE INTELLIGENCE</span>
     </div>
     <h1 class="hero-title">항공사 <em>수하물 정책</em> 트래커</h1>
-    <p class="hero-sub">구글시트 "메인매트릭스의 사본" 탭에 값을 입력하면 이 페이지를 새로고침할 때 자동으로 반영됩니다. 항공사별로 노선구간 · 클래스 · 운임브랜드 조합까지 세분화된 무료 수하물 조건을 추적합니다.</p>
+    <p class="hero-sub">구글시트 수하물 DB 탭(허용량 · 초과요금 · 회원등급 · 특수조건 · 유아소아)을 그대로 읽어 보여줍니다. 무게와 규격은 원문에서 뽑은 숫자로 보여주고, 원문은 칸을 누르면 볼 수 있습니다.</p>
     <p class="meta" id="meta-line"><span class="dot"></span>데이터 불러오는 중…</p>
   </div>
   <div class="hero-shelf"></div>
 </header>
 
-<div class="dash-wrap">
-  <div class="dash-panel" id="dash-panel" hidden></div>
-</div>
+<div class="dash-wrap"><div class="dash-panel" id="dash-panel" hidden></div></div>
 
 <div class="toolbar">
   <div class="toolbar-left">
     <div class="search-wrap"><span class="search-ico">⌕</span><input type="search" id="filter-input" placeholder="코드·항공사명 검색…" autocomplete="off"></div>
-    <div class="seg" id="status-seg"><div class="seg-thumb"></div></div>
+    <div class="seg" id="alli-seg" role="group" aria-label="동맹"></div>
+    <div class="seg" id="risk-seg" role="group" aria-label="위험도 등급"></div>
   </div>
   <div class="toolbar-left">
     <span class="stat" id="count-stat"></span>
@@ -640,49 +492,44 @@
 </div>
 
 <div class="table-wrap">
-  <div class="table-frame" id="table-frame">
-    <div class="state"><div class="spinner"></div>불러오는 중…</div>
-  </div>
+  <div class="table-frame" id="table-frame"><div class="state"><div class="spinner"></div>불러오는 중…</div></div>
 </div>
 </section>
 
 <section id="view-compare" class="view" hidden>
   <div class="page-head">
     <h1>항공사 비교</h1>
-    <p>항공사를 2~3개 골라서 노선·클래스·운임브랜드별 상세 조건을 나란히 비교합니다.</p>
+    <p>항공사를 2~3개 골라 허용량 · 초과요금 · 회원등급 · 특수조건을 나란히 비교합니다.</p>
   </div>
   <div class="compare-picker">
     <input type="search" id="compare-search" placeholder="항공사 코드·이름 검색해서 추가 (최대 3개)" autocomplete="off">
     <div class="compare-suggest" id="compare-suggest" hidden></div>
     <div class="compare-chips" id="compare-chips"></div>
   </div>
-  <div class="compare-grid" id="compare-grid">
-    <div class="compare-empty">비교할 항공사를 검색해서 추가해주세요.</div>
-  </div>
+  <div class="compare-grid" id="compare-grid"><div class="compare-empty">비교할 항공사를 검색해서 추가해주세요.</div></div>
 </section>
 
 <section id="view-export" class="view" hidden>
   <div class="page-head">
     <h1>내보내기</h1>
-    <p>검색어·확인상태로 걸러진 항공사들의 전체 상세 조건행을 CSV로 내려받습니다.</p>
+    <p>검색어 · 동맹으로 걸러진 항공사의 허용량 행 또는 초과요금 구간 행을 CSV로 내려받습니다.</p>
   </div>
   <div class="toolbar export-toolbar">
     <div class="toolbar-left">
-      <input type="search" id="export-filter-input" placeholder="코드·항공사명 검색…" autocomplete="off">
-      <select id="export-status-filter">
-        <option value="">확인상태 전체</option>
-      </select>
+      <div class="search-wrap"><span class="search-ico">⌕</span><input type="search" id="export-filter-input" placeholder="코드·항공사명 검색…" autocomplete="off"></div>
+      <select id="export-alli-filter"><option value="">동맹 전체</option><option value="star">Star Alliance</option><option value="sky">SkyTeam</option><option value="one">oneworld</option><option value="none">동맹 없음·확인 필요</option></select>
     </div>
     <div class="toolbar-left">
       <span class="stat" id="export-count-stat"></span>
-      <button class="btn primary" id="export-download-btn" type="button">⬇ CSV 다운로드</button>
+      <button class="btn" id="export-fee-btn" type="button">⬇ 초과요금 CSV</button>
+      <button class="btn primary" id="export-allow-btn" type="button">⬇ 허용량 CSV</button>
     </div>
   </div>
   <div class="export-summary" id="export-summary"></div>
 </section>
 
 <footer>
-  데이터 소스: <a href="https://docs.google.com/spreadsheets/d/12WL67NcJZq09hT_nx07y-zZKCOP5AyZAHgqjZAy8nSo/edit" target="_blank" rel="noopener">항공사 수하물 정책 트래커 v5 · 메인매트릭스 (Google Sheets)</a> · 이 시트는 "링크가 있는 모든 사용자 - 뷰어"로 공유되어 있어야 이 페이지가 데이터를 읽어올 수 있습니다. 시트 값을 바꾼 뒤 "새로고침"을 누르면 반영됩니다(반영까지 몇 분 걸릴 수 있음). 행을 클릭하면 항공사별 세부 조건 팝업이 뜹니다.
+  데이터 소스: <a href="https://docs.google.com/spreadsheets/d/12WL67NcJZq09hT_nx07y-zZKCOP5AyZAHgqjZAy8nSo/edit" target="_blank" rel="noopener">항공사 수하물 정책 트래커 v5 (Google Sheets)</a>의 01_항공사 · 02_위탁허용량 · 03_기내허용량 · 04_초과요금 · 05_유아소아 · 06_회원등급 · 08_특수조건 · 항공사별 공통정책 탭. 시트가 "링크가 있는 모든 사용자 - 뷰어"로 공유돼 있어야 읽을 수 있습니다. 시트 값을 바꾼 뒤 "새로고침"을 누르면 반영됩니다(몇 분 걸릴 수 있음).
 </footer>
 
   </div>
@@ -694,968 +541,784 @@
     <div id="modal-content"></div>
   </div>
 </div>
-
 <div class="cell-popover" id="cell-popover" hidden></div>
 
 <script>
 (function(){
+  'use strict';
   var SHEET_ID = '12WL67NcJZq09hT_nx07y-zZKCOP5AyZAHgqjZAy8nSo';
-  // 기본 데이터도 "메인매트릭스의 사본"에서 읽는다 — 2차 검수가 이 탭에서 진행되고 있어
-  // (메인은 1차검수완료에서 멈춰 있음) 메인을 읽으면 검수 진행 상황이 보이지 않는다.
-  // 초과요금 컬럼(AD~AG)도 같은 탭에 있으므로 한 번만 불러 양쪽에 쓴다.
-  var SHEET_NAME = '메인매트릭스의 사본';
-  // 초과요금·사전구매(AD~AG)는 아직 "메인매트릭스"엔 없고 "메인매트릭스의 사본" 탭에만 있다(2026-09-11
-  // 리서치 결과, 운임브랜드까지 세분화된 별도 작업본). 부가서비스(스포츠/악기/반려동물/유아용품)는
-  // "항공사별 공통정책" 탭에 항공사당 1행으로 있다. 셋 다 항공사 코드로 조인해서 같이 보여준다.
-  var SHEET_NAME_POLICY = '항공사별 공통정책';
-
-  // 메인매트릭스 탭 컬럼 인덱스(A=0 ... W=22)
-  // 2026-09-08: 시트에 "유아/소아 무료 위탁수하물 허용량" 2개 컬럼이 개인소지품 상세와 적용시작일
-  // 사이에 새로 추가되면서 이후 컬럼이 전부 +2 밀림 — 이 매핑을 시트 실제 헤더 순서에 맞게 갱신함.
-  // 2026-09-09: E열 "발권 기준일자"가 항공사명(한글) 뒤에 추가되어 이후 컬럼이 전부 +1 밀림.
-  // 값 형식은 "YYYY-MM-DD 이후" / "YYYY-MM-DD 이전"(이후 = 해당일 포함). 비어 있으면 발권일 무관.
-  // 2026-09-10: F열 "기종"이 발권 기준일자 뒤에 새로 추가되어 이후 컬럼이 전부 +1 밀림
-  // (발권일기준 > 노선별 > 기종별로 더 세분화된 항공사가 생김, 현재는 VN만 사용).
-  var COL = {
-    NO:0, CODE:1, NAME_EN:2, NAME_KR:3, TICKET_DATE:4, AIRCRAFT:5, BAG_TYPE:6, ROUTE:7, CLASS:8, BRAND:9,
-    PAX:10, TIER:11, CODESHARE:12, CONCEPT:13, QTY:14, PER_W:15, TOTAL_W:16,
-    DIM:17, P_QTY:18, P_PER_W:19,
-    PERSONAL:20, INFANT:21, CHILD:22, START:23, END:24, STATUS:25, LAST_CHECK:26, SOURCE:27, NOTE:28,
-    // "메인매트릭스의 사본" 탭에만 있는 4개 컬럼(AD~AG). A~AC까지는 메인매트릭스와 동일한 레이아웃이라
-    // 위 COL 그대로 재사용하고 이 4개만 더 읽는다.
-    EXCESS_WEIGHT:29, EXCESS_COUNT:30, EXCESS_SIZE:31, PREBUY:32
+  // 사본 탭을 분리한 수하물 DB 탭(2026-09-29 반영). 열은 이름으로 읽으므로 열 순서가 바뀌어도 깨지지 않는다.
+  var TABS = [
+    { key:'guide',   name:'00_안내', raw:true },
+    { key:'airline', name:'01_항공사' },
+    { key:'checked', name:'02_위탁허용량' },
+    { key:'cabin',   name:'03_기내허용량' },
+    { key:'fee',     name:'04_초과요금' },
+    { key:'pax',     name:'05_유아소아' },
+    { key:'tier',    name:'06_회원등급' },
+    { key:'spec',    name:'08_특수조건' },
+    { key:'policy',  name:'항공사별 공통정책', raw:true }
+  ];
+  // "항공사별 공통정책" 탭(항공사당 1행, A~R 18열)은 헤더가 '그룹|항목' 형식이라 위치로 읽는다.
+  var PCOL = { CODE:0, GOLF:3, SKI:4, BIKE:5, SURF:6, INST_CABIN:7, INST_SEAT:8, PET_CABIN:9, PET_HOLD:10, PET_FEE:11, STROLLER:12, CARSEAT:13, STATUS:14, LAST_CHECK:15, SOURCE:16, NOTE:17 };
+  var FEE_TYPES = ['중량초과', '개수초과', '규격초과', '사전구매'];
+  var FEE_FK = { '중량초과':'중량초과 요금그룹ID', '개수초과':'개수초과 요금그룹ID', '규격초과':'규격초과 요금그룹ID', '사전구매':'사전구매 그룹ID' };
+  var ALLI = {
+    star:  { label:'Star Alliance', short:'Star' },
+    sky:   { label:'SkyTeam', short:'SkyTeam' },
+    one:   { label:'oneworld', short:'oneworld' },
+    none:  { label:'동맹 없음', short:'없음' },
+    check: { label:'확인 필요', short:'확인 필요' }
   };
-
-  // "항공사별 공통정책" 탭(항공사당 1행, A~R 18컬럼) 전용 인덱스
-  var PCOL = {
-    CODE:0, NAME_EN:1, NAME_KR:2,
-    GOLF:3, SKI:4, BIKE:5, SURF:6,
-    INST_CABIN:7, INST_SEAT:8,
-    PET_CABIN:9, PET_HOLD:10, PET_FEE:11,
-    STROLLER:12, CARSEAT:13,
-    STATUS:14, LAST_CHECK:15, SOURCE:16, NOTE:17
-  };
+  var SPEC_TYPE = { STU:'학생', SEA:'선원', LBR:'근로자', RES:'거주자', DISC:'할인 대상', NEGO:'네고', ETC:'기타', TIER:'회원 가산' };
 
   var frame = document.getElementById('table-frame');
   var metaLine = document.getElementById('meta-line');
   var dashPanel = document.getElementById('dash-panel');
   var countStat = document.getElementById('count-stat');
   var filterInput = document.getElementById('filter-input');
-  var statusSeg = document.getElementById('status-seg');
-  var statusFilterValue = '';
+  var alliSeg = document.getElementById('alli-seg');
+  var riskSeg = document.getElementById('risk-seg');
   var refreshBtn = document.getElementById('refresh-btn');
 
-  var airlines = [];
-  var sortState = { key: 'code', dir: 1 };
+  var airlines = [], raw = {}, snapshotLabel = '';
+  var alliFilter = '', riskValue = '';
+  var sortState = { key:'code', dir:1 };
 
-  function escapeHtml(s){
-    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // ---------------------------------------------------------------- 공용 헬퍼
+  function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function escAttr(s){ return esc(s).replace(/"/g,'&quot;'); }
+  function str(v){ return v == null ? '' : String(v).trim(); }
+  function has(v){ var s = str(v); return s !== '' && s !== '-'; }
+  function num(v){ return (v === '' || v == null || isNaN(Number(v))) ? null : Number(v); }
+  function fmtNum(v){
+    var n = num(v); if(n == null) return esc(v);
+    return Number.isInteger(n) ? n.toLocaleString('ko-KR') : String(n);
   }
-  function escapeAttr(s){
-    return escapeHtml(s).replace(/"/g,'&quot;');
-  }
-  function renderRich(s){
-    return escapeHtml(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  }
-  function linkifyUrl(u){
+  function href(u){ return /^https?:\/\//i.test(u) ? u : 'https://' + u; }
+  function linkify(u){
     if(!u) return '';
-    var href = /^https?:\/\//i.test(u) ? u : 'https://' + u;
-    return '<a href="' + escapeHtml(href) + '" target="_blank" rel="noopener">' + escapeHtml(u) + '</a>';
+    var parts = String(u).split(/\s*[;\n]\s*|\s+(?=https?:\/\/)/).filter(Boolean);
+    return parts.map(function(p){ return /[a-z0-9-]+\.[a-z]{2,}/i.test(p) ? '<a href="' + escAttr(href(p)) + '" target="_blank" rel="noopener">' + esc(p) + '</a>' : esc(p); }).join(' · ');
   }
-
-  // 검수는 단계로 올라간다 — "2차검수중"은 1차가 끝났다는 뜻이므로 미검증으로 세면 안 된다.
-  // 시트의 상태값 문구는 운영하며 바뀌므로(검토중 -> 1차검수완료 -> 2차검수중 ...) 정확히
-  // 일치시키지 않고 키워드로 단계를 추정하고, 모르는 값은 0단계로 둔다.
-  var STATUS_STAGES = [
-    { stage: 3, test: function(v){ return /2차.*완료|최종.*완료|^확인완료$/.test(v); }, cls: 'done' },
-    { stage: 2, test: function(v){ return /2차/.test(v); },                            cls: 'partial' },
-    // 1차검수완료와 일부확인은 "적어도 한 번은 검증됨" — 공통정책 탭은 후자를 쓴다
-    { stage: 1, test: function(v){ return /1차.*완료|일부확인|부분확인/.test(v); },     cls: 'partial' },
-    { stage: 0, test: function(v){ return true; },                                     cls: 'wip' }
-  ];
-  var STAGE_DONE = 3, STAGE_FIRST_PASS = 1;
-
-  function statusStage(v){
-    var text = (v || '').replace(/\s/g, '');
-    for(var i = 0; i < STATUS_STAGES.length; i++){
-      if(STATUS_STAGES[i].test(text)) return STATUS_STAGES[i];
-    }
-    return STATUS_STAGES[STATUS_STAGES.length - 1];
-  }
-
-  function statusBadge(v){
-    if(!v) return '<span class="badge wip">미확인</span>';
-    return '<span class="badge ' + statusStage(v).cls + '">' + escapeHtml(v) + '</span>';
-  }
-
-  function countChip(n){
-    n = n || 0;
-    return '<span class="count-chip' + (n === 0 ? ' zero' : '') + '">' + n + '</span>';
-  }
-
-  function sourceButton(u){
-    if(!u) return '<span class="badge empty">—</span>';
-    var href = /^https?:\/\//i.test(u) ? u : 'https://' + u;
-    return '<a class="src-btn" href="' + escapeAttr(href) + '" target="_blank" rel="noopener" ' +
-      'onclick="event.stopPropagation()" title="' + escapeAttr(u) + '">출처 <span class="src-arrow">↗</span></a>';
-  }
-
-  // 출처 버튼 옆 남는 공간에 실제 도메인을 흐리게 보여줘서 빈 여백을 정보로 채운다.
-  function sourceCell(u){
-    if(!u) return '<span class="badge empty">—</span>';
-    var domain = u.replace(/^https?:\/\//i, '').split('/')[0];
-    return '<div class="src-cell">' + sourceButton(u) +
-      '<span class="src-domain">' + escapeHtml(domain) + '</span></div>';
-  }
-
-  // 여러 항목(label+text)을 팝오버용 plain text / rich html로 조립하는 공용 헬퍼
-  // (허용량 상세, 비고 둘 다 같은 팝오버 스타일을 쓴다)
-  function buildPopoverBits(items){
-    var plainFull = items.map(function(it){ return (it.label ? it.label + ' ' : '') + it.text; }).join('\n');
-    var popoverHtml = items.map(function(it){
-      return '<div class="cp-item' + (it.accent ? ' accent' : '') + '">' +
-        (it.label ? '<span class="cp-label">' + escapeHtml(it.label) + '</span>' : '') +
-        '<span class="cp-text">' + escapeHtml(it.text) + '</span>' +
-        '</div>';
+  function domain(u){ return String(u || '').replace(/^https?:\/\//i, '').split('/')[0]; }
+  function popAttrs(items){
+    var plain = items.map(function(it){ return (it.label ? it.label + ' ' : '') + it.text; }).join('\n');
+    var html = items.map(function(it){
+      return '<div class="cp-item' + (it.accent ? ' accent' : '') + '">' + (it.label ? '<span class="cp-label">' + esc(it.label) + '</span>' : '') +
+        '<span class="cp-text">' + esc(it.text) + '</span></div>';
     }).join('');
-    return { plainFull: plainFull, popoverHtml: popoverHtml };
+    return ' data-full="' + escAttr(plain) + '" data-full-html="' + escAttr(html) + '"';
   }
-  function popoverAttrs(items){
-    var bits = buildPopoverBits(items);
-    return ' data-full="' + escapeAttr(bits.plainFull) + '" data-full-html="' + escapeAttr(bits.popoverHtml) + '"';
+  function countChip(n, warn){ n = n || 0; return '<span class="count-chip' + (n === 0 ? ' zero' : (warn ? ' warn' : '')) + '">' + n + '</span>'; }
+  function alliKey(v){
+    var s = str(v);
+    if(/^Star/i.test(s)) return 'star';
+    if(/^SkyTeam/i.test(s)) return 'sky';
+    if(/^oneworld/i.test(s)) return 'one';
+    if(/확인 필요/.test(s)) return 'check';
+    return 'none';
   }
-
-  // 허용개수/개당중량/총중량 3칸을 "N피스 · Mkg" 형태로 합치는 공용 로직
-  // (메인 허용량, 개인소지품 허용량 둘 다 같은 3-컬럼 구조라 재사용한다)
-  function qtyWeightText(qty, perW, totalW){
-    var weightVal = (perW && perW !== '-') ? perW : ((totalW && totalW !== '-') ? totalW : '');
-    // 숫자(+kg)까지만 뽑아서 고정폭으로 오른쪽 정렬하고, "이하"/"초과 금지" 같은 뒤에 붙는 설명은
-    // 옅은 색으로 따로 붙인다 — 시트 값은 그대로 두되(추가 안 함) 자릿수만 맞게 보이게.
-    var weightPrefix = '', weightNum = '', weightSuffix = '';
-    if(weightVal){
-      // 숫자 앞에 "무게 18kg..."처럼 글자가 붙어있는 경우도 있어서 앞/뒤 텍스트를 다 분리한다
-      var m = String(weightVal).match(/^([^\d]*)([\d.,~\-\/]+\s*(?:kg)?)\s*([\s\S]*)$/i);
-      if(m){ weightPrefix = m[1].trim(); weightNum = m[2].trim(); weightSuffix = m[3].trim(); }
-      else { weightNum = String(weightVal); }
-    }
-    var qtyPart = (qty && qty !== '-') ? (qty + '피스') : '';
-    return {
-      corePlain: [qtyPart, weightNum].filter(Boolean).join(' · '),
-      fullText: [qtyPart, weightVal].filter(Boolean).join(' · '),
-      weightPrefix: weightPrefix, weightSuffix: weightSuffix
-    };
+  function alliChip(a){
+    var k = a.alliKey, info = ALLI[k];
+    var label = k === 'none' && /가입 예정/.test(a.alli) ? 'oneworld 예정' : info.label;
+    var unver = (k === 'star' || k === 'sky') && a.alliStatus === '△' ? ' <span class="unverified" title="' + escAttr(a.alliSrc) + '">△</span>' : '';
+    return '<span class="alli ' + k + '" title="' + escAttr(a.alli + (a.alliSrc ? ' — ' + a.alliSrc : '')) + '">' + esc(label) + unver + '</span>';
   }
-
-  // ---- 허용량(개수/무게) 표기 ----
-  // 셀에는 개수/무게 요약만 보여주고, 클릭하면 규격/개인소지품 상세까지 팝업으로 보여준다.
-  function formatAllowance(r){
-    var main = qtyWeightText(r[COL.QTY] || '', r[COL.PER_W] || '', r[COL.TOTAL_W] || '');
-    var corePlain = main.corePlain, fullText = main.fullText, weightPrefix = main.weightPrefix, weightSuffix = main.weightSuffix;
-
-    var bagType = r[COL.BAG_TYPE];
-    var bagLabel = (bagType === '위탁수하물' || bagType === '기내수하물') ? bagType : '허용량';
-
-    var items = [];
-    if(fullText) items.push({ label: bagLabel + ' 정보:', text: fullText, accent:false });
-    var dim = r[COL.DIM];
-    if(dim && dim !== '-'){
-      // "규격"만으로는 위탁/기내 중 뭘 말하는지 헷갈리므로 수하물 종류를 라벨에 명시하고,
-      // 시트 값에 남아있을 수 있는 중복 "규격 " 앞말은 제거한다.
-      items.push({ label: bagLabel + ' 규격:', text: dim.trim().replace(/^규격\s*/, ''), accent:false });
-    }
-    var personalQW = qtyWeightText(r[COL.P_QTY] || '', r[COL.P_PER_W] || '', '');
-    if(personalQW.fullText) items.push({ label: '개인소지품 정보:', text: personalQW.fullText, accent:true });
-    var personal = r[COL.PERSONAL];
-    if(personal && personal !== '해당없음' && personal !== '-'){
-      // 개인소지품도 "규격" 항목이라는 걸 명확히 하려고 위탁/기내수하물 규격과 같은 방식으로 라벨을 통일한다.
-      items.push({ label: '개인소지품 규격:', text: personal.trim().replace(/^개인소지품\s*/, ''), accent:true });
-    }
-
-    if(!corePlain){
-      if(!items.length) return '<span class="badge empty">—</span>';
-      return '<span class="popover-trigger badge empty"' + popoverAttrs(items) + '>—</span>';
-    }
-    // 큰 숫자 토큰: [2 피스] [23 kg 이하] — 0피스는 붉은 "무료 없음" 토큰으로
-    var qtyRaw = String(r[COL.QTY] || '').trim();
-    var toks = '';
-    if(qtyRaw && qtyRaw !== '-'){
-      var qm = qtyRaw.match(/^([\d~\-–.]+)\s*(.*)$/);
-      var qNum = qm ? qm[1] : qtyRaw, qExtra = qm ? qm[2] : '';
-      if(qNum === '0'){
-        toks += '<span class="tok zero"><b>0</b>피스' + (qExtra ? '<span class="tok-extra">' + escapeHtml(qExtra) + '</span>' : '') + '</span>';
-      } else {
-        toks += '<span class="tok qty"><b>' + escapeHtml(qNum) + '</b>피스' + (qExtra ? '<span class="tok-extra">' + escapeHtml(qExtra) + '</span>' : '') + '</span>';
-      }
-    }
-    var perW = String(r[COL.PER_W] || '').trim(), totalW = String(r[COL.TOTAL_W] || '').trim();
-    var hasPer = perW && perW !== '-';
-    var wRaw = hasPer ? perW : ((totalW && totalW !== '-') ? totalW : '');
-    if(wRaw){
-      var isTotal = !hasPer;
-      var wm = wRaw.match(/^([^\d]*)([\d.,~\-–\/]+)\s*(kg)?\s*([\s\S]*)$/i);
-      if(wm){
-        toks += '<span class="tok wt">' + (isTotal ? '<span class="tok-extra">총</span>' : '') +
-          (wm[1].trim() ? '<span class="tok-extra">' + escapeHtml(wm[1].trim()) + '</span>' : '') +
-          '<b>' + escapeHtml(wm[2]) + '</b>' + (wm[3] ? 'kg' : '') +
-          (wm[4].trim() ? '<span class="tok-extra">' + escapeHtml(wm[4].trim()) + '</span>' : '') + '</span>';
-      }
-    }
-    // Q열(개인소지품 허용개수)이 있으면 "+개인소지품 1" 보조 토큰으로 같이 보여준다
-    // (gviz가 M열을 숫자형으로 읽어서 "1(+개인소지품)" 같은 텍스트는 버리므로, 시트는 M=숫자·Q=개수로 분리 기재)
-    var pq = String(r[COL.P_QTY] || '').trim();
-    if(pq && pq !== '-'){
-      toks += '<span class="tok pi"><span class="tok-extra">+개인소지품</span><b>' + escapeHtml(pq) + '</b></span>';
-    }
-    if(!toks) toks = '<span class="tok"><b>' + escapeHtml(corePlain) + '</b></span>';
-    return '<span class="popover-trigger allow-tokens"' + popoverAttrs(items) + '>' + toks + '</span>';
+  function riskChip(r){
+    var s = str(r); if(!s) return '<span class="badge empty">—</span>';
+    return '<span class="risk ' + (s === '상' ? 'hi' : s === '중' ? 'mid' : 'lo') + '">' + esc(s) + '</span>';
   }
+  function vBadge(v){
+    var s = str(v);
+    if(s === 'o') return '<span class="vb o" title="2차검증 일치">o</span>';
+    if(s === '△') return '<span class="vb p" title="2차검증 부분 일치">△</span>';
+    if(s === 'x') return '<span class="vb x" title="2차검증 불일치">x</span>';
+    return '<span class="vb n" title="2차검증 판정 없음">·</span>';
+  }
+  function vbar(v){
+    var t = v.o + v.p + v.x + v.n || 1;
+    function seg(cls, n){ return n ? '<i class="' + cls + '" style="width:' + (n / t * 100) + '%"></i>' : ''; }
+    var pct = Math.round(v.o / t * 100);
+    return '<div class="vbar" title="o ' + v.o + ' · △ ' + v.p + ' · x ' + v.x + ' · 판정 없음 ' + v.n + '"><div class="vbar-track">' +
+      seg('o', v.o) + seg('p', v.p) + seg('x', v.x) + seg('n', v.n) + '</div><span class="vbar-pct">' + pct + '%</span></div>';
+  }
+  var LOGO_OVERRIDES = { TW: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii00LjUgLTIuNSAzOCAzOCI+PHBhdGggZD0iTTE1LjA1NDcgMzMuMTY1OUwyOC42NTQ3IDkuNjA0NDlMMjIuMDYzNyAxMC4zNjg0QzE5LjI5NzMgMTAuNjg4NCAxNy4xMjQ0IDEyLjg5MjIgMTYuODQwNSAxNS42NjM5TDE1LjA1NDcgMzMuMTY1OVoiIGZpbGw9InVybCgjcGFpbnQwX2xpbmVhcl8yNzkyXzM1MTYpIi8+PHBhdGggZD0iTTEzLjU5NjEgMzMuMTY1OUwtMC4wMDM5MDYyNSA5LjYwNDQ5TDYuNTg3MDggMTAuMzY4NEM5LjM1MzU0IDEwLjY4ODQgMTEuNTI2NSAxMi44OTIyIDExLjgxMDMgMTUuNjYzOUwxMy41OTYxIDMzLjE2NTlaIiBmaWxsPSJ1cmwoI3BhaW50MV9saW5lYXJfMjc5Ml8zNTE2KSIvPjxwYXRoIGQ9Ik0xNi4wMTUzIDkuMjUyNTdMMjYuNzUwOCA0LjMxODM2SDEuOTA0M0wxMi42MzQ3IDkuMjUyNTdDMTMuNzA4MiA5Ljc0ODA1IDE0Ljk0MTggOS43NDgwNSAxNi4wMTAxIDkuMjUyNTdIMTYuMDE1M1oiIGZpbGw9InVybCgjcGFpbnQyX2xpbmVhcl8yNzkyXzM1MTYpIi8+PGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0icGFpbnQwX2xpbmVhcl8yNzkyXzM1MTYiIHgxPSIxLjgwNTYxIiB5MT0iMzYuNTU2OCIgeDI9IjIxLjgyNjMiIHkyPSIxNy45NCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBvZmZzZXQ9IjAuMDEiIHN0b3AtY29sb3I9IiNGMkU5RDIiLz4KPHN0b3Agb2Zmc2V0PSIwLjUiIHN0b3AtY29sb3I9IiNFN0Q1QTkiLz4KPHN0b3Agb2Zmc2V0PSIwLjk5IiBzdG9wLWNvbG9yPSIjQzFCNDk0Ii8+CjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0icGFpbnQxX2xpbmVhcl8yNzkyXzM1MTYiIHgxPSIxNi4yMTI5IiB5MT0iMzUuMjI1MiIgeDI9IjguNzc1NDgiIHkyPSIxOC42NjI2IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiNFMkM3QjUiLz4KPHN0b3Agb2Zmc2V0PSIwLjUyIiBzdG9wLWNvbG9yPSIjRDdBNzlCIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0M2OTE4NiIvPgo8L2xpbmVhckdyYWRpZW50Pgo8bGluZWFyR3JhZGllbnQgaWQ9InBhaW50Ml9saW5lYXJfMjc5Ml8zNTE2IiB4MT0iOC4yMTY1OCIgeTE9Ii04LjYwMDM5IiB4Mj0iMTcuNzkwOCIgeTI9IjExLjYzNzEiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0M2QzhDOCIvPgo8c3RvcCBvZmZzZXQ9IjAuMzQiIHN0b3AtY29sb3I9IiNDRkQwRDAiLz4KPHN0b3Agb2Zmc2V0PSIwLjg5IiBzdG9wLWNvbG9yPSIjRThFN0U3Ii8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0VGRURFRCIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+PC9zdmc+' };
+  function logoUrl(code){ return LOGO_OVERRIDES[code] || 'https://pics.avs.io/60/60/' + encodeURIComponent(code) + '.png'; }
 
-  // 클래스 문자열 → 색상 칩(이코노미/프리미엄이코노미/비즈니스/퍼스트/전클래스)
-  function classChip(cls){
-    var c = String(cls || '').trim();
-    if(!c || c === '-') return '<span class="badge empty">—</span>';
+  function classChip(cls, code){
+    var c = str(cls);
+    if(!c) return '<span class="badge empty">—</span>';
     var kind = 'eco';
-    if(/전\s*클래스|전체|공통/.test(c)) kind = 'all';
-    else if(/퍼스트|first/i.test(c) && !/비즈니스|business/i.test(c)) kind = 'first';
-    else if(/비즈니스|business|프레스티지|로렐/i.test(c)) kind = 'biz';
-    else if(/프리미엄|premium|Go Plus|SAS Plus/i.test(c)) kind = 'pe';
-    // "비즈니스(로얄로렐/프리미엄로렐/비즈니스)"처럼 괄호 설명이 길면 칩에는 앞부분만 넣고
-    // 괄호 안은 작은 보조 줄로 내려 행 높이가 들쭉날쭉해지지 않게 한다.
+    if(/^전클래스/.test(c)) kind = 'all';
+    else if(/^퍼스트/.test(c)) kind = 'first';
+    else if(/^비즈니스/.test(c)) kind = 'biz';
+    else if(/^프리미엄/.test(c)) kind = 'pe';
+    var codeTag = code ? '<span class="cls-code">' + esc(code) + '</span>' : '';
     var pm = c.match(/^([^(]+?)\s*\((.+)\)\s*$/);
     if(pm && pm[2].length > 6){
-      return '<span class="cls-chip ' + kind + '">' + escapeHtml(pm[1]) + '</span>' +
-        '<div class="cls-sub">' + escapeHtml(pm[2]) + '</div>';
+      return '<span class="cls-chip ' + kind + '">' + esc(pm[1]) + '</span>' + codeTag + '<div class="cls-sub">' + esc(pm[2]) + '</div>';
     }
-    return '<span class="cls-chip ' + kind + '">' + escapeHtml(c) + '</span>';
+    return '<span class="cls-chip ' + kind + '">' + esc(c) + '</span>' + codeTag;
   }
-  // 운임브랜드 "Up(B/Y)/Standard(Q/H/M)/Basic(V/W/S)" → 괄호 밖의 "/"로만 나눠 칩으로
-  function brandChips(brand){
-    var b = String(brand || '').trim();
-    if(!b || b === '-') return '<span class="badge empty">—</span>';
-    if(/공통\(전체동일\)|^공통$/.test(b)) return '<div class="brand-chips"><span class="brand-chip common">공통(전체동일)</span></div>';
+  function brandChips(b){
+    b = str(b);
+    if(!b) return '<span class="badge empty">—</span>';
+    if(/^공통\(전체동일\)$|^공통$/.test(b)) return '<div class="brand-chips"><span class="brand-chip common">공통(전체동일)</span></div>';
     var parts = b.split(/\s*\/\s*(?![^(]*\))/).filter(Boolean);
-    return '<div class="brand-chips">' + parts.map(function(p){ return '<span class="brand-chip">' + escapeHtml(p) + '</span>'; }).join('') + '</div>';
+    return '<div class="brand-chips">' + parts.map(function(p){ return '<span class="brand-chip">' + esc(p) + '</span>'; }).join('') + '</div>';
   }
 
-  function formatTags(r){
-    var tags = [];
-    var pax = r[COL.PAX]; if(pax && pax !== '성인' && pax !== '-') tags.push(pax);
-    var tier = r[COL.TIER]; if(tier && tier !== '해당없음' && tier !== '-') tags.push(tier);
-    var cs = r[COL.CODESHARE]; if(cs && cs !== '해당없음' && cs !== '-') tags.push(cs);
-    if(!tags.length) return '';
-    return tags.map(function(t){ return '<span class="pill">' + escapeHtml(t) + '</span>'; }).join('');
-  }
-
-  // 규격/개인소지품은 허용량 팝업 쪽으로 옮겼으므로(formatAllowance 참고),
-  // 비고에는 유아/소아/일반 비고만 남는다.
-  function formatNote(r){
-    var items = []; // {label, text, accent}
-    var infant = r[COL.INFANT];
-    if(infant && infant !== '해당없음' && infant !== '-') items.push(splitLabel('유아', infant, true));
-    var child = r[COL.CHILD];
-    if(child && child !== '해당없음' && child !== '-') items.push(splitLabel('소아', child, true));
-    var note = r[COL.NOTE];
-    if(note && note !== '-') items.push({label:'', text: note, accent:false});
-    if(!items.length) return '';
-
-    var inlineHtml = items.map(function(it){
-      if(it.accent){
-        var tagCls = it.label.indexOf('소아') === 0 ? 'note-tag child' : 'note-tag';
-        return '<span class="' + tagCls + '">' + escapeHtml(it.label.replace(/:$/, '')) + '</span>' + escapeHtml(it.text);
-      }
-      return escapeHtml(it.text);
-    }).join('<span class="note-sep">·</span>');
-
-    // 비고가 여러 줄이면 행 높이가 노선구간표마다 들쭉날쭉해지므로, 한 줄로 축약하고
-    // 클릭하면 전체 내용을 팝오버로 보여준다(허용량 칸과 동일한 패턴).
-    return '<span class="popover-trigger"' + popoverAttrs(items) + '>' + inlineHtml + '</span>';
-  }
-  // 라벨은 항상 붙이고, 시트 값 앞에 그 라벨 단어가 이미 들어있으면(중복 방지) 잘라낸다.
-  // 승연님이 "유아 요금에는..."처럼 라벨 단어로 문장을 시작해도 "유아: 요금에는..."으로 자동 정리됨.
-  // 2026-09-09: "좌석 미점유 유아: …", "무릎 유아: …", "유아(만 0~2세): …"처럼 수식어가 붙은 접두어도
-  // 라벨과 중복이므로 같이 잘라내고, 수식어는 괄호로 뒤에 붙여 정보는 잃지 않게 한다.
-  function splitLabel(label, value, accent){
-    var v = value.trim();
-    // 라벨 뒤에 공백/콜론/괄호가 올 때만 접두어로 본다 — "유아용품…"처럼 단어 일부인 경우는 건드리지 않는다.
-    var m = v.match(new RegExp('^((?:좌석\\s*미점유|좌석\\s*점유|무릎|비점유|동반)?)\\s*' + label + '(?=\\s|[:：(]|$)\\s*(\\([^)]*\\))?\\s*[:：]?\\s*'));
-    if(m && m[0].length){
-      v = v.slice(m[0].length);
-      var qual = [m[1], m[2]].filter(Boolean).join(' ').trim();
-      if(qual && v) v = v + ' (' + qual.replace(/^\(|\)$/g, '') + ')';
+  // ---------------------------------------------------------------- 불러오기 (gviz JSONP, 탭 9개 병렬)
+  function cellVal(c){
+    if(!c || c.v == null) return '';
+    var v = c.v;
+    if(typeof v === 'string'){
+      var m = v.match(/^Date\((\d+),(\d+),(\d+)(?:,\d+,\d+,\d+)?\)$/);
+      if(m) return m[1] + '-' + String(+m[2] + 1).padStart(2, '0') + '-' + String(+m[3]).padStart(2, '0');
     }
-    return { label: label + (accent ? ':' : ''), text: v, accent: accent };
+    return v;
+  }
+  function toObjects(resp){
+    var labels = resp.table.cols.map(function(c, i){ return String(c.label || c.id || ('c' + i)).trim(); });
+    return resp.table.rows.map(function(r){
+      var o = {};
+      labels.forEach(function(k, i){ o[k] = cellVal(r.c[i]); });
+      return o;
+    });
+  }
+  function toArrays(resp){
+    return resp.table.rows.map(function(r){ return (r.c || []).map(function(c){ var v = cellVal(c); return v === '' ? '' : String(v); }); });
   }
 
-  // 외부 로고 CDN(pics.avs.io)이 아직 옛 로고를 주는 항공사는 공식 사이트에서 가져온 로고로 덮어쓴다.
-  // TW: 2026-09 티웨이 → 트리니티항공 리브랜딩, 공홈 헤더 로고(main_logo_trinity.svg)의 엠블럼 부분.
-  var LOGO_OVERRIDES = {
-    TW: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii00LjUgLTIuNSAzOCAzOCI+PHBhdGggZD0iTTE1LjA1NDcgMzMuMTY1OUwyOC42NTQ3IDkuNjA0NDlMMjIuMDYzNyAxMC4zNjg0QzE5LjI5NzMgMTAuNjg4NCAxNy4xMjQ0IDEyLjg5MjIgMTYuODQwNSAxNS42NjM5TDE1LjA1NDcgMzMuMTY1OVoiIGZpbGw9InVybCgjcGFpbnQwX2xpbmVhcl8yNzkyXzM1MTYpIi8+PHBhdGggZD0iTTEzLjU5NjEgMzMuMTY1OUwtMC4wMDM5MDYyNSA5LjYwNDQ5TDYuNTg3MDggMTAuMzY4NEM5LjM1MzU0IDEwLjY4ODQgMTEuNTI2NSAxMi44OTIyIDExLjgxMDMgMTUuNjYzOUwxMy41OTYxIDMzLjE2NTlaIiBmaWxsPSJ1cmwoI3BhaW50MV9saW5lYXJfMjc5Ml8zNTE2KSIvPjxwYXRoIGQ9Ik0xNi4wMTUzIDkuMjUyNTdMMjYuNzUwOCA0LjMxODM2SDEuOTA0M0wxMi42MzQ3IDkuMjUyNTdDMTMuNzA4MiA5Ljc0ODA1IDE0Ljk0MTggOS43NDgwNSAxNi4wMTAxIDkuMjUyNTdIMTYuMDE1M1oiIGZpbGw9InVybCgjcGFpbnQyX2xpbmVhcl8yNzkyXzM1MTYpIi8+PGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0icGFpbnQwX2xpbmVhcl8yNzkyXzM1MTYiIHgxPSIxLjgwNTYxIiB5MT0iMzYuNTU2OCIgeDI9IjIxLjgyNjMiIHkyPSIxNy45NCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBvZmZzZXQ9IjAuMDEiIHN0b3AtY29sb3I9IiNGMkU5RDIiLz4KPHN0b3Agb2Zmc2V0PSIwLjUiIHN0b3AtY29sb3I9IiNFN0Q1QTkiLz4KPHN0b3Agb2Zmc2V0PSIwLjk5IiBzdG9wLWNvbG9yPSIjQzFCNDk0Ii8+CjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0icGFpbnQxX2xpbmVhcl8yNzkyXzM1MTYiIHgxPSIxNi4yMTI5IiB5MT0iMzUuMjI1MiIgeDI9IjguNzc1NDgiIHkyPSIxOC42NjI2IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiNFMkM3QjUiLz4KPHN0b3Agb2Zmc2V0PSIwLjUyIiBzdG9wLWNvbG9yPSIjRDdBNzlCIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0M2OTE4NiIvPgo8L2xpbmVhckdyYWRpZW50Pgo8bGluZWFyR3JhZGllbnQgaWQ9InBhaW50Ml9saW5lYXJfMjc5Ml8zNTE2IiB4MT0iOC4yMTY1OCIgeTE9Ii04LjYwMDM5IiB4Mj0iMTcuNzkwOCIgeTI9IjExLjYzNzEiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0M2QzhDOCIvPgo8c3RvcCBvZmZzZXQ9IjAuMzQiIHN0b3AtY29sb3I9IiNDRkQwRDAiLz4KPHN0b3Agb2Zmc2V0PSIwLjg5IiBzdG9wLWNvbG9yPSIjRThFN0U3Ii8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0VGRURFRCIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+PC9zdmc+'
-  };
-  function airlineLogoUrl(code){ return LOGO_OVERRIDES[code] || 'https://pics.avs.io/60/60/' + encodeURIComponent(code) + '.png'; }
+  var pending = 0, failed = false, timer = null;
+  function setMeta(state, text){
+    var dot = state === 'ok' ? '' : state === 'wait' ? ' style="background:var(--wait);box-shadow:0 0 0 3px var(--wait-soft)"' : ' style="background:var(--partial);box-shadow:0 0 0 3px var(--partial-soft)"';
+    metaLine.innerHTML = '<span class="dot"' + dot + '></span>' + text;
+  }
+  function fail(detail){
+    if(failed) return;
+    failed = true; clearTimeout(timer);
+    frame.innerHTML = '<div class="state">시트를 불러오지 못했습니다.<br><br>구글시트 공유 설정이 "링크가 있는 모든 사용자 - 뷰어"인지, 수하물 DB 탭 이름(01_항공사 등)이 그대로인지 확인해주세요.<br><span style="font-size:12px;">(' + esc(detail || '') + ')</span></div>';
+    setMeta('fail', '불러오기 실패');
+  }
+  function load(){
+    raw = {}; failed = false; pending = TABS.length;
+    frame.innerHTML = '<div class="state"><div class="spinner"></div>불러오는 중… (탭 ' + TABS.length + '개)</div>';
+    setMeta('wait', '데이터 불러오는 중…');
+    TABS.forEach(function(t){
+      var cb = '__bt_' + t.key;
+      window[cb] = function(resp){
+        if(failed) return;
+        if(!resp || resp.status !== 'ok'){ fail(t.name + ' 응답 상태: ' + (resp && resp.status)); return; }
+        raw[t.key] = t.raw ? toArrays(resp) : toObjects(resp);
+        pending--;
+        if(pending === 0){ clearTimeout(timer); done(); }
+      };
+      var old = document.getElementById('gviz-' + t.key); if(old) old.remove();
+      var s = document.createElement('script');
+      s.id = 'gviz-' + t.key;
+      s.src = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json;responseHandler:' + cb +
+        '&sheet=' + encodeURIComponent(t.name) + '&headers=1&_=' + Date.now();
+      s.onerror = function(){ fail(t.name + ' 스크립트 로드 실패(네트워크/접근 권한)'); };
+      document.body.appendChild(s);
+    });
+    clearTimeout(timer);
+    timer = setTimeout(function(){ if(pending > 0) fail('응답 시간 초과(30초) — 남은 탭 ' + pending + '개'); }, 30000);
+  }
 
-  // ---- 상단 통계 카드 ----
+  // ---------------------------------------------------------------- 모델
+  function build(){
+    var byCode = {}, order = [];
+    raw.airline.forEach(function(r){
+      var code = str(r['항공사코드']); if(!code) return;
+      byCode[code] = {
+        code: code, en: str(r['영문명']), kr: str(r['한글명']), home: str(r['거점국가']),
+        alli: str(r['동맹']), alliSrc: str(r['동맹 근거']), alliStatus: str(r['동맹 확인상태']),
+        program: str(r['회원 프로그램(사본 기재)']), tierWhere: str(r['회원등급 정보 위치']),
+        calcGroup: str(r['계산기 그룹']), calcForm: str(r['계산기 제공 형태']), risk: str(r['위험도 등급(초안 0923)']),
+        checked: [], cabin: [], feeRows: [], groups: {}, groupOrder: [], pax: [], tiers: [], specs: [], policy: null
+      };
+      order.push(code);
+    });
+    function attach(list, key, field){ (list || []).forEach(function(r){ var a = byCode[str(r[field])]; if(a) a[key].push(r); }); }
+    attach(raw.checked, 'checked', '항공사');
+    attach(raw.cabin, 'cabin', '항공사');
+    attach(raw.fee, 'feeRows', '항공사');
+    attach(raw.pax, 'pax', '항공사');
+    attach(raw.tier, 'tiers', '항공사');
+    attach(raw.spec, 'specs', 'airline_code');
+    (raw.policy || []).forEach(function(arr){
+      var a = byCode[str(arr[PCOL.CODE])]; if(!a) return;
+      a.policy = { golf: arr[PCOL.GOLF], ski: arr[PCOL.SKI], bike: arr[PCOL.BIKE], surf: arr[PCOL.SURF],
+        instCabin: arr[PCOL.INST_CABIN], instSeat: arr[PCOL.INST_SEAT], petCabin: arr[PCOL.PET_CABIN], petHold: arr[PCOL.PET_HOLD],
+        petFee: arr[PCOL.PET_FEE], stroller: arr[PCOL.STROLLER], carseat: arr[PCOL.CARSEAT], status: arr[PCOL.STATUS],
+        lastCheck: arr[PCOL.LAST_CHECK], source: arr[PCOL.SOURCE], note: arr[PCOL.NOTE] };
+    });
+    airlines = order.map(function(code){
+      var a = byCode[code];
+      a.feeRows.forEach(function(f){
+        var gid = str(f['요금그룹ID']);
+        if(!a.groups[gid]){ a.groups[gid] = { id: gid, type: str(f['요금유형']), cell: str(f['셀 원문']), url: str(f['출처URL']), rows: [], refs: [] }; a.groupOrder.push(gid); }
+        a.groups[gid].rows.push(f);
+      });
+      var all = a.checked.concat(a.cabin);
+      all.forEach(function(r){
+        FEE_TYPES.forEach(function(t){ var g = a.groups[str(r[FEE_FK[t]])]; if(g) g.refs.push(r); });
+      });
+      a.v = { o:0, p:0, x:0, n:0 };
+      var last = '', routes = {}, srcs = {};
+      all.forEach(function(r){
+        var v = str(r['2차검증 판정']);
+        if(v === 'o') a.v.o++; else if(v === '△') a.v.p++; else if(v === 'x') a.v.x++; else a.v.n++;
+        var d = str(r['최종확인일']); if(d > last) last = d;
+        if(r['노선구간']) routes[r['노선구간']] = 1;
+        var u = str(r['출처URL']); if(u) srcs[u] = (srcs[u] || 0) + 1;
+      });
+      a.total = all.length; a.nChecked = a.checked.length; a.nCabin = a.cabin.length;
+      a.vPct = a.total ? a.v.o / a.total : 0;
+      a.lastDate = last; a.routeCount = Object.keys(routes).length; a.sources = srcs;
+      a.source = Object.keys(srcs).sort(function(x, y){ return srcs[y] - srcs[x]; })[0] || '';
+      a.nFee = a.feeRows.length; a.nGroups = a.groupOrder.length;
+      a.nFeeNeed = a.feeRows.filter(function(f){ return str(f['파싱상태']) === '확인 필요'; }).length;
+      a.nTier = a.tiers.length; a.nSpec = a.specs.length;
+      a.alliKey = alliKey(a.alli);
+      a.riskOrder = a.risk === '상' ? 3 : a.risk === '중' ? 2 : a.risk === '하' ? 1 : 0;
+      return a;
+    });
+    snapshotLabel = '';
+    (raw.guide || []).some(function(row){
+      return row.some(function(cell){ var m = String(cell).match(/스냅샷\s*([\d-]+\s*[\d:]*)/); if(m){ snapshotLabel = m[1].trim(); return true; } return false; });
+    });
+  }
+
+  function done(){
+    try { build(); } catch(e){ fail('데이터 해석 오류: ' + e.message); console.error(e); return; }
+    setMeta('ok', '마지막 불러오기 ' + new Date().toLocaleString('ko-KR') + ' · 수하물 DB 탭에서 직접 읽음' +
+      (snapshotLabel ? ' · 사본 분리 기준 ' + esc(snapshotLabel) : ''));
+    renderSeg(); renderStats(); render(); renderCompareChips(); renderCompare(); renderExport();
+  }
+
+  // ---------------------------------------------------------------- 대시보드
   function renderStats(){
-    var firstPass = 0, fullyDone = 0, totalRows = 0, routeSet = {};
-    var feeConfirmed = 0, policyConfirmed = 0, stageLabels = {};
+    var n = airlines.length || 1, rows = 0, ck = 0, cb = 0, v = { o:0, p:0, x:0, n:0 };
+    var fee = 0, feeNeed = 0, groups = 0, tierAl = 0, tierRows = 0, spec = 0, pol = 0, polStat = {}, al = { star:0, sky:0, one:0 };
     airlines.forEach(function(a){
-      totalRows += a.total;
-      if(a.stage >= STAGE_FIRST_PASS) firstPass++;
-      if(a.stage >= STAGE_DONE) fullyDone++;
-      Object.keys(a.statusCounts || {}).forEach(function(s){ stageLabels[s] = 1; });
-      if((a.fees || []).some(function(f){ return f.hasFee; })) feeConfirmed++;
-      // '확인' 문자열 매칭은 상태 문구가 '1차검수완료'로 바뀌자 10건을 놓쳤다 — 단계로 판정한다
-      if(a.policy && a.policy.status && statusStage(a.policy.status).stage >= STAGE_FIRST_PASS) policyConfirmed++;
+      rows += a.total; ck += a.nChecked; cb += a.nCabin;
+      v.o += a.v.o; v.p += a.v.p; v.x += a.v.x; v.n += a.v.n;
+      fee += a.nFee; feeNeed += a.nFeeNeed; groups += a.nGroups;
+      if(a.nTier){ tierAl++; tierRows += a.nTier; }
+      spec += a.nSpec;
+      if(a.policy){ var ps = str(a.policy.status) || '상태 없음'; polStat[ps] = (polStat[ps] || 0) + 1; if(/완료/.test(ps) && !/진행/.test(ps)) pol++; }
+      if(al[a.alliKey] != null) al[a.alliKey]++;
     });
-    // 시트에 실제로 쓰인 상태 문구를 그대로 보여준다 (문구가 바뀌어도 코드 수정 불필요)
-    var labelList = Object.keys(stageLabels).sort(function(x, y){
-      return statusStage(y).stage - statusStage(x).stage;
-    });
-    var n = airlines.length || 1;
-    var ringColor = { '':'var(--accent2)', ok:'var(--ok)', accent:'var(--accent)', wait:'var(--wait)', plane:'var(--plane)' };
+    var vt = v.o + v.p + v.x + v.n || 1;
     var cards = [
-      { cls:'', label:'항공사', value: airlines.length + '개', sub:'추적 중인 전체', pct: Math.round(airlines.length / n * 100) },
-      { cls:'ok', label:'1차검수 이상', value: firstPass + '개', sub: labelList.join(' · ') || '검수 단계', pct: Math.round(firstPass / n * 100) },
-      { cls:'accent', label:'최종검수 완료', value: fullyDone + '개', sub:'2차검수까지 완료', pct: Math.round(fullyDone / n * 100) },
-      { cls:'wait', label:'조건행', value: totalRows.toLocaleString('ko-KR') + '개', sub:'노선·클래스·운임 조합', pct: null },
-      { cls:'accent', label:'초과요금 확인', value: feeConfirmed + '개사', sub:'중량·개수·규격 중 1개 이상', pct: Math.round(feeConfirmed / n * 100) },
-      { cls:'plane', label:'부가서비스 확인', value: policyConfirmed + '개사', sub:'스포츠·악기·반려동물·유아용품', pct: Math.round(policyConfirmed / n * 100) }
+      { label:'항공사', value: airlines.length + '개', sub:'Star ' + al.star + ' · SkyTeam ' + al.sky + ' · oneworld ' + al.one, pct:null },
+      { label:'무료 허용량 조건', value: rows.toLocaleString('ko-KR') + '행', sub:'위탁 ' + ck.toLocaleString('ko-KR') + ' · 기내 ' + cb, pct:null },
+      { label:'2차검증 일치', value: Math.round(v.o / vt * 100) + '%', sub:'o ' + v.o + ' · △ ' + v.p + ' · x ' + v.x, pct: Math.round(v.o / vt * 100), c:'var(--ok)' },
+      { label:'초과요금 구간', value: fee.toLocaleString('ko-KR') + '행', sub:'요금표 ' + groups + '개 · 확인 필요 ' + feeNeed, pct: Math.round((fee - feeNeed) / (fee || 1) * 100), c:'var(--accent)' },
+      { label:'회원등급 혜택', value: tierAl + '개사', sub: tierRows + '행 · 특수조건 ' + spec + '건', pct: Math.round(tierAl / n * 100), c:'var(--plane)' },
+      { label:'부가서비스 검수완료', value: pol + '개사', sub: Object.keys(polStat).sort(function(x, y){ return polStat[y] - polStat[x]; }).map(function(k){ return k + ' ' + polStat[k]; }).join(' · '), pct: Math.round(pol / n * 100), c:'var(--accent2)' }
     ];
     dashPanel.hidden = false;
     dashPanel.innerHTML = cards.map(function(c){
-      var ring = c.pct == null ? '' :
-        '<div class="ring" style="--pct:' + c.pct + ';--ring-c:' + ringColor[c.cls] + '"><span>' + c.pct + '%</span></div>';
-      return '<div class="dash-cell">' +
-        '<div class="dash-top"><div class="dash-label">' + escapeHtml(c.label) + '</div>' + ring + '</div>' +
-        '<div class="dash-value">' + escapeHtml(c.value) + '</div>' +
-        '<div class="dash-sub">' + escapeHtml(c.sub) + '</div>' +
-        '</div>';
+      var ring = c.pct == null ? '' : '<div class="ring" style="--pct:' + c.pct + ';--ring-c:' + c.c + '"><span>' + c.pct + '%</span></div>';
+      return '<div class="dash-cell"><div class="dash-top"><div class="dash-label">' + esc(c.label) + '</div>' + ring + '</div>' +
+        '<div class="dash-value">' + esc(c.value) + '</div><div class="dash-sub">' + esc(c.sub) + '</div></div>';
     }).join('');
   }
 
-  // ---- 항공사 요약 테이블 렌더 ----
+  // ---------------------------------------------------------------- 목록
+  // 세그먼트 토글: 강조 박스를 선택된 버튼의 실제 위치·너비에 맞춘다(버튼 글자 길이가 달라서 등분하면 어긋남).
+  function placeThumb(seg){
+    var th = seg.querySelector('.seg-thumb'), btn = seg.querySelector('button.active');
+    if(!th || !btn) return;
+    th.style.width = btn.offsetWidth + 'px';
+    th.style.transform = 'translateX(' + btn.offsetLeft + 'px)';
+  }
+  function makeSeg(seg, label, vals, current, onPick){
+    seg.innerHTML = '<div class="seg-thumb"></div>' + (label ? '<span class="seg-label">' + esc(label) + '</span>' : '') +
+      vals.map(function(x){ return '<button type="button" data-v="' + escAttr(x[0]) + '"' + (x[0] === current ? ' class="active"' : '') + '>' + esc(x[1]) +
+        (x[2] != null ? '<span class="seg-n">' + x[2] + '</span>' : '') + '</button>'; }).join('');
+    seg.querySelectorAll('button').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        seg.querySelectorAll('button').forEach(function(b){ b.classList.toggle('active', b === btn); });
+        placeThumb(seg);
+        onPick(btn.getAttribute('data-v'));
+      });
+    });
+    requestAnimationFrame(function(){ placeThumb(seg); });
+  }
+  function renderSeg(){
+    var ac = { '':airlines.length, star:0, sky:0, one:0, none:0 }, rc = { '':airlines.length, '상':0, '중':0, '하':0 };
+    airlines.forEach(function(a){ ac[a.alliKey === 'check' ? 'none' : a.alliKey]++; if(rc[a.risk] != null) rc[a.risk]++; });
+    makeSeg(alliSeg, '동맹', [['', '전체', ac['']], ['star', 'Star', ac.star], ['sky', 'SkyTeam', ac.sky], ['one', 'oneworld', ac.one], ['none', '없음·확인 필요', ac.none]],
+      alliFilter, function(v){ alliFilter = v; render(); });
+    makeSeg(riskSeg, '위험도', [['', '전체', null], ['상', '상', rc['상']], ['중', '중', rc['중']], ['하', '하', rc['하']]],
+      riskValue, function(v){ riskValue = v; render(); });
+  }
+  window.addEventListener('resize', function(){ placeThumb(alliSeg); placeThumb(riskSeg); });
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ placeThumb(alliSeg); placeThumb(riskSeg); });
+  function matches(a, q, alli, risk){
+    if(q && (a.code + ' ' + a.en + ' ' + a.kr).toLowerCase().indexOf(q) === -1) return false;
+    if(alli){ var k = a.alliKey === 'check' ? 'none' : a.alliKey; if(k !== alli) return false; }
+    if(risk && a.risk !== risk) return false;
+    return true;
+  }
+  var COLS = [
+    { key:'code', label:'코드' }, { key:'kr', label:'항공사명' }, { key:'alli', label:'동맹' },
+    { key:'nChecked', label:'위탁', center:true }, { key:'nCabin', label:'기내', center:true },
+    { key:'nFee', label:'초과요금', center:true }, { key:'nTier', label:'회원등급', center:true },
+    { key:'vPct', label:'2차검증 일치' }, { key:'riskOrder', label:'위험도', center:true },
+    { key:'lastDate', label:'최종확인일', center:true }, { key:'source', label:'대표 출처' }
+  ];
   function render(){
     var q = filterInput.value.trim().toLowerCase();
-    var sf = statusFilterValue;
-
-    var filtered = airlines.filter(function(a){
-      if(q && (a.code + ' ' + a.en + ' ' + a.kr).toLowerCase().indexOf(q) === -1) return false;
-      if(sf && a.status !== sf) return false;
-      return true;
+    var list = airlines.filter(function(a){ return matches(a, q, alliFilter, riskValue); });
+    var k = sortState.key, d = sortState.dir;
+    list.sort(function(x, y){
+      var av = x[k], bv = y[k];
+      if(typeof av === 'string'){ av = av.toLowerCase(); bv = String(bv || '').toLowerCase(); }
+      return av < bv ? -d : av > bv ? d : 0;
     });
-
-    if(sortState.key){
-      filtered.sort(function(a, b){
-        var av = a[sortState.key], bv = b[sortState.key];
-        if(typeof av === 'string'){ av = av.toLowerCase(); bv = (bv||'').toLowerCase(); }
-        if(av < bv) return -1 * sortState.dir;
-        if(av > bv) return 1 * sortState.dir;
-        return 0;
-      });
-    }
-
-    countStat.textContent = filtered.length + ' / ' + airlines.length + '개 항공사 · 총 ' +
-      airlines.reduce(function(s,a){ return s + a.total; }, 0) + '개 조건행';
-
-    var cols = [
-      { key:'code', label:'코드' },
-      { key:'kr', label:'항공사명' },
-      { key:'consignCount', label:'위탁조건', center:true },
-      { key:'cabinCount', label:'기내조건', center:true },
-      { key:'routeCount', label:'노선구간종류', center:true },
-      { key:'status', label:'확인상태', center:true },
-      { key:'lastDate', label:'최종확인일', center:true },
-      { key:'source', label:'출처' }
-    ];
-
-    // CSS Grid rows (not <table>): header and body share the same grid-template-columns
-    // via the shared ".grow" class, so columns can never drift apart between them.
-    var html = '<div class="gtable">';
-    html += '<div class="grow ghead">';
-    cols.forEach(function(c){
+    countStat.textContent = list.length + ' / ' + airlines.length + '개 항공사 · 허용량 ' +
+      list.reduce(function(s, a){ return s + a.total; }, 0).toLocaleString('ko-KR') + '행';
+    var html = '<div class="gtable"><div class="grow ghead">' + COLS.map(function(c){
       var sorted = sortState.key === c.key;
-      html += '<div class="gcell' + (sorted ? ' sorted' : '') + (c.center ? ' center' : '') + '" data-key="' + c.key + '">' + escapeHtml(c.label) + ' <span class="arrow">' + (sorted && sortState.dir === -1 ? '▴' : '▾') + '</span></div>';
-    });
-    html += '</div><div class="gbody">';
-    filtered.forEach(function(a, idx){
-      html += '<div class="grow row-click" data-idx="' + idx + '">';
-      html += '<div class="gcell"><span class="code-badge">' + escapeHtml(a.code) + '</span></div>';
-      html += '<div class="gcell"><div class="al-cell"><div class="al-logo"><img src="' + airlineLogoUrl(a.code) + '" alt="" loading="lazy" onerror="this.parentElement.hidden=true"></div>' +
-        '<div class="al-name">' + escapeHtml(a.kr) + '<div class="al-en">' + escapeHtml(a.en) + '</div></div></div></div>';
-      html += '<div class="gcell center">' + countChip(a.consignCount) + '</div>';
-      html += '<div class="gcell center">' + countChip(a.cabinCount) + '</div>';
-      html += '<div class="gcell center">' + countChip(a.routeCount) + '</div>';
-      html += '<div class="gcell center">' + statusBadge(a.status) + '</div>';
-      html += '<div class="gcell center">' + escapeHtml(a.lastDate || '—') + '</div>';
-      html += '<div class="gcell src-gcell">' + sourceCell(a.source) + '</div>';
-      html += '</div>';
+      return '<div class="gcell' + (sorted ? ' sorted' : '') + (c.center ? ' center' : '') + '" data-key="' + c.key + '">' + esc(c.label) +
+        ' <span class="arrow">' + (sorted && d === -1 ? '▴' : '▾') + '</span></div>';
+    }).join('') + '</div><div class="gbody">';
+    list.forEach(function(a, i){
+      html += '<div class="grow" data-idx="' + i + '">' +
+        '<div class="gcell"><span class="code-badge">' + esc(a.code) + '</span></div>' +
+        '<div class="gcell"><div class="al-cell"><div class="al-logo"><img src="' + logoUrl(a.code) + '" alt="" loading="lazy" onerror="this.parentElement.hidden=true"></div>' +
+          '<div class="al-name">' + esc(a.kr) + '<div class="al-en">' + esc(a.en) + '</div></div></div></div>' +
+        '<div class="gcell">' + alliChip(a) + '</div>' +
+        '<div class="gcell center">' + countChip(a.nChecked) + '</div>' +
+        '<div class="gcell center">' + countChip(a.nCabin) + '</div>' +
+        '<div class="gcell center" title="요금표 ' + a.nGroups + '개 · 확인 필요 ' + a.nFeeNeed + '">' + countChip(a.nFee, a.nFeeNeed > 0) + '</div>' +
+        '<div class="gcell center" title="' + escAttr(a.tierWhere) + '">' + countChip(a.nTier) + '</div>' +
+        '<div class="gcell">' + vbar(a.v) + '</div>' +
+        '<div class="gcell center">' + riskChip(a.risk) + '</div>' +
+        '<div class="gcell center">' + esc(a.lastDate || '—') + '</div>' +
+        '<div class="gcell">' + (a.source ? '<div class="src-cell"><a class="src-btn" href="' + escAttr(href(a.source)) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">출처 ↗</a><span class="src-domain">' + esc(domain(a.source)) + '</span></div>' : '<span class="badge empty">—</span>') + '</div>' +
+        '</div>';
     });
     html += '</div></div>';
-    frame.innerHTML = html;
-
-    frame.querySelectorAll('.grow.row-click').forEach(function(tr){
-      tr.addEventListener('click', function(){
-        var idx = parseInt(tr.getAttribute('data-idx'), 10);
-        openAirlineModal(filtered[idx]);
-      });
+    frame.innerHTML = list.length ? html : '<div class="state">조건에 맞는 항공사가 없습니다.</div>';
+    frame.querySelectorAll('.gbody .grow').forEach(function(row){
+      row.addEventListener('click', function(){ openModal(list[+row.getAttribute('data-idx')]); });
     });
-
-    frame.querySelectorAll('.ghead .gcell[data-key]').forEach(function(th){
-      th.addEventListener('click', function(){
-        var key = th.getAttribute('data-key');
-        if(sortState.key === key){ sortState.dir *= -1; }
-        else { sortState = { key: key, dir: 1 }; }
+    frame.querySelectorAll('.ghead .gcell[data-key]').forEach(function(h){
+      h.addEventListener('click', function(){
+        var key = h.getAttribute('data-key');
+        if(sortState.key === key) sortState.dir *= -1; else sortState = { key:key, dir: (key === 'code' || key === 'kr' || key === 'alli' || key === 'source') ? 1 : -1 };
         render();
       });
     });
   }
 
-  var modalOverlay = document.getElementById('modal-overlay');
-  var modalContent = document.getElementById('modal-content');
-
-  function buildRouteTable(rows){
-    var html = '<div class="mtx-table"><div class="mrow mhead">' +
-      '<div class="mcell">클래스</div><div class="mcell">운임브랜드</div><div class="mcell">허용량</div><div class="mcell">비고</div>' +
-      '</div>';
-    rows.forEach(function(r){
-      html += '<div class="mrow">';
-      html += '<div class="mcell cls">' + classChip(r[COL.CLASS]) + '</div>';
-      html += '<div class="mcell brand">' + brandChips(r[COL.BRAND]) + '</div>';
-      html += '<div class="mcell allow">' + formatAllowance(r) + '</div>';
-      html += '<div class="mcell note">' + (formatNote(r) || '—') + '</div>';
-      html += '</div>';
-    });
-    html += '</div>';
-    return html;
+  // ---------------------------------------------------------------- 상세: 허용량
+  function isBase(r){ return str(r['회원·특수 구분']) === '기본'; }
+  function dateInfo(r){
+    var basis = str(r['날짜기준']), s = str(r['시작일']), e = str(r['종료일']), inc = str(r['종료일 포함']);
+    var xs = str(r['적용 시작일(X열)']), xe = str(r['적용 종료일(Y열)']), rawE = str(r['날짜조건 원문']);
+    if(basis === '복합') return { key:'c|' + rawE, cls:'plain', kicker:'복합 조건', label:'조건이 둘 이상 — 원문 확인', note: rawE, sort:'9' };
+    var xy = (xs || xe) ? '적용 기간 ' + xs + ' ~ ' + (xe || '') : '';
+    if(s || e){
+      var label = (s ? s + ' 이후' : '') + (s && e ? ' · ' : '') + (e ? e + (inc === '포함' ? ' 까지' : ' 이전') : '') + (xy ? ' · ' + xy : '');
+      return { key:'d|' + basis + s + e + inc + '|' + xs + xe, cls: e && !s ? 'before' : 'after', kicker: basis || '기준일', label: label, note: rawE, sort: (s || e) + xs };
+    }
+    if(xs || xe) return { key:'x|' + xs + xe, cls:'after', kicker:'적용 기간', label: xs + ' ~ ' + (xe || ''), note:'', sort: xs };
+    return null;
   }
-
-  // 노선구간 안에서 기종(F열)별로 한 번 더 나눈다. 기종 값이 있는 행이 하나도 없으면
-  // 지금까지처럼 표를 바로 보여주고, 기종별로 조건이 갈리는 항공사(예: VN)만 소구역을 만든다.
-  function buildAircraftGroups(rows){
-    var hasAircraft = rows.some(function(r){ return r[COL.AIRCRAFT]; });
-    if(!hasAircraft) return buildRouteTable(rows);
-    var acOrder = [];
-    var byAircraft = {};
+  function allowTokens(r, cabin){
+    var t = '', o = num(r['무료 개수']);
+    if(o != null) t += o === 0 ? '<span class="tok zero"><b>0</b>개</span>' : '<span class="tok qty"><b>' + o + '</b>개</span>';
+    var per = num(r['개당 최대 kg']), tot = num(r['총 허용 kg']);
+    if(per != null) t += '<span class="tok wt"><b>' + per + '</b>kg' + (tot != null ? '' : '') + '</span>';
+    if(tot != null) t += '<span class="tok wt"><span class="tok-extra">총</span><b>' + tot + '</b>kg</span>';
+    var needW = /무게/.test(str(r['파싱 확인 필요']));
+    if(per == null && tot == null && (has(r['개당 무게 원문']) || has(r['총 무게 원문']))){
+      t += '<span class="tok raw">⚠ ' + esc(has(r['개당 무게 원문']) ? r['개당 무게 원문'] : r['총 무게 원문']) + '</span>';
+    } else if(needW){
+      t += '<span class="tok raw">⚠ 원문 확인</span>';
+    }
+    if(cabin){
+      var pq = num(r['개인소지품 개수']), pk = num(r['개인소지품 kg']);
+      if(pq != null) t += '<span class="tok pi"><span class="tok-extra">+개인</span><b>' + pq + '</b>' + (pk != null ? '<span class="tok-extra">' + pk + 'kg</span>' : '') + '</span>';
+    }
+    var st = str(r['제공상태']), tags = '';
+    if(st === 'C') tags = '<div style="margin-top:4px"><span class="tag c">무료 없음 · 유료 구매</span></div>';
+    else if(st === '확인 필요' && o === 0) tags = '<div style="margin-top:4px"><span class="tag q">무료 없음</span></div>';
+    var items = [];
+    if(has(r['개념'])) items.push({ label:'개념', text: r['개념'] + (r['개념코드'] ? ' (' + r['개념코드'] + ')' : '') });
+    if(r['무료 개수'] !== '') items.push({ label:'무료 개수', text: String(r['무료 개수']) });
+    if(has(r['개당 무게 원문'])) items.push({ label:'개당 무게 원문', text: r['개당 무게 원문'] });
+    if(has(r['총 무게 원문'])) items.push({ label:'총 무게 원문', text: r['총 무게 원문'] });
+    if(cabin && has(r['개인소지품 무게 원문'])) items.push({ label:'개인소지품 무게', text: r['개인소지품 무게 원문'], accent:true });
+    items.push({ label:'제공상태', text: st === 'I' ? 'I 무료 포함' : st === 'C' ? 'C 무료 없음 · 유료 구매 가능' : st || '—' });
+    if(!t) t = '<span class="badge empty">—</span>';
+    return '<span class="popover-trigger allow-tokens"' + popAttrs(items) + '>' + t + '</span>' + tags;
+  }
+  function sizeCell(r, cabin){
+    var lin = num(r['3변 합 cm']), inch = num(r['3변 합 in']), d1 = num(r['규격1 cm']), d2 = num(r['규격2 cm']), d3 = num(r['규격3 cm']);
+    var pair = num(r['2개 합산 3변 합 cm']), lmin = num(r['3변 합 하한 cm']), st = str(r['규격 파싱상태']);
+    var t = '';
+    if(lin != null) t += '<span class="tok dim"><span class="tok-extra">3변</span>' + (lmin != null ? '<b>' + lmin + '~' + lin + '</b>' : '<b>' + lin + '</b>') + 'cm' + (inch != null ? '<span class="tok-extra">' + inch + 'in</span>' : '') + '</span>';
+    var dims = (d1 != null && d2 != null && d3 != null) ? d1 + '×' + d2 + '×' + d3 + 'cm' : '';
+    if(!t && dims) t += '<span class="tok dim"><b>' + dims.replace('cm', '') + '</b>cm</span>';
+    else if(dims) t += '<div class="dims-line">각 변 ' + dims + '</div>';
+    if(pair != null) t += '<div class="dims-line">2개 합산 ' + pair + 'cm</div>';
+    if(str(r['바퀴·손잡이 포함']) === 'Y') t += '<div class="dims-line">바퀴·손잡이 포함</div>';
+    if(st === '확인 필요' || (st === '원문만' && has(r['규격 원문']))) t += '<span class="tok raw">⚠ 원문 확인</span>';
+    var items = [];
+    if(has(r['규격 원문'])) items.push({ label:(cabin ? '기내' : '위탁') + ' 규격 원문', text: r['규격 원문'] });
+    if(cabin){
+      var p1 = num(r['개인소지품 규격1 cm']), p2 = num(r['개인소지품 규격2 cm']), p3 = num(r['개인소지품 규격3 cm']);
+      if(p1 != null && p2 != null && p3 != null) t += '<div class="dims-line">개인소지품 ' + p1 + '×' + p2 + '×' + p3 + 'cm</div>';
+      if(has(r['개인소지품 원문']) && str(r['개인소지품 원문']) !== '해당없음') items.push({ label:'개인소지품 원문', text: r['개인소지품 원문'], accent:true });
+      if(has(r['R열 병기 개인소지품 원문'])) items.push({ label:'규격 칸에 같이 적힌 개인소지품', text: r['R열 병기 개인소지품 원문'], accent:true });
+    }
+    if(!t) return items.length ? '<span class="popover-trigger badge empty"' + popAttrs(items) + '>원문 보기</span>' : '<span class="badge empty">—</span>';
+    return '<div class="popover-trigger"' + (items.length ? popAttrs(items) : '') + '>' + t + '</div>';
+  }
+  function noteCell(r){
+    var bits = [];
+    if(has(r['승객유형']) && str(r['승객유형']) !== '성인') bits.push('<span class="tag t">' + esc(r['승객유형']) + '</span>');
+    if(has(r['회원등급 조건'])) bits.push('<span class="tag t">' + esc(r['회원등급 조건']) + '</span>');
+    var note = str(r['비고 원문']);
+    if(!note && !bits.length) return '—';
+    var items = [];
+    if(note) items.push({ label:'', text: note });
+    if(has(r['행 메모'])) items.push({ label:'정리 메모', text: r['행 메모'], accent:true });
+    return bits.join('') + (note ? '<span class="popover-trigger"' + popAttrs(items) + '>' + esc(note) + '</span>' : '');
+  }
+  function allowTable(rows, cabin){
+    var html = '<div class="mtx-table"><div class="mrow mhead"><div class="mcell">좌석등급</div><div class="mcell">운임브랜드</div><div class="mcell">허용량</div><div class="mcell">규격</div><div class="mcell">비고</div><div class="mcell">검증</div></div>';
     rows.forEach(function(r){
-      var ac = r[COL.AIRCRAFT] || '기종 미구분';
-      if(!byAircraft[ac]){ byAircraft[ac] = []; acOrder.push(ac); }
-      byAircraft[ac].push(r);
+      html += '<div class="mrow"><div class="mcell">' + classChip(r['좌석등급'], r['좌석등급코드']) + '</div>' +
+        '<div class="mcell">' + brandChips(r['운임브랜드']) + '</div>' +
+        '<div class="mcell">' + allowTokens(r, cabin) + '</div>' +
+        '<div class="mcell">' + sizeCell(r, cabin) + '</div>' +
+        '<div class="mcell note">' + noteCell(r) + '</div>' +
+        '<div class="mcell"><div class="vcell">' + vBadge(r['2차검증 판정']) + (r['최종확인일'] ? '<span class="d">' + esc(r['최종확인일']) + '</span>' : '') + '</div></div></div>';
     });
-    return acOrder.map(function(ac){
-      return '<div class="mtx-aircraft">' +
-        '<div class="mtx-aircraft-title">' +
-          '<svg class="ac-ico" viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M22 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3-1 3 1v-1.5L13 19v-5.5z" fill="currentColor"/></svg>' +
-          escapeHtml(ac) +
-        '</div>' +
-        buildRouteTable(byAircraft[ac]) +
-        '</div>';
+    return html + '</div>';
+  }
+  function groupBy(rows, keyFn){
+    var order = [], map = {};
+    rows.forEach(function(r){ var k = keyFn(r); if(!map[k]){ map[k] = []; order.push(k); } map[k].push(r); });
+    return order.map(function(k){ return { key:k, rows: map[k] }; });
+  }
+  function routeGroups(rows, cabin){
+    return groupBy(rows, function(r){ return str(r['노선구간']) || '기타'; }).map(function(g){
+      var ac = groupBy(g.rows, function(r){ return str(r['기종조건 원문']); });
+      var inner = (ac.length === 1 && !ac[0].key) ? allowTable(g.rows, cabin) : ac.map(function(x){
+        return '<div class="mtx-aircraft"><div class="mtx-aircraft-title">✈ ' + esc(x.key || '기종 미구분') +
+          (x.rows[0]['기종코드'] ? ' <span style="opacity:.7">(' + esc(x.rows[0]['기종코드']) + ')</span>' : '') + '</div>' + allowTable(x.rows, cabin) + '</div>';
+      }).join('');
+      return '<div class="mtx-route"><div class="mtx-route-title">' + esc(g.key) + '</div>' + inner + '</div>';
     }).join('');
   }
-
-  // 노선구간별로 그룹핑해 표를 만든다 (원본 정렬 순서 유지)
-  function buildRouteGroups(rows){
-    var routeOrder = [];
-    var byRoute = {};
+  function sectionAllow(id, icon, title, rows, cabin){
+    if(!rows.length) return '<div class="mtx-section" id="' + id + '"><div class="mtx-section-title"><span class="icon">' + icon + '</span>' + esc(title) + '</div><div class="mtx-empty">기본 허용량 행이 없습니다.</div></div>';
+    var plain = [], dated = {}, order = [];
     rows.forEach(function(r){
-      var route = r[COL.ROUTE] || '기타';
-      if(!byRoute[route]){ byRoute[route] = []; routeOrder.push(route); }
-      byRoute[route].push(r);
+      var di = dateInfo(r);
+      if(!di){ plain.push(r); return; }
+      if(!dated[di.key]){ dated[di.key] = { info: di, rows: [] }; order.push(di.key); }
+      dated[di.key].rows.push(r);
     });
-    return routeOrder.map(function(route){
-      return '<div class="mtx-route">' +
-        '<div class="mtx-route-title">' + escapeHtml(route) + '</div>' +
-        buildAircraftGroups(byRoute[route]) +
-        '</div>';
-    }).join('');
-  }
-
-  // E열(기준일자) 값을 정규화. 기준은 셀 문구에서 읽는다:
-  //   "2026-04-23 이후"            → 발권일 2026-04-23 이후
-  //   "탑승일 기준 2026.10.24 까지" → 탑승일 2026-10-24 까지
-  //   "2026-04-29부터 발행 또는 변경된 항공권" → 발권·변경일 2026-04-29 부터
-  // 둘째 줄부터는 부가 조건(출발 기간 등)으로 보고 소구역 제목 아래에 그대로 보여준다.
-  function parseTicketDate(v){
-    var s = String(v || '').trim();
-    if(!s) return null;
-    var lines = s.split(/\n+/).map(function(l){ return l.trim(); }).filter(Boolean);
-    var first = lines[0], note = lines.slice(1).join(' / ');
-    // "발행"은 발권과 같은 뜻으로 보고 합친다(VN 셀이 두 표기를 섞어 씀).
-    var basis = /탑승|출발/.test(first) ? '탑승일'
-              : /변경/.test(first) ? '발권·변경일' : '발권일';
-    var m = first.match(/(\d{4})\s*[.\-\/]\s*(\d{1,2})\s*[.\-\/]\s*(\d{1,2})\s*(?:일)?\s*(이후|이전|부터|까지|after|before)?/i);
-    if(!m) return { key: s, label: first, basis: basis, note: note, date: '', dir: '' };
-    var date = m[1] + '-' + String(m[2]).padStart(2,'0') + '-' + String(m[3]).padStart(2,'0');
-    var word = (m[4] || '이후').toLowerCase();
-    var dir = /이전|까지|before/.test(word) ? 'before' : 'after';
-    if(word === 'after') word = '이후'; if(word === 'before') word = '이전';
-    return { key: basis + '|' + date + '|' + dir + '|' + note, date: date, dir: dir, basis: basis, note: note, label: date + ' ' + word };
-  }
-
-  function buildSection(icon, title, rows){
-    if(!rows.length) return '';
-    var source = '';
-    rows.forEach(function(r){ if(!source && r[COL.SOURCE]) source = r[COL.SOURCE]; });
-
-    // 기준일자(E열)가 있는 행은 "발권일/탑승일/발행일 YYYY-MM-DD 이전/이후" 소구역으로 나누고,
-    // 없는 행은 지금까지처럼 그대로 보여준다. 소구역은 해당 행이 있을 때만 생긴다.
-    var plain = [], dated = {}, datedOrder = [];
-    rows.forEach(function(r){
-      var td = parseTicketDate(r[COL.TICKET_DATE]);
-      if(!td){ plain.push(r); return; }
-      if(!dated[td.key]){ dated[td.key] = { info: td, rows: [] }; datedOrder.push(td.key); }
-      dated[td.key].rows.push(r);
-    });
-    // 같은 날짜는 "이전" → "이후" 순, 날짜는 오름차순
-    datedOrder.sort(function(a, b){
-      var A = dated[a].info, B = dated[b].info;
-      if(A.date !== B.date) return A.date < B.date ? -1 : 1;
-      return (A.dir === 'before' ? 0 : 1) - (B.dir === 'before' ? 0 : 1);
-    });
-
+    order.sort(function(x, y){ return dated[x].info.sort < dated[y].info.sort ? -1 : dated[x].info.sort > dated[y].info.sort ? 1 : 0; });
     var body = '';
-    if(plain.length){
-      body += (datedOrder.length ? '<div class="mtx-ticket-group"><div class="mtx-ticket-title plain">기준일 무관</div>' + buildRouteGroups(plain) + '</div>' : buildRouteGroups(plain));
-    }
-    datedOrder.forEach(function(k){
+    if(plain.length) body += order.length ? '<div class="mtx-ticket-group"><div class="mtx-ticket-title plain">기준일 무관</div>' + routeGroups(plain, cabin) + '</div>' : routeGroups(plain, cabin);
+    order.forEach(function(k){
       var g = dated[k];
-      body += '<div class="mtx-ticket-group">' +
-        '<div class="mtx-ticket-title ' + (g.info.dir === 'before' ? 'before' : 'after') + '">' +
-          '<svg class="tk-ico" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="1.5" y="3" width="13" height="11.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M1.5 6.5h13" stroke="currentColor" stroke-width="1.5"/><path d="M5 1.5v3M11 1.5v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><rect x="4.5" y="8.5" width="3" height="3" rx=".6" fill="currentColor"/></svg>' +
-          '<span class="tk-kicker">' + escapeHtml(g.info.basis) + '</span>' + escapeHtml(g.info.label) + ' <span class="tk-what">' + escapeHtml(title) + '</span>' +
-          '<span class="tk-count">' + g.rows.length + '개</span></div>' +
-        (g.info.note ? '<div class="mtx-ticket-note">' + escapeHtml(g.info.note) + '</div>' : '') +
-        buildRouteGroups(g.rows) +
-        '</div>';
+      body += '<div class="mtx-ticket-group"><div class="mtx-ticket-title ' + g.info.cls + '"><span class="tk-kicker">' + esc(g.info.kicker) + '</span>' +
+        esc(g.info.label) + '<span class="tk-count">' + g.rows.length + '행</span></div>' +
+        (g.info.note && g.info.cls === 'plain' ? '<div class="mtx-ticket-note">' + esc(g.info.note) + '</div>' : '') + routeGroups(g.rows, cabin) + '</div>';
     });
-
-    return '<div class="mtx-section">' +
-      '<div class="mtx-section-title"><span class="icon">' + icon + '</span>' + escapeHtml(title) + '<span class="count">' + rows.length + '개 조건</span></div>' +
-      '<div class="mtx-section-source">출처: ' + (source ? linkifyUrl(source) : '<span class="badge empty">—</span>') + '</div>' +
-      body +
-      '</div>';
+    return '<div class="mtx-section" id="' + id + '"><div class="mtx-section-title"><span class="icon">' + icon + '</span>' + esc(title) +
+      '<span class="count">' + rows.length + '행</span></div>' + body + '</div>';
   }
 
-  // 초과요금 셀 표기규칙("존명: 구간 금액 통화 / 구간 금액 통화; 존명: ...")을 칩으로 풀어준다.
-  // 존이 하나뿐이면 세미콜론이 없어 zones가 1개고, 구간이 하나뿐이면 슬래시가 없어 tiers도 1개 —
-  // 어느 쪽이든 그대로 자연스럽게 렌더링된다.
-  function formatFeeValue(v){
-    if(!v || v === '-') return '<span class="fee-empty">공홈 미공개</span>';
-    var zones = String(v).split(';').map(function(z){ return z.trim(); }).filter(Boolean);
-    return zones.map(function(z){
-      var tiers = z.split('/').map(function(t){ return t.trim(); }).filter(Boolean);
-      return '<div class="fee-zone">' + tiers.map(function(t){
-        return '<div class="fee-tier">' + escapeHtml(t) + '</div>';
+  // ---------------------------------------------------------------- 상세: 초과요금
+  function segText(f){
+    var s = num(f['구간 시작']), e = num(f['구간 끝']), u = str(f['구간 단위']), per = str(f['과금 방식']);
+    var main = '';
+    if(u === '개'){
+      if(s != null && e != null && s === e) main = s + '번째';
+      else if(s != null && e != null) main = s + '~' + e + '번째';
+      else if(s != null) main = s + '번째~';
+    } else if(s != null || e != null){
+      main = (s != null ? s : '') + (e != null ? '~' + e : (s != null ? ' 초과' : '')) + u;
+      if(s == null && e != null) main = e + u;
+    }
+    if(str(f['행 유형']) === '조건·메모') return '<span class="badge empty">—</span>';
+    if(!main) main = str(f['구간 원문']);
+    var perTxt = (per && per !== '구간 정액' && per !== '개당 정액' && main.indexOf(per) === -1) ? per : '';
+    return '<span class="fee-seg">' + esc(main) + (perTxt ? '<span class="per">' + esc(perTxt) + '</span>' : '') + '</span>';
+  }
+  function amtText(f){
+    var kind = str(f['행 유형']);
+    if(kind === '무료') return '<span class="fee-amt free">무료</span>';
+    if(kind === '불가·한도') return '<span class="fee-amt block">접수 불가</span>';
+    if(kind === '조건·메모') return '<span class="badge empty">—</span>';
+    var a = num(f['금액']), hi = num(f['금액 상한']);
+    if(a == null) return '<span class="badge empty">—</span>';
+    return '<span class="fee-amt">' + a.toLocaleString('ko-KR') + (hi != null ? '~' + hi.toLocaleString('ko-KR') : '') + '<span class="cur">' + esc(f['통화']) + '</span></span>';
+  }
+  function scopeSummary(refs){
+    var routes = {}, cls = {};
+    refs.forEach(function(r){ routes[str(r['노선구간'])] = 1; cls[str(r['좌석등급']).replace(/\(.*$/, '')] = 1; });
+    var rl = Object.keys(routes), cl = Object.keys(cls);
+    var txt = rl.slice(0, 3).join(' · ') + (rl.length > 3 ? '<span class="more"> 외 ' + (rl.length - 3) + '개 노선</span>' : '');
+    return (txt || '적용 행 없음') + ' <span class="more">· ' + esc(cl.join('·')) + '</span>';
+  }
+  function sectionFees(a){
+    if(!a.groupOrder.length) return '<div class="mtx-section" id="sec-fee"><div class="mtx-section-title"><span class="icon">💳</span>초과 수하물 요금</div><div class="mtx-empty">사본에 초과요금 정보가 없습니다.</div></div>';
+    var body = '';
+    FEE_TYPES.forEach(function(t){
+      var gs = a.groupOrder.map(function(id){ return a.groups[id]; }).filter(function(g){ return g.type === t; });
+      if(!gs.length) return;
+      var nRows = gs.reduce(function(s, g){ return s + g.rows.length; }, 0);
+      body += '<div class="fee-type"><div class="fee-type-title">' + esc(t) + '<span class="n">요금표 ' + gs.length + '개 · ' + nRows + '행</span></div>';
+      gs.forEach(function(g, i){
+        var need = g.rows.filter(function(f){ return str(f['파싱상태']) === '확인 필요'; }).length;
+        var zones = {}; g.rows.forEach(function(f){ zones[str(f['요금존'])] = 1; });
+        body += '<details class="fee-group"' + (i === 0 ? ' open' : '') + '><summary><span class="fg-scope">' + scopeSummary(g.refs) + '</span>' +
+          '<span class="fg-meta">' + (need ? '<span class="pill warn">확인 필요 ' + need + '</span>' : '') + '<span class="pill">' + g.rows.length + '행</span>' +
+          '<span class="pill info">' + esc(g.id) + '</span></span></summary><div class="fee-table">' +
+          '<div class="frow fhead"><div>존</div><div>구간</div><div>금액</div><div>채널</div><div>메모</div></div>';
+        g.rows.forEach(function(f){
+          var memo = [str(f['조건 메모']), str(f['공통 조건(앞머리)']), str(f['다른 통화 표기']) ? '다른 통화 ' + f['다른 통화 표기'] : '', str(f['할인율 표기']) ? '할인 ' + f['할인율 표기'] : ''].filter(Boolean).join(' · ');
+          body += '<div class="frow"><div class="fee-memo">' + esc(f['요금존'] || '—') + '</div><div>' + segText(f) + '</div><div>' + amtText(f) +
+            (str(f['파싱상태']) === '확인 필요' ? ' <span class="tag q">확인</span>' : '') + '</div><div class="fee-memo">' + esc(f['판매 채널'] || '—') + '</div>' +
+            '<div class="fee-memo">' + esc(memo || '—') + '</div></div>';
+        });
+        body += '<div class="fee-src popover-trigger"' + popAttrs([{ label:'셀 원문', text: g.cell }, { label:'출처', text: g.url || '—' }]) + '>셀 원문 보기 · ' + esc(domain(g.url) || '출처 여러 개') + '</div></div></details>';
+      });
+      body += '</div>';
+    });
+    return '<div class="mtx-section" id="sec-fee"><div class="mtx-section-title"><span class="icon">💳</span>초과 수하물 요금<span class="count">' + a.nFee + '행</span></div>' +
+      '<div class="mtx-section-note">같은 요금 문장을 쓰는 노선·좌석을 한 요금표로 묶었습니다. 요금표 제목은 그 요금이 적용되는 노선입니다.</div>' + body + '</div>';
+  }
+
+  // ---------------------------------------------------------------- 상세: 회원등급
+  function effText(t){
+    var e = str(t['효과']), bits = [];
+    if(e === 'ADD'){
+      if(num(t['추가 개수']) != null) bits.push('+<b>' + t['추가 개수'] + '</b>개');
+      if(num(t['추가 kg']) != null) bits.push('+<b>' + t['추가 kg'] + '</b>kg');
+      if(num(t['추가 비율(%)']) != null) bits.push('+<b>' + t['추가 비율(%)'] + '</b>%');
+      return bits.length ? '<span class="eff">' + bits.join(' · ') + '</span>' : '<span class="eff unknown">추가(수치 미기재)</span>';
+    }
+    if(e === 'REPLACE'){
+      if(num(t['대체 개수']) != null) bits.push('<b>' + t['대체 개수'] + '</b>개');
+      if(num(t['대체 개당 kg']) != null) bits.push('개당 <b>' + t['대체 개당 kg'] + '</b>kg');
+      if(num(t['대체 총 kg']) != null) bits.push('총 <b>' + t['대체 총 kg'] + '</b>kg');
+      return bits.length ? '<span class="eff rep">' + bits.join(' · ') + '</span>' : '<span class="eff unknown">대체(수치 미기재)</span>';
+    }
+    if(e === 'NONE') return '<span class="eff none">변화 없음</span>';
+    if(e === 'FEE_DISC') return '<span class="eff disc">' + (num(t['요금 할인율(%)']) != null ? '요금 <b>' + t['요금 할인율(%)'] + '</b>% 할인' : '요금 할인') + '</span>';
+    if(e === 'COND') return '<span class="eff cond">조건</span>';
+    return esc(e);
+  }
+  function scopeChips(t){
+    var s = [];
+    if(t['수하물종류']) s.push(t['수하물종류']);
+    if(t['적용 개념']) s.push(t['적용 개념'] === 'PC' ? '개수제' : t['적용 개념'] === 'WT' ? '중량제' : t['적용 개념']);
+    if(t['적용 노선']) s.push(t['적용 노선']);
+    if(t['적용 좌석등급']) s.push(t['적용 좌석등급']);
+    if(t['적용 운임']) s.push(t['적용 운임']);
+    if(t['시작일'] || t['종료일']) s.push((t['날짜기준'] || '') + ' ' + (t['시작일'] || '') + '~' + (t['종료일'] || ''));
+    return '<div class="scope">' + s.map(function(x){ return '<span class="s">' + esc(x) + '</span>'; }).join('') + '</div>';
+  }
+  function statChips(t){
+    var x = str(t['추출 상태']), c = str(t['확인상태']);
+    var out = '';
+    if(x && x !== '자동') out += '<span class="pill warn">' + esc(x) + '</span>';
+    out += '<span class="pill' + (/^o/.test(c) ? ' info' : '') + '">' + esc(c || '미검증') + '</span>';
+    return '<div class="tstat">' + out + '</div>';
+  }
+  function sectionTiers(a){
+    if(!a.tiers.length){
+      return '<div class="mtx-section" id="sec-tier"><div class="mtx-section-title"><span class="icon">🏅</span>회원등급 혜택</div><div class="mtx-empty">' +
+        (/^없음/.test(a.tierWhere) ? '사본 어디에도 회원등급 정보가 없습니다. 공홈 조사가 필요합니다.' : '회원등급 정보가 없습니다.') + '</div></div>';
+    }
+    var fromL = a.tiers.filter(function(t){ return /회원등급 열/.test(str(t['원문 위치'])); });
+    var fromAC = a.tiers.filter(function(t){ return !/회원등급 열/.test(str(t['원문 위치'])); });
+    var body = '';
+    var kindOrder = ['자사 등급', '동맹 등급', '제휴카드'];
+    if(fromAC.length){
+      var byProg = groupBy(fromAC.slice().sort(function(x, y){ return kindOrder.indexOf(str(x['혜택주체'])) - kindOrder.indexOf(str(y['혜택주체'])); }), function(t){ return str(t['혜택주체']) + '|' + str(t['프로그램']); });
+      byProg.forEach(function(g){
+        var kind = g.key.split('|')[0], prog = g.key.split('|')[1];
+        body += '<div class="tier-prog"><div class="tier-prog-title">' + esc(prog) + '<span class="kind">' + esc(kind) + '</span></div><div class="tier-list">' +
+          '<div class="trow thead"><div>등급</div><div>효과</div><div>적용 범위</div><div>조건 · 제외</div><div>상태</div></div>';
+        g.rows.forEach(function(t){
+          var cond = [str(t['적용 조건']), str(t['제외 조건']) ? '제외: ' + t['제외 조건'] : '', str(t['개당 조건']) ? '추가분: ' + t['개당 조건'] : '', str(t['추출 메모'])].filter(Boolean).join(' · ');
+          body += '<div class="trow popover-trigger"' + popAttrs([{ label:'원문', text: str(t['원문']) }, { label:'출처 행', text: str(t['출처 행 요약']) || ('원본No ' + t['원본No(대표)']) }]) + '>' +
+            '<div class="tier-name">' + esc(t['등급']) + (t['동맹 등급 대응'] && str(t['혜택주체']) !== '동맹 등급' ? '<span class="alli-eq">= ' + esc(t['동맹 등급 대응']) + '</span>' : '') + '</div>' +
+            '<div>' + effText(t) + '</div><div>' + scopeChips(t) + '</div><div class="tcond">' + esc(cond || '—') + '</div><div>' + statChips(t) + '</div></div>';
+        });
+        body += '</div></div>';
+      });
+    }
+    if(fromL.length){
+      var byTier = groupBy(fromL, function(t){ return str(t['혜택주체']) + '|' + str(t['프로그램']) + '|' + str(t['등급']); });
+      body += '<div class="tier-prog"><div class="tier-prog-title">등급별 허용량 표<span class="kind">회원등급 열 행 · 기본 허용량 대신 적용</span></div>';
+      byTier.forEach(function(g){
+        var p = g.key.split('|'), first = g.rows[0];
+        body += '<details class="tier-rep"><summary><b>' + esc(p[2]) + '</b><span class="pill">' + esc(p[1]) + '</span>' +
+          (first['동맹 등급 대응'] && p[0] !== '동맹 등급' ? '<span class="pill info">= ' + esc(first['동맹 등급 대응']) + '</span>' : '') +
+          '<span class="pill">' + g.rows.length + '행</span>' + (first['적용 조건'] ? '<span class="tcond" title="' + escAttr(first['적용 조건']) + '">' + esc(first['적용 조건']) + '</span>' : '') + '</summary>' +
+          '<div class="rep-row rhead"><div>노선</div><div>좌석등급</div><div>운임</div><div>허용량</div><div>검증</div></div>';
+        g.rows.forEach(function(t){
+          body += '<div class="rep-row"><div>' + esc(t['적용 노선']) + '</div><div>' + classChip(t['적용 좌석등급'], t['좌석등급코드']) + '</div><div>' + brandChips(t['적용 운임']) + '</div><div>' + effText(t) + '</div><div>' + vBadge(t['확인상태']) + '</div></div>';
+        });
+        body += '</details>';
+      });
+      body += '</div>';
+    }
+    return '<div class="mtx-section" id="sec-tier"><div class="mtx-section-title"><span class="icon">🏅</span>회원등급 혜택<span class="count">' + a.tiers.length + '행</span></div>' +
+      '<div class="mtx-section-note">비고 문장에서 뽑은 행은 공홈 대조 전(△)입니다. 행을 누르면 원문이 보입니다.</div>' + body + '</div>';
+  }
+
+  // ---------------------------------------------------------------- 상세: 특수조건 · 유아소아 · 부가서비스 · 출처
+  function sectionSpecs(a){
+    if(!a.specs.length) return '';
+    var body = a.specs.map(function(s){
+      var eff = str(s['effect_type']), vals = [];
+      if(num(s['pieces']) != null) vals.push(s['pieces'] + '개');
+      if(num(s['kg_per_piece']) != null) vals.push('개당 ' + s['kg_per_piece'] + 'kg');
+      if(num(s['total_kg']) != null) vals.push('총 ' + s['total_kg'] + 'kg');
+      if(num(s['add_pieces']) != null) vals.push('+' + s['add_pieces'] + '개');
+      if(num(s['add_kg']) != null) vals.push('+' + s['add_kg'] + 'kg');
+      var scope = [s['route_group'], s['cabin_class'], s['fare_brand']].filter(has).join(' · ');
+      var period = (s['valid_from'] || s['valid_to']) ? (s['date_basis'] || '') + ' ' + (s['valid_from'] || '') + '~' + (s['valid_to'] || '') : '';
+      return '<div class="spec-card"><div class="spec-type">' + esc(s['condition_type']) + '<small>' + esc(SPEC_TYPE[str(s['condition_type'])] || '') + '</small></div>' +
+        '<div class="spec-body"><div class="spec-elig">' + esc(s['eligibility']) + '</div>' +
+        '<div><span class="eff ' + (eff === 'REPLACE' ? 'rep' : eff === 'NONE' ? 'none' : eff === 'PER_TICKET' ? 'cond' : '') + '">' + esc(eff) + (vals.length ? ' · ' + esc(vals.join(' · ')) : '') + '</span></div>' +
+        (has(s['effect_note']) ? '<div class="spec-line">' + esc(s['effect_note']) + '</div>' : '') +
+        (scope ? '<div class="spec-line">범위: ' + esc(scope) + '</div>' : '') +
+        (has(s['scope_exclude']) ? '<div class="spec-line">제외: ' + esc(s['scope_exclude']) + '</div>' : '') +
+        (period ? '<div class="spec-line">기간: ' + esc(period) + '</div>' : '') +
+        '<div class="spec-line">근거 ' + esc(s['evidence_type'] || '—') + ' · 확인 ' + esc(s['verify_status'] || '—') + (s['checked_at'] ? ' · ' + esc(s['checked_at']) : '') +
+        (has(s['source_url']) && /\./.test(s['source_url']) ? ' · ' + linkify(s['source_url']) : '') + '</div></div></div>';
+    }).join('');
+    return '<div class="mtx-section" id="sec-spec"><div class="mtx-section-title"><span class="icon">🧾</span>특수조건<span class="count">' + a.specs.length + '건</span></div>' + body + '</div>';
+  }
+  function sectionPax(a){
+    if(!a.pax.length) return '';
+    function col(code, title){
+      var list = a.pax.filter(function(p){ return str(p['승객유형코드']) === code; });
+      if(!list.length) return '<div><div class="pax-col-title">' + title + '</div><div class="mtx-empty">정보 없음</div></div>';
+      return '<div><div class="pax-col-title">' + title + ' <span class="stat">' + list.length + '종</span></div>' + list.map(function(p){
+        var flags = [];
+        if(str(p['성인과 동일']) === 'Y') flags.push('<span class="pill info">성인과 동일</span>');
+        if(has(p['좌석 점유 언급'])) flags.push('<span class="pill">좌석 ' + esc(p['좌석 점유 언급']) + '</span>');
+        if(str(p['유모차 언급']) === 'Y') flags.push('<span class="pill">유모차</span>');
+        if(str(p['카시트 언급']) === 'Y') flags.push('<span class="pill">카시트</span>');
+        if(str(p['요람 언급']) === 'Y') flags.push('<span class="pill">요람</span>');
+        return '<div class="pax-item">' + esc(p['원문']) + (flags.length ? '<div class="flags">' + flags.join('') + '</div>' : '') +
+          '<div class="ref">' + esc(p['참조 좌석등급']) + ' · ' + esc(p['참조 행 수']) + '행에서 사용</div></div>';
       }).join('') + '</div>';
-    }).join('');
+    }
+    return '<div class="mtx-section" id="sec-pax"><div class="mtx-section-title"><span class="icon">👶</span>유아 · 소아<span class="count">' + a.pax.length + '종</span></div>' +
+      '<div class="mtx-section-note">원문 기준입니다. 개수·무게 구조화는 다음 단계라 언급 여부만 표시합니다.</div><div class="pax-grid">' + col('INF', '유아') + col('CHD', '소아') + '</div></div>';
   }
-
-  function buildFeeSection(a){
-    var fees = a.fees || [];
-    if(!fees.length) return '';
-    var withFee = fees.filter(function(f){ return f.hasFee; });
-    // 전부 "공홈 미공개"인 항공사도 있다(유럽 FSC 등, 계산기 전용) — 그래도 대표로 1행은 보여서
-    // "확인은 했지만 항공사가 수치를 안 준다"는 걸 알 수 있게 한다.
-    var rows = withFee.length ? withFee : fees.slice(0, 1);
-    var body = rows.map(function(f){
-      return '<div class="fee-row">' +
-        '<div class="fee-route">' + escapeHtml(f.route) + ' <span class="fee-route-sep">·</span> ' + escapeHtml(f.cls) + '</div>' +
-        '<div class="fee-grid">' +
-          '<div class="fee-cell"><div class="fee-cell-label">중량초과</div><div class="fee-cell-value">' + formatFeeValue(f.w) + '</div></div>' +
-          '<div class="fee-cell"><div class="fee-cell-label">개수초과</div><div class="fee-cell-value">' + formatFeeValue(f.c) + '</div></div>' +
-          '<div class="fee-cell"><div class="fee-cell-label">규격초과</div><div class="fee-cell-value">' + formatFeeValue(f.s) + '</div></div>' +
-          '<div class="fee-cell"><div class="fee-cell-label">사전구매</div><div class="fee-cell-value">' + formatFeeValue(f.pre) + '</div></div>' +
-        '</div></div>';
-    }).join('');
-    return '<div class="mtx-section">' +
-      '<div class="mtx-section-title"><span class="icon">💳</span>초과 수하물 요금<span class="count">' + rows.length + '개 조합</span></div>' +
-      body +
-      '</div>';
-  }
-
   function policyItem(icon, label, val){
-    var has = val && val !== '-' && !/^(미확인|공홈 미기재)/.test(val);
-    return '<div class="pol-item' + (has ? '' : ' empty') + '">' +
-      '<div class="pol-icon">' + icon + '</div>' +
-      '<div class="pol-body">' +
-        '<div class="pol-label">' + escapeHtml(label) + '</div>' +
-        '<div class="pol-value">' + (has ? escapeHtml(val) : '정보 없음') + '</div>' +
-      '</div></div>';
+    var ok = has(val) && !/^(미확인|공홈 미기재)/.test(str(val));
+    return '<div class="pol-item' + (ok ? '' : ' empty') + '"><div class="pol-icon">' + icon + '</div><div><div class="pol-label">' + esc(label) + '</div><div class="pol-value">' + (ok ? esc(val) : '정보 없음') + '</div></div></div>';
   }
-
-  function buildPolicySection(a){
-    var p = a.policy;
-    if(!p) return '';
+  function sectionPolicy(a){
+    var p = a.policy; if(!p) return '';
     var groups = [
-      { title:'스포츠 장비', items:[
-        policyItem('⛳', '골프', p.golf), policyItem('🎿', '스키·스노보드', p.ski),
-        policyItem('🚲', '자전거', p.bike), policyItem('🏄', '서핑보드', p.surf)
-      ]},
-      { title:'악기', items:[
-        policyItem('🎻', '기내 반입', p.instCabin), policyItem('🎻', '좌석 구매', p.instSeat)
-      ]},
-      { title:'반려동물', items:[
-        policyItem('🐾', '기내 동반', p.petCabin), policyItem('🐾', '화물칸 위탁', p.petHold),
-        policyItem('💰', '운송 요금', p.petFee)
-      ]},
-      { title:'유아용품', items:[
-        policyItem('🍼', '유모차', p.stroller), policyItem('🪑', '카시트', p.carseat)
-      ]}
+      ['스포츠 장비', [policyItem('⛳', '골프', p.golf), policyItem('🎿', '스키·스노보드', p.ski), policyItem('🚲', '자전거', p.bike), policyItem('🏄', '서핑보드', p.surf)]],
+      ['악기', [policyItem('🎻', '기내 반입', p.instCabin), policyItem('🎻', '좌석 구매', p.instSeat)]],
+      ['반려동물', [policyItem('🐾', '기내 동반', p.petCabin), policyItem('🐾', '화물칸 위탁', p.petHold), policyItem('💰', '운송 요금', p.petFee)]],
+      ['유아용품', [policyItem('🍼', '유모차', p.stroller), policyItem('🪑', '카시트', p.carseat)]]
     ];
-    var body = groups.map(function(g){
-      return '<div class="pol-group"><div class="pol-group-title">' + escapeHtml(g.title) + '</div>' +
-        '<div class="pol-grid">' + g.items.join('') + '</div></div>';
-    }).join('');
-    return '<div class="mtx-section">' +
-      '<div class="mtx-section-title"><span class="icon">🧭</span>부가서비스</div>' +
-      '<div class="mtx-section-source">' + statusBadge(p.status) +
-        (p.lastCheck ? ' · 최종확인 ' + escapeHtml(p.lastCheck) : '') + ' · 출처: ' +
-        (p.source ? linkifyUrl(p.source) : '<span class="badge empty">—</span>') + '</div>' +
-      body +
-      (p.note ? '<div class="mtx-ticket-note">' + escapeHtml(p.note) + '</div>' : '') +
-      '</div>';
+    return '<div class="mtx-section" id="sec-pol"><div class="mtx-section-title"><span class="icon">🧭</span>부가서비스</div>' +
+      '<div class="mtx-section-note">' + esc(p.status || '상태 없음') + (p.lastCheck ? ' · 최종확인 ' + esc(p.lastCheck) : '') + (p.source ? ' · 출처 ' + linkify(p.source) : '') + '</div>' +
+      groups.map(function(g){ return '<div class="pol-group"><div class="pol-group-title">' + esc(g[0]) + '</div><div class="pol-grid">' + g[1].join('') + '</div></div>'; }).join('') +
+      (p.note ? '<div class="mtx-ticket-note">' + esc(p.note) + '</div>' : '') + '</div>';
+  }
+  function sectionSources(a){
+    var list = Object.keys(a.sources).sort(function(x, y){ return a.sources[y] - a.sources[x]; });
+    if(!list.length) return '';
+    return '<div class="mtx-section" id="sec-src"><div class="mtx-section-title"><span class="icon">🔗</span>출처<span class="count">' + list.length + '곳</span></div><div class="src-list">' +
+      list.map(function(u){ return '<div>' + linkify(u) + '<span class="n">' + a.sources[u] + '행</span></div>'; }).join('') + '</div></div>';
   }
 
-  // 항공사 1개의 "보딩패스" 카드 HTML(로고/코드/핵심수치 + 위탁/기내/초과요금/부가서비스/기타 섹션)을 만든다.
-  // 모달과 비교 화면이 완전히 같은 렌더링을 쓰도록 공용 함수로 뺐다.
-  function airlineDetailHtml(a){
-    var consignRows = a.rows.filter(function(r){ return r[COL.BAG_TYPE] === '위탁수하물'; });
-    var cabinRows = a.rows.filter(function(r){ return r[COL.BAG_TYPE] === '기내수하물'; });
-    var otherRows = a.rows.filter(function(r){ return r[COL.BAG_TYPE] !== '위탁수하물' && r[COL.BAG_TYPE] !== '기내수하물'; });
-
-    var factsHtml =
-      '<div><div class="tf-label">확인상태</div><div class="tf-value">' + statusBadge(a.status) + '</div></div>' +
-      '<div><div class="tf-label">최종확인일</div><div class="tf-value' + (a.lastDate ? '' : ' empty') + '">' + escapeHtml(a.lastDate || '—') + '</div></div>' +
-      '<div><div class="tf-label">전체 조건행</div><div class="tf-value">' + a.total + '개</div></div>' +
-      '<div><div class="tf-label">노선구간 종류</div><div class="tf-value">' + a.routeCount + '개</div></div>';
-
-    var bodyHtml =
-      buildSection('🧳', '위탁수하물', consignRows) +
-      buildSection('🎒', '기내수하물', cabinRows) +
-      buildFeeSection(a) +
-      buildPolicySection(a) +
-      buildSection('📦', '기타', otherRows);
-
-    var logoUrl = airlineLogoUrl(a.code);
-
-    return '<div class="tk-header">' +
-        '<div class="tk-logo"><img src="' + logoUrl + '" alt="" onerror="this.parentElement.hidden=true"></div>' +
-        '<div class="tk-text">' +
-          '<div class="tk-eyebrow">✈ NUUA BAGGAGE PASS</div>' +
-          '<div class="tk-code">' + escapeHtml(a.code) + '</div>' +
-          '<div class="tk-name">' + escapeHtml(a.kr) + ' · ' + escapeHtml(a.en) + '</div>' +
-        '</div>' +
-      '</div>' +
-      '<div class="tk-facts">' + factsHtml + '</div>' +
-      '<div class="tk-perf"></div>' +
-      '<div class="tk-body">' + bodyHtml + '</div>';
+  function detailHtml(a, compact){
+    var base = a.checked.filter(isBase), baseCb = a.cabin.filter(isBase);
+    var facts = [
+      ['동맹', alliChip(a), a.alliSrc ? '' : ''],
+      ['거점국가', '<span class="tf-value mono">' + esc(a.home || '—') + '</span>', ''],
+      ['회원 프로그램', esc(a.program || '—'), a.tierWhere],
+      ['계산기', esc(a.calcGroup.replace(/^\d\s*/, '') || '—'), a.calcForm],
+      ['위험도(초안)', riskChip(a.risk), ''],
+      ['허용량 행', '<span class="tf-value mono">' + a.nChecked + ' · ' + a.nCabin + '</span>', '위탁 · 기내'],
+      ['2차검증', vbar(a.v), 'o ' + a.v.o + ' · △ ' + a.v.p + ' · x ' + a.v.x],
+      ['최종확인일', '<span class="tf-value mono">' + esc(a.lastDate || '—') + '</span>', '']
+    ].map(function(f){ return '<div><div class="tf-label">' + esc(f[0]) + '</div><div class="tf-value">' + f[1] + '</div>' + (f[2] ? '<div class="tf-sub">' + esc(f[2]) + '</div>' : '') + '</div>'; }).join('');
+    var nav = compact ? '' : '<div class="tk-nav">' + [
+      ['sec-ck', '위탁', base.length], ['sec-cb', '기내', baseCb.length], ['sec-fee', '초과요금', a.nFee], ['sec-tier', '회원등급', a.nTier],
+      ['sec-spec', '특수조건', a.nSpec], ['sec-pax', '유아·소아', a.pax.length], ['sec-pol', '부가서비스', a.policy ? '' : 0], ['sec-src', '출처', Object.keys(a.sources).length]
+    ].filter(function(x){ return x[2] !== 0; }).map(function(x){ return '<a href="#' + x[0] + '" data-jump="' + x[0] + '">' + esc(x[1]) + (x[2] !== '' ? '<span class="n">' + x[2] + '</span>' : '') + '</a>'; }).join('') + '</div>';
+    return '<div class="tk-header"><div class="tk-logo"><img src="' + logoUrl(a.code) + '" alt="" onerror="this.parentElement.hidden=true"></div>' +
+      '<div class="tk-text"><div class="tk-eyebrow">✈ NUUA BAGGAGE PASS</div><div class="tk-code">' + esc(a.code) + '</div><div class="tk-name">' + esc(a.kr) + ' · ' + esc(a.en) + '</div></div></div>' +
+      '<div class="tk-facts">' + facts + '</div><div class="tk-perf"></div><div class="tk-body">' + nav +
+      sectionAllow('sec-ck', '🧳', '위탁수하물 · 기본 허용량', base, false) +
+      sectionAllow('sec-cb', '🎒', '기내수하물 · 기본 허용량', baseCb, true) +
+      sectionFees(a) + sectionTiers(a) + sectionSpecs(a) + sectionPax(a) + sectionPolicy(a) + sectionSources(a) + '</div>';
   }
 
-  function openAirlineModal(a){
-    if(!a) return;
-    modalContent.innerHTML = airlineDetailHtml(a);
-    modalOverlay.hidden = false;
-  }
-  function closeModal(){ modalOverlay.hidden = true; }
-  modalOverlay.addEventListener('click', function(e){ if(e.target === modalOverlay) closeModal(); });
-  document.getElementById('modal-close').addEventListener('click', closeModal);
-  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && !modalOverlay.hidden) closeModal(); });
-
-  // ---- 허용량처럼 "..."으로 줄인 셀 클릭 시 전체 텍스트 팝업 ----
-  var cellPopover = document.getElementById('cell-popover');
-  function showCellPopover(trigger){
-    var fullHtml = trigger.getAttribute('data-full-html');
-    if(fullHtml){ cellPopover.innerHTML = fullHtml; }
-    else { cellPopover.textContent = trigger.getAttribute('data-full') || ''; }
-    cellPopover.hidden = false;
-    var r = trigger.getBoundingClientRect();
-    var top = r.bottom + 6;
-    var left = r.left;
-    // 화면 밖으로 나가지 않게 보정
-    var maxLeft = window.innerWidth - cellPopover.offsetWidth - 10;
-    if(left > maxLeft) left = Math.max(10, maxLeft);
-    if(top + cellPopover.offsetHeight > window.innerHeight) top = r.top - cellPopover.offsetHeight - 6;
-    cellPopover.style.top = top + 'px';
-    cellPopover.style.left = left + 'px';
-  }
-  function hideCellPopover(){ cellPopover.hidden = true; }
-  document.addEventListener('click', function(e){
-    var trigger = e.target.closest && e.target.closest('.popover-trigger');
-    if(trigger){ showCellPopover(trigger); e.stopPropagation(); }
-    else if(!e.target.closest('#cell-popover')){ hideCellPopover(); }
+  var overlay = document.getElementById('modal-overlay'), modalContent = document.getElementById('modal-content');
+  function openModal(a){ if(!a) return; modalContent.innerHTML = detailHtml(a, false); overlay.hidden = false; overlay.querySelector('.modal').scrollTop = 0; }
+  function closeModal(){ overlay.hidden = true; }
+  overlay.addEventListener('click', function(e){
+    if(e.target === overlay) closeModal();
+    var j = e.target.closest && e.target.closest('[data-jump]');
+    if(j){ e.preventDefault(); var t = modalContent.querySelector('#' + j.getAttribute('data-jump')); if(t) t.scrollIntoView({ behavior:'smooth', block:'start' }); }
   });
-  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') hideCellPopover(); });
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ hidePop(); if(!overlay.hidden) closeModal(); } });
 
-  var jsonpTimeout = null;
-
-  function cellToString(v){
-    if(v == null) return '';
-    var s = String(v);
-    // gviz는 날짜 셀을 "Date(2026,8,7)" 형태(월은 0-indexed)의 문자열로 내려준다 — YYYY-MM-DD로 변환.
-    // 셀이 날짜+시간 형식이면 "Date(2026,8,7,0,0,0)"처럼 시:분:초가 붙어 오므로 그 부분은 무시한다.
-    var m = s.match(/^Date\((\d+),(\d+),(\d+)(?:,\d+,\d+,\d+)?\)$/);
-    if(m){
-      var mm = String(parseInt(m[2], 10) + 1).padStart(2, '0');
-      var dd = String(parseInt(m[3], 10)).padStart(2, '0');
-      return m[1] + '-' + mm + '-' + dd;
-    }
-    return s;
+  var pop = document.getElementById('cell-popover');
+  function showPop(tr){
+    var h = tr.getAttribute('data-full-html');
+    if(h) pop.innerHTML = h; else pop.textContent = tr.getAttribute('data-full') || '';
+    pop.hidden = false;
+    var r = tr.getBoundingClientRect(), top = r.bottom + 6, left = r.left;
+    var maxLeft = window.innerWidth - pop.offsetWidth - 10; if(left > maxLeft) left = Math.max(10, maxLeft);
+    if(top + pop.offsetHeight > window.innerHeight) top = Math.max(10, r.top - pop.offsetHeight - 6);
+    pop.style.top = top + 'px'; pop.style.left = left + 'px';
   }
-
-  // 시트에서 "위탁수화물"/"위탁 수화물"처럼 표기가 흔들려도 위탁/기내로 분류되도록 정규화
-  function normalizeBagType(s){
-    var t = String(s || '').replace(/\s+/g, '').replace(/수화물/g, '수하물');
-    if(t === '위탁수하물' || t === '기내수하물') return t;
-    return String(s || '');
-  }
-
-  function sheetToRows(response){
-    return response.table.rows.map(function(r){
-      var arr = r.c.map(function(cell){ return cell ? cellToString(cell.v) : ''; });
-      arr[COL.BAG_TYPE] = normalizeBagType(arr[COL.BAG_TYPE]);
-      return arr;
-    });
-  }
-
-  // 세 탭(메인매트릭스/사본/공통정책)을 병렬로 불러온 뒤 코드로 조인한다. 하나라도 실패하면 전체를 에러 처리.
-  var loadState = { main:false, fee:false, policy:false, failed:false };
-  var feeByCode = {}, policyByCode = {};
-
-  function onSheetError(label, response){
-    if(loadState.failed) return;
-    loadState.failed = true;
-    if(jsonpTimeout){ clearTimeout(jsonpTimeout); jsonpTimeout = null; }
-    showLoadError(label + ' 응답 상태: ' + (response && response.status));
-  }
-
-  window.__baggageTrackerMain = function(response){
-    if(loadState.failed) return;
-    if(!response || response.status !== 'ok'){ onSheetError(SHEET_NAME, response); return; }
-
-    var raw = sheetToRows(response);
-    var byCode = {}; var order = [];
-    raw.forEach(function(arr){
-      var code = arr[COL.CODE];
-      if(!code) return;
-      if(!byCode[code]){
-        byCode[code] = { code: code, en: arr[COL.NAME_EN], kr: arr[COL.NAME_KR], rows: [] };
-        order.push(code);
-      }
-      byCode[code].rows.push(arr);
-    });
-
-    airlines = order.map(function(c){ return byCode[c]; });
-    airlines.forEach(function(a){
-      var checked = 0, lastDate = '', source = '', consignCount = 0, cabinCount = 0;
-      var routeSet = {}, minStage = null, statusCounts = {};
-      a.rows.forEach(function(r){
-        var raw = (r[COL.STATUS] || '').trim();
-        var stage = statusStage(raw).stage;
-        if(minStage === null || stage < minStage) minStage = stage;
-        if(raw) statusCounts[raw] = (statusCounts[raw] || 0) + 1;
-        if(stage >= STAGE_DONE) checked++;
-        if(r[COL.LAST_CHECK] && r[COL.LAST_CHECK] > lastDate) lastDate = r[COL.LAST_CHECK];
-        if(!source && r[COL.SOURCE]) source = r[COL.SOURCE];
-        if(r[COL.ROUTE]) routeSet[r[COL.ROUTE]] = 1;
-        if(r[COL.BAG_TYPE] === '위탁수하물') consignCount++;
-        if(r[COL.BAG_TYPE] === '기내수하물') cabinCount++;
-      });
-      a.total = a.rows.length;
-      a.checked = checked;
-      a.lastDate = lastDate;
-      a.source = source;
-      a.routeCount = Object.keys(routeSet).length;
-      a.consignCount = consignCount;
-      a.cabinCount = cabinCount;
-      a.stage = minStage === null ? 0 : minStage;   // 가장 덜 검수된 행 기준
-      // 행마다 상태가 다르면 "일부확인", 같으면 시트 문구를 그대로 보여준다
-      var distinct = Object.keys(statusCounts);
-      a.status = distinct.length === 1 ? distinct[0] : (distinct.length === 0 ? '미확인' : '일부확인');
-      a.statusCounts = statusCounts;
-    });
-
-    loadState.main = true;
-    window.__baggageTrackerFee(response);   // 같은 탭에 초과요금 컬럼이 있으므로 재사용
-    checkAllLoaded();
-  };
-
-  // 초과요금(AD~AG)은 원본 행보다 노선×클래스×운임으로 더 세분화돼 있어서,
-  // 같은 (노선, 클래스)에 값이 같은 운임브랜드 행이 여러 개 겹친다 — 코드+노선+클래스+금액 4종 조합으로
-  // 중복 제거해 항공사 상세 카드에 보여줄 수 있는 크기로 줄인다.
-  window.__baggageTrackerFee = function(response){
-    if(loadState.failed) return;
-    if(!response || response.status !== 'ok'){ onSheetError(SHEET_NAME, response); return; }
-
-    var raw = sheetToRows(response);
-    var seen = {}; var byCode = {};
-    raw.forEach(function(arr){
-      var code = arr[COL.CODE];
-      if(!code) return;
-      var w = arr[COL.EXCESS_WEIGHT] || '-', c = arr[COL.EXCESS_COUNT] || '-',
-          s = arr[COL.EXCESS_SIZE] || '-', pre = arr[COL.PREBUY] || '-';
-      var route = arr[COL.ROUTE], cls = arr[COL.CLASS];
-      var key = code + '|' + route + '|' + cls + '|' + w + '|' + c + '|' + s + '|' + pre;
-      if(seen[key]) return;
-      seen[key] = true;
-      if(!byCode[code]) byCode[code] = [];
-      byCode[code].push({
-        route: route, cls: cls, w: w, c: c, s: s, pre: pre,
-        hasFee: [w, c, s].some(function(v){ return v && v !== '-'; })
-      });
-    });
-    feeByCode = byCode;
-
-    loadState.fee = true;
-    checkAllLoaded();
-  };
-
-  window.__baggageTrackerPolicy = function(response){
-    if(loadState.failed) return;
-    if(!response || response.status !== 'ok'){ onSheetError('항공사별 공통정책', response); return; }
-
-    var raw = sheetToRows(response);
-    var byCode = {};
-    raw.forEach(function(arr){
-      var code = arr[PCOL.CODE];
-      if(!code) return;
-      byCode[code] = {
-        golf: arr[PCOL.GOLF], ski: arr[PCOL.SKI], bike: arr[PCOL.BIKE], surf: arr[PCOL.SURF],
-        instCabin: arr[PCOL.INST_CABIN], instSeat: arr[PCOL.INST_SEAT],
-        petCabin: arr[PCOL.PET_CABIN], petHold: arr[PCOL.PET_HOLD], petFee: arr[PCOL.PET_FEE],
-        stroller: arr[PCOL.STROLLER], carseat: arr[PCOL.CARSEAT],
-        status: arr[PCOL.STATUS], lastCheck: arr[PCOL.LAST_CHECK], source: arr[PCOL.SOURCE], note: arr[PCOL.NOTE]
-      };
-    });
-    policyByCode = byCode;
-
-    loadState.policy = true;
-    checkAllLoaded();
-  };
-
-  // 확인상태 필터는 시트에 실제로 존재하는 값으로 채운다 — 상태 문구가 바뀌어도
-  // (검토중 -> 1차검수완료 -> 2차검수중) 코드를 고치지 않아도 되도록.
-  function fillStatusFilters(){
-    var seen = {};
-    airlines.forEach(function(a){
-      if(a.status) seen[a.status] = 1;
-      Object.keys(a.statusCounts || {}).forEach(function(s){ seen[s] = 1; });
-    });
-    var values = Object.keys(seen).sort(function(x, y){
-      return statusStage(y).stage - statusStage(x).stage;
-    });
-
-    // 메인 툴바: 세그먼트 토글(값 개수만큼 필 버튼 생성, 슬라이딩 썸)
-    var segValues = [''].concat(values);
-    if(segValues.indexOf(statusFilterValue) === -1) statusFilterValue = '';
-    var thumbW = 100 / segValues.length;
-    statusSeg.innerHTML = '<div class="seg-thumb" style="width:calc(' + thumbW + '% - 2px);transform:translateX(' +
-      (segValues.indexOf(statusFilterValue) * 100) + '%)"></div>' +
-      segValues.map(function(v){
-        return '<button type="button" class="' + (v === statusFilterValue ? 'active' : '') + '" data-v="' +
-          escapeHtml(v) + '">' + escapeHtml(v || '전체') + '</button>';
-      }).join('');
-    Array.prototype.forEach.call(statusSeg.querySelectorAll('button'), function(btn, i){
-      btn.addEventListener('click', function(){
-        statusFilterValue = btn.dataset.v;
-        Array.prototype.forEach.call(statusSeg.querySelectorAll('button'), function(b){ b.classList.remove('active'); });
-        btn.classList.add('active');
-        statusSeg.querySelector('.seg-thumb').style.transform = 'translateX(' + (i * 100) + '%)';
-        render();
-      });
-    });
-
-    // 내보내기 패널의 select는 기존 그대로
-    var exportSel = document.getElementById('export-status-filter');
-    if(exportSel){
-      var current = exportSel.value;
-      exportSel.innerHTML = '<option value="">확인상태 전체</option>' + values.map(function(v){
-        return '<option value="' + escapeHtml(v) + '">' + escapeHtml(v) + '</option>';
-      }).join('');
-      if(values.indexOf(current) !== -1) exportSel.value = current;
-    }
-  }
-
-  function checkAllLoaded(){
-    if(loadState.failed || !loadState.main || !loadState.fee || !loadState.policy) return;
-    if(jsonpTimeout){ clearTimeout(jsonpTimeout); jsonpTimeout = null; }
-
-    airlines.forEach(function(a){
-      a.fees = feeByCode[a.code] || [];
-      a.policy = policyByCode[a.code] || null;
-    });
-
-    metaLine.innerHTML = '<span class="dot"></span>마지막 불러오기: ' + new Date().toLocaleString('ko-KR') +
-      ' · 구글시트 "메인매트릭스의 사본"·"항공사별 공통정책" 탭에서 직접 읽어옵니다';
-    fillStatusFilters();
-    renderStats();
-    render();
-    renderCompareChips();
-    renderCompare();
-    renderExport();
-  }
-
-  function showLoadError(detail){
-    frame.innerHTML =
-      '<div class="state">시트를 불러오지 못했습니다.<br><br>' +
-      '구글시트 공유 설정이 "링크가 있는 모든 사용자 - 뷰어"로 되어 있는지 확인해주세요.<br>' +
-      '<span style="font-size:12px;">(' + escapeHtml(detail || '') + ')</span></div>';
-    metaLine.innerHTML = '<span class="dot" style="background:var(--partial);box-shadow:0 0 0 3px var(--partial-soft);"></span>불러오기 실패';
-  }
-
-  function load(){
-    frame.innerHTML = '<div class="state">불러오는 중…</div>';
-    metaLine.innerHTML = '<span class="dot" style="background:var(--wait);box-shadow:0 0 0 3px var(--wait-soft);"></span>데이터 불러오는 중…';
-
-    loadState = { main:false, fee:false, policy:false, failed:false };
-    feeByCode = {}; policyByCode = {};
-
-    ['gviz-jsonp-main', 'gviz-jsonp-policy'].forEach(function(id){
-      var old = document.getElementById(id);
-      if(old){ old.parentNode.removeChild(old); }
-    });
-
-    var sheets = [
-      { id: 'gviz-jsonp-main', name: SHEET_NAME, cb: '__baggageTrackerMain', label: SHEET_NAME },
-      { id: 'gviz-jsonp-policy', name: SHEET_NAME_POLICY, cb: '__baggageTrackerPolicy', label: SHEET_NAME_POLICY }
-    ];
-    sheets.forEach(function(s){
-      var script = document.createElement('script');
-      script.id = s.id;
-      script.src = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID +
-        '/gviz/tq?tqx=out:json;responseHandler:' + s.cb +
-        '&sheet=' + encodeURIComponent(s.name) + '&headers=1&_=' + Date.now();
-      script.onerror = function(){ onSheetError(s.label, { status: '스크립트 로드 실패(네트워크/접근 권한)' }); };
-      document.body.appendChild(script);
-    });
-
-    jsonpTimeout = setTimeout(function(){ showLoadError('응답 시간 초과(10초)'); }, 10000);
-  }
+  function hidePop(){ pop.hidden = true; }
+  document.addEventListener('click', function(e){
+    var tr = e.target.closest && e.target.closest('.popover-trigger[data-full]');
+    if(tr && !e.target.closest('summary')){ showPop(tr); e.stopPropagation(); }
+    else if(!e.target.closest('#cell-popover')) hidePop();
+  });
 
   filterInput.addEventListener('input', render);
   refreshBtn.addEventListener('click', function(){
     var ico = refreshBtn.querySelector('.spin-ico');
-    ico.style.transition = 'none';
-    ico.style.transform = 'rotate(0deg)';
-    requestAnimationFrame(function(){
-      ico.style.transition = 'transform .5s var(--spring)';
-      ico.style.transform = 'rotate(360deg)';
-    });
+    ico.style.transition = 'none'; ico.style.transform = 'rotate(0deg)';
+    requestAnimationFrame(function(){ ico.style.transition = 'transform .5s var(--spring)'; ico.style.transform = 'rotate(360deg)'; });
     load();
   });
 
-  // ---- 왼쪽 사이드바: 클릭하면 펼쳐지고, 메뉴 고르면 화면 전환 후 자동으로 닫힘 ----
-  var railToggle = document.getElementById('rail-toggle');
-  var railMenu = document.getElementById('rail-menu');
-  var views = {
-    tracker: document.getElementById('view-tracker'),
-    compare: document.getElementById('view-compare'),
-    export: document.getElementById('view-export')
-  };
-  railToggle.addEventListener('click', function(e){
-    e.stopPropagation();
-    railMenu.hidden = !railMenu.hidden;
-  });
-  document.addEventListener('click', function(e){
-    if(!railMenu.hidden && !e.target.closest('.side-rail')) railMenu.hidden = true;
-  });
+  // ---------------------------------------------------------------- 레일 메뉴·화면 전환
+  var railToggle = document.getElementById('rail-toggle'), railMenu = document.getElementById('rail-menu');
+  var views = { tracker: document.getElementById('view-tracker'), compare: document.getElementById('view-compare'), export: document.getElementById('view-export') };
+  railToggle.addEventListener('click', function(e){ e.stopPropagation(); railMenu.hidden = !railMenu.hidden; });
+  document.addEventListener('click', function(e){ if(!railMenu.hidden && !e.target.closest('.side-rail')) railMenu.hidden = true; });
   document.querySelectorAll('.rail-item').forEach(function(btn){
     btn.addEventListener('click', function(){
       var v = btn.getAttribute('data-view');
@@ -1667,163 +1330,73 @@
     });
   });
 
-  // ---- 항공사 비교 ----
-  var compareSelected = [];
-  var compareSearchInput = document.getElementById('compare-search');
-  var compareSuggest = document.getElementById('compare-suggest');
-  var compareChipsEl = document.getElementById('compare-chips');
-  var compareGrid = document.getElementById('compare-grid');
-
+  // ---------------------------------------------------------------- 비교
+  var compareSel = [], cSearch = document.getElementById('compare-search'), cSuggest = document.getElementById('compare-suggest');
+  var cChips = document.getElementById('compare-chips'), cGrid = document.getElementById('compare-grid');
+  function byCodeOf(code){ return airlines.find(function(x){ return x.code === code; }); }
   function renderCompareChips(){
-    compareChipsEl.innerHTML = compareSelected.map(function(code){
-      var a = airlines.find(function(x){ return x.code === code; });
-      if(!a) return '';
-      return '<div class="compare-chip" data-code="' + escapeAttr(code) + '">' +
-        '<span class="code-badge">' + escapeHtml(code) + '</span>' +
-        '<span class="cc-name">' + escapeHtml(a.kr) + '</span>' +
-        '<button class="cc-remove" type="button" aria-label="비교에서 제거">✕</button>' +
-        '</div>';
+    cChips.innerHTML = compareSel.map(function(code){
+      var a = byCodeOf(code); if(!a) return '';
+      return '<div class="compare-chip" data-code="' + escAttr(code) + '"><span class="code-badge">' + esc(code) + '</span><span class="cc-name">' + esc(a.kr) + '</span><button class="cc-remove" type="button" aria-label="비교에서 제거">✕</button></div>';
     }).join('');
-    compareChipsEl.querySelectorAll('.cc-remove').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var code = btn.closest('.compare-chip').getAttribute('data-code');
-        compareSelected = compareSelected.filter(function(c){ return c !== code; });
-        renderCompareChips();
-        renderCompare();
-      });
+    cChips.querySelectorAll('.cc-remove').forEach(function(b){
+      b.addEventListener('click', function(){ var c = b.closest('.compare-chip').getAttribute('data-code'); compareSel = compareSel.filter(function(x){ return x !== c; }); renderCompareChips(); renderCompare(); });
     });
   }
-
   function renderCompare(){
-    if(!compareGrid) return;
-    if(!compareSelected.length){
-      compareGrid.innerHTML = '<div class="compare-empty">비교할 항공사를 검색해서 추가해주세요.</div>';
-      return;
-    }
-    compareGrid.innerHTML = compareSelected.map(function(code){
-      var a = airlines.find(function(x){ return x.code === code; });
-      if(!a) return '';
-      return '<div class="compare-col">' + airlineDetailHtml(a) + '</div>';
-    }).join('');
+    if(!compareSel.length){ cGrid.innerHTML = '<div class="compare-empty">비교할 항공사를 검색해서 추가해주세요.</div>'; return; }
+    cGrid.innerHTML = compareSel.map(function(code){ var a = byCodeOf(code); return a ? '<div class="compare-col">' + detailHtml(a, true) + '</div>' : ''; }).join('');
   }
-
-  function renderCompareSuggest(){
-    var q = compareSearchInput.value.trim().toLowerCase();
-    if(!q){ compareSuggest.hidden = true; return; }
-    if(compareSelected.length >= 3){
-      compareSuggest.innerHTML = '<div class="compare-suggest-empty">최대 3개까지 비교할 수 있어요. 하나를 빼고 다시 골라주세요.</div>';
-      compareSuggest.hidden = false;
-      return;
-    }
-    var matches = airlines.filter(function(a){
-      return compareSelected.indexOf(a.code) === -1 &&
-        (a.code + ' ' + a.en + ' ' + a.kr).toLowerCase().indexOf(q) !== -1;
-    }).slice(0, 8);
-    if(!matches.length){
-      compareSuggest.innerHTML = '<div class="compare-suggest-empty">일치하는 항공사가 없습니다.</div>';
-      compareSuggest.hidden = false;
-      return;
-    }
-    compareSuggest.innerHTML = matches.map(function(a){
-      return '<div class="compare-suggest-item" data-code="' + escapeAttr(a.code) + '">' +
-        '<span class="cs-code">' + escapeHtml(a.code) + '</span>' +
-        '<span>' + escapeHtml(a.kr) + '</span>' +
-        '</div>';
-    }).join('');
-    compareSuggest.hidden = false;
-    compareSuggest.querySelectorAll('.compare-suggest-item').forEach(function(el){
-      el.addEventListener('click', function(){
-        var code = el.getAttribute('data-code');
-        if(compareSelected.length < 3 && compareSelected.indexOf(code) === -1){
-          compareSelected.push(code);
-          renderCompareChips();
-          renderCompare();
-        }
-        compareSearchInput.value = '';
-        compareSuggest.hidden = true;
-      });
+  function renderSuggest(){
+    var q = cSearch.value.trim().toLowerCase();
+    if(!q){ cSuggest.hidden = true; return; }
+    if(compareSel.length >= 3){ cSuggest.innerHTML = '<div class="compare-suggest-empty">최대 3개까지 비교할 수 있어요.</div>'; cSuggest.hidden = false; return; }
+    var m = airlines.filter(function(a){ return compareSel.indexOf(a.code) === -1 && (a.code + ' ' + a.en + ' ' + a.kr).toLowerCase().indexOf(q) !== -1; }).slice(0, 8);
+    cSuggest.innerHTML = m.length ? m.map(function(a){ return '<div class="compare-suggest-item" data-code="' + escAttr(a.code) + '"><span class="cs-code">' + esc(a.code) + '</span><span>' + esc(a.kr) + '</span></div>'; }).join('') : '<div class="compare-suggest-empty">일치하는 항공사가 없습니다.</div>';
+    cSuggest.hidden = false;
+    cSuggest.querySelectorAll('.compare-suggest-item').forEach(function(el){
+      el.addEventListener('click', function(){ var c = el.getAttribute('data-code'); if(compareSel.length < 3 && compareSel.indexOf(c) === -1){ compareSel.push(c); renderCompareChips(); renderCompare(); } cSearch.value = ''; cSuggest.hidden = true; });
     });
   }
-  compareSearchInput.addEventListener('input', renderCompareSuggest);
-  compareSearchInput.addEventListener('focus', renderCompareSuggest);
-  document.addEventListener('click', function(e){
-    if(!e.target.closest('.compare-picker')) compareSuggest.hidden = true;
-  });
+  cSearch.addEventListener('input', renderSuggest);
+  cSearch.addEventListener('focus', renderSuggest);
+  document.addEventListener('click', function(e){ if(!e.target.closest('.compare-picker')) cSuggest.hidden = true; });
 
-  // ---- 내보내기 ----
-  var exportFilterInput = document.getElementById('export-filter-input');
-  var exportStatusFilter = document.getElementById('export-status-filter');
-  var exportCountStat = document.getElementById('export-count-stat');
-  var exportSummary = document.getElementById('export-summary');
-  var exportDownloadBtn = document.getElementById('export-download-btn');
-
-  function getFilteredAirlines(query, statusVal){
-    var q = (query || '').trim().toLowerCase();
-    return airlines.filter(function(a){
-      if(q && (a.code + ' ' + a.en + ' ' + a.kr).toLowerCase().indexOf(q) === -1) return false;
-      if(statusVal && a.status !== statusVal) return false;
-      return true;
-    });
-  }
-
+  // ---------------------------------------------------------------- 내보내기
+  var exFilter = document.getElementById('export-filter-input'), exAlli = document.getElementById('export-alli-filter');
+  var exCount = document.getElementById('export-count-stat'), exSummary = document.getElementById('export-summary');
+  function exList(){ var q = exFilter.value.trim().toLowerCase(); return airlines.filter(function(a){ return matches(a, q, exAlli.value, ''); }); }
   function renderExport(){
-    if(!exportSummary) return;
-    var filtered = getFilteredAirlines(exportFilterInput.value, exportStatusFilter.value);
-    var totalRows = filtered.reduce(function(s,a){ return s + a.total; }, 0);
-    exportCountStat.textContent = filtered.length + ' / ' + airlines.length + '개 항공사 · 조건행 ' + totalRows.toLocaleString('ko-KR') + '개';
-    if(!filtered.length){
-      exportSummary.innerHTML = '<div class="state">조건에 맞는 항공사가 없습니다.</div>';
-      return;
-    }
-    exportSummary.innerHTML = '<div class="export-list">' + filtered.map(function(a){
-      return '<div class="export-list-item">' +
-        '<span class="code-badge">' + escapeHtml(a.code) + '</span>' +
-        '<span class="el-name">' + escapeHtml(a.kr) + '</span>' +
-        statusBadge(a.status) +
-        '<span class="el-count">' + a.total + '개 조건행</span>' +
-        '</div>';
-    }).join('') + '</div>';
+    var list = exList();
+    var rows = list.reduce(function(s, a){ return s + a.total; }, 0), fees = list.reduce(function(s, a){ return s + a.nFee; }, 0);
+    exCount.textContent = list.length + ' / ' + airlines.length + '개 항공사 · 허용량 ' + rows.toLocaleString('ko-KR') + '행 · 초과요금 ' + fees.toLocaleString('ko-KR') + '행';
+    exSummary.innerHTML = list.length ? '<div class="export-list">' + list.map(function(a){
+      return '<div class="export-list-item"><span class="code-badge">' + esc(a.code) + '</span><span class="el-name">' + esc(a.kr) + '</span>' + alliChip(a) +
+        '<span class="el-count">허용량 ' + a.total + '행 · 초과요금 ' + a.nFee + '행</span></div>';
+    }).join('') + '</div>' : '<div class="state">조건에 맞는 항공사가 없습니다.</div>';
   }
-  exportFilterInput.addEventListener('input', renderExport);
-  exportStatusFilter.addEventListener('change', renderExport);
-
-  var CSV_COLS = [
-    { key: COL.CODE, label: '코드' }, { key: COL.NAME_KR, label: '항공사명' }, { key: COL.NAME_EN, label: '영문명' },
-    { key: COL.TICKET_DATE, label: '기준일자(발권/탑승)' }, { key: COL.AIRCRAFT, label: '기종' },
-    { key: COL.BAG_TYPE, label: '수하물종류' }, { key: COL.ROUTE, label: '노선구간' }, { key: COL.CLASS, label: '클래스' },
-    { key: COL.BRAND, label: '운임브랜드' }, { key: COL.PAX, label: '승객유형' }, { key: COL.TIER, label: '회원등급' },
-    { key: COL.CODESHARE, label: '공동운항' }, { key: COL.CONCEPT, label: '개념' }, { key: COL.QTY, label: '허용개수' },
-    { key: COL.PER_W, label: '개당최대중량' }, { key: COL.TOTAL_W, label: '총허용중량' }, { key: COL.DIM, label: '규격' },
-    { key: COL.P_QTY, label: '개인소지품개수' }, { key: COL.P_PER_W, label: '개인소지품무게' }, { key: COL.PERSONAL, label: '개인소지품상세' },
-    { key: COL.INFANT, label: '유아' }, { key: COL.CHILD, label: '소아' }, { key: COL.STATUS, label: '확인상태' },
-    { key: COL.LAST_CHECK, label: '최종확인일' }, { key: COL.SOURCE, label: '출처' }, { key: COL.NOTE, label: '비고' }
-  ];
-  function csvEscape(v){
-    var s = v == null ? '' : String(v);
-    if(/[",\n]/.test(s)) s = '"' + s.replace(/"/g, '""') + '"';
-    return s;
-  }
-  function downloadExportCsv(){
-    var filtered = getFilteredAirlines(exportFilterInput.value, exportStatusFilter.value);
-    if(!filtered.length) return;
-    var lines = [CSV_COLS.map(function(c){ return csvEscape(c.label); }).join(',')];
-    filtered.forEach(function(a){
-      a.rows.forEach(function(r){
-        lines.push(CSV_COLS.map(function(c){ return csvEscape(r[c.key]); }).join(','));
-      });
-    });
-    var csv = '﻿' + lines.join('\r\n'); // BOM: 엑셀에서 한글 깨짐 방지
-    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    var url = URL.createObjectURL(blob);
-    var link = document.createElement('a');
-    link.href = url;
-    link.download = '항공사_수하물_' + new Date().toISOString().slice(0, 10) + '.csv';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  exFilter.addEventListener('input', renderExport);
+  exAlli.addEventListener('change', renderExport);
+  function csvEsc(v){ var s = v == null ? '' : String(v); if(/[",\n]/.test(s)) s = '"' + s.replace(/"/g, '""') + '"'; return s; }
+  function download(name, header, rows){
+    var lines = [header.map(csvEsc).join(',')].concat(rows.map(function(r){ return header.map(function(h){ return csvEsc(r[h]); }).join(','); }));
+    var blob = new Blob(['﻿' + lines.join('\r\n')], { type:'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob), link = document.createElement('a');
+    link.href = url; link.download = name + '_' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(link); link.click(); document.body.removeChild(link);
     setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
   }
-  exportDownloadBtn.addEventListener('click', downloadExportCsv);
+  var ALLOW_COLS = ['행ID', '원본No', '항공사', '노선구간', '좌석등급', '좌석등급코드', '운임브랜드', '승객유형코드', '회원등급 조건', '회원·특수 구분', '날짜기준', '시작일', '종료일', '기종코드',
+    '개념코드', '제공상태', '무료 개수', '개당 최대 kg', '총 허용 kg', '3변 합 cm', '규격1 cm', '규격2 cm', '규격3 cm', '개인소지품 개수', '개인소지품 kg', '2차검증 판정', '최종확인일', '출처URL', '비고 원문'];
+  var FEE_COLS = ['요금행ID', '요금그룹ID', '항공사', '요금유형', '요금존', '구간 원문', '구간 시작', '구간 끝', '구간 단위', '과금 방식', '금액', '금액 상한', '통화', '판매 채널', '행 유형', '파싱상태', '조건 메모', '셀 원문'];
+  document.getElementById('export-allow-btn').addEventListener('click', function(){
+    var rows = []; exList().forEach(function(a){ a.checked.forEach(function(r){ rows.push(Object.assign({ '수하물종류':'위탁' }, r)); }); a.cabin.forEach(function(r){ rows.push(Object.assign({ '수하물종류':'기내' }, r)); }); });
+    if(rows.length) download('수하물_허용량', ['수하물종류'].concat(ALLOW_COLS), rows);
+  });
+  document.getElementById('export-fee-btn').addEventListener('click', function(){
+    var rows = []; exList().forEach(function(a){ rows = rows.concat(a.feeRows); });
+    if(rows.length) download('수하물_초과요금', FEE_COLS, rows);
+  });
 
   load();
 })();
