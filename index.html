@@ -339,9 +339,18 @@
   .fee-amt .cur{ font-size:10.5px; color:var(--ink-dim); margin-left:3px; }
   .fee-amt.free{ color:var(--ok); }
   .fee-amt.block{ color:var(--danger); font-size:12px; }
+  .fee-amt.limit{ color:var(--partial); font-size:12px; }
   .fee-seg{ font-family:"IBM Plex Mono"; font-size:11.5px; color:var(--ink); }
   .fee-seg .per{ display:block; font-family:"Pretendard"; font-size:10.5px; color:var(--ink-faint); }
+  .fee-seg .raw{ display:block; font-family:"Pretendard"; font-size:10.5px; color:var(--ink-dim); margin-top:1px; }
   .fee-memo{ font-size:11px; color:var(--ink-dim); word-break:keep-all; overflow-wrap:anywhere; }
+  .fee-memo .marks{ display:block; margin-top:3px; }
+  .fee-memo .tag{ text-decoration:none; }
+  .fee-memo .mark-note{ margin-right:6px; }
+  .tag.ok{ background:var(--ok-soft); color:var(--ok); }
+  .fee-table .frow.fcommon{ display:block; padding:6px 14px; background:var(--accent2-soft); color:var(--accent2-ink); font-size:11px; font-weight:600; }
+  .fee-table .frow.fcommon .lbl{ font-family:"IBM Plex Mono"; font-size:9.5px; font-weight:700; letter-spacing:.06em; margin-right:8px; opacity:.7; }
+  .fee-table .frow.in-common{ box-shadow:inset 3px 0 0 color-mix(in srgb, var(--accent2) 45%, transparent); }
   .fee-src{ padding:8px 14px 10px; border-top:1px solid var(--line); font-size:11px; color:var(--ink-faint); }
 
   /* ---- 회원등급·특수조건·유아소아 ---- */
@@ -759,8 +768,9 @@
       var a = byCode[code];
       a.feeRows.forEach(function(f){
         var gid = str(f['요금그룹ID']);
-        if(!a.groups[gid]){ a.groups[gid] = { id: gid, type: str(f['요금유형']), cell: str(f['셀 원문']), url: str(f['출처URL']), rows: [], refs: [] }; a.groupOrder.push(gid); }
+        if(!a.groups[gid]){ a.groups[gid] = { id: gid, type: str(f['요금유형']), cell: str(f['셀 원문']), srcs: {}, rows: [], refs: [] }; a.groupOrder.push(gid); }
         a.groups[gid].rows.push(f);
+        str(f['출처URL']).split(/\s*;\s*/).filter(Boolean).forEach(function(u){ a.groups[gid].srcs[u] = (a.groups[gid].srcs[u] || 0) + 1; });
       });
       var all = a.checked.concat(a.cabin);
       all.forEach(function(r){
@@ -1045,26 +1055,52 @@
   }
 
   // ---------------------------------------------------------------- 상세: 초과요금
+  // 구간 원문에서 숫자·단위·범위 낱말을 빼고 남는 말(추가·소형가방·베이직 최초 등)이 있으면 숫자 구간 아래에 원문을 같이 보여준다
+  var SEG_PLAIN = /\d+(?:\.\d+)?|kg|lbs?|cm|in|개당|개|번째|째|pcs?|pieces?|초과|이하|이상|미만|까지|부터|이내|당|각|1st|2nd|3rd|th|[~\-–,.()\/×x+·&\s]/gi;
   function segText(f){
-    var s = num(f['구간 시작']), e = num(f['구간 끝']), u = str(f['구간 단위']), per = str(f['과금 방식']);
+    if(str(f['행 유형']) === '조건·메모') return '<span class="badge empty">—</span>';
+    var s = num(f['구간 시작']), e = num(f['구간 끝']), u = str(f['구간 단위']), per = str(f['과금 방식']), raw = str(f['구간 원문']);
     var main = '';
     if(u === '개'){
       if(s != null && e != null && s === e) main = s + '번째';
       else if(s != null && e != null) main = s + '~' + e + '번째';
       else if(s != null) main = s + '번째~';
-    } else if(s != null || e != null){
-      main = (s != null ? s : '') + (e != null ? '~' + e : (s != null ? ' 초과' : '')) + u;
-      if(s == null && e != null) main = e + u;
-    }
-    if(str(f['행 유형']) === '조건·메모') return '<span class="badge empty">—</span>';
-    if(!main) main = str(f['구간 원문']);
-    var perTxt = (per && per !== '구간 정액' && per !== '개당 정액' && main.indexOf(per) === -1) ? per : '';
-    return '<span class="fee-seg">' + esc(main) + (perTxt ? '<span class="per">' + esc(perTxt) + '</span>' : '') + '</span>';
+    } else if(s != null && e != null) main = s + '~' + e + u;
+    else if(s != null) main = s + u + ' 초과';
+    else if(e != null) main = '~' + e + u;
+    var sub = '';
+    if(!main) main = raw;
+    else if(raw.replace(SEG_PLAIN, '')) sub = raw;
+    if(!main) return '<span class="badge empty">—</span>';
+    var perTxt = (per && per !== '구간 정액' && per !== '개당 정액' && main.indexOf(per) === -1 && main.replace(/\d+/g, '') !== per.replace(/\d+/g, '')) ? per : '';
+    return '<span class="fee-seg">' + esc(main) + (perTxt ? '<span class="per">' + esc(perTxt) + '</span>' : '') +
+      (sub ? '<span class="raw">' + esc(sub) + '</span>' : '') + '</span>';
+  }
+  // 불가·한도 행: 원문이 받지 않는다는 뜻인지(불가), 최대치를 정한 것인지(한도) 낱말로 가른다
+  function limitKind(f){
+    var t = str(f['구간 원문']) + ' ' + str(f['조건 메모']).split('※')[0];
+    var no = /불가|금지|거절|접수하지|받지 않|운송하지|중단|화물|cargo/i.test(t), cap = /최대|까지|한도|이하|이내|넘을 수 없|초과할 수 없/.test(t);
+    return no && !cap ? '불가' : cap && !no ? '한도' : '불가·한도';
+  }
+  // 조건 메모 끝의 "※ 공홈 확인(날짜): URL"·"※ 확인 필요: 이유"는 글자 대신 표시로 보여준다
+  function memoHtml(f, withCommon){
+    var parts = str(f['조건 메모']).split(/\s*※\s*/), main = parts.shift(), marks = [];
+    parts.forEach(function(p){
+      var ok = p.match(/^공홈 확인\(([^)]*)\):\s*(\S+)\s*([\s\S]*)$/), need = p.match(/^확인 필요:\s*([\s\S]*)$/);
+      if(ok) marks.push('<a class="tag ok" href="' + escAttr(href(ok[2])) + '" target="_blank" rel="noopener" title="' + escAttr('공홈에서 확인한 값 — ' + ok[2]) + '">공홈 확인 ' + esc(ok[1]) + ' ↗</a>' +
+        (ok[3] ? '<span class="mark-note">' + esc(ok[3].replace(/^[—–-]\s*/, '')) + '</span>' : ''));
+      else if(need) marks.push('<span class="tag q">확인 필요</span><span class="mark-note">' + esc(need[1]) + '</span>');
+      else main += (main ? ' ' : '') + '※ ' + p;
+    });
+    var bits = [main, withCommon ? str(f['공통 조건(앞머리)']) : '', str(f['다른 통화 표기']) ? '다른 통화 ' + f['다른 통화 표기'] : '',
+      str(f['할인율 표기']) ? '할인 ' + f['할인율 표기'] : ''].filter(Boolean);
+    if(!bits.length && !marks.length) return '—';
+    return esc(bits.join(' · ')) + (marks.length ? '<span class="marks">' + marks.join('') + '</span>' : '');
   }
   function amtText(f){
     var kind = str(f['행 유형']);
     if(kind === '무료') return '<span class="fee-amt free">무료</span>';
-    if(kind === '불가·한도') return '<span class="fee-amt block">접수 불가</span>';
+    if(kind === '불가·한도'){ var lk = limitKind(f); return '<span class="fee-amt ' + (lk === '한도' ? 'limit' : 'block') + '">' + lk + '</span>'; }
     if(kind === '조건·메모') return '<span class="badge empty">—</span>';
     var a = num(f['금액']), hi = num(f['금액 상한']);
     if(a == null) return '<span class="badge empty">—</span>';
@@ -1092,13 +1128,22 @@
           '<span class="fg-meta">' + (need ? '<span class="pill warn">확인 필요 ' + need + '</span>' : '') + '<span class="pill">' + g.rows.length + '행</span>' +
           '<span class="pill info">' + esc(g.id) + '</span></span></summary><div class="fee-table">' +
           '<div class="frow fhead"><div>존</div><div>구간</div><div>금액</div><div>채널</div><div>메모</div></div>';
+        // 공통 조건(셀 앞머리)은 행마다 반복하지 않고 그 조건이 걸린 행 묶음 위에 한 번만 보여준다
+        var prevCommon = '';
         g.rows.forEach(function(f){
-          var memo = [str(f['조건 메모']), str(f['공통 조건(앞머리)']), str(f['다른 통화 표기']) ? '다른 통화 ' + f['다른 통화 표기'] : '', str(f['할인율 표기']) ? '할인 ' + f['할인율 표기'] : ''].filter(Boolean).join(' · ');
-          body += '<div class="frow"><div class="fee-memo">' + esc(f['요금존'] || '—') + '</div><div>' + segText(f) + '</div><div>' + amtText(f) +
+          var common = str(f['공통 조건(앞머리)']);
+          if(common && common !== prevCommon) body += '<div class="frow fcommon"><span class="lbl">공통 조건</span>' + esc(common) + '</div>';
+          prevCommon = common;
+          body += '<div class="frow' + (common ? ' in-common' : '') + '"><div class="fee-memo">' + esc(f['요금존'] || '—') + '</div><div>' + segText(f) + '</div><div>' + amtText(f) +
             (str(f['파싱상태']) === '확인 필요' ? ' <span class="tag q">확인</span>' : '') + '</div><div class="fee-memo">' + esc(f['판매 채널'] || '—') + '</div>' +
-            '<div class="fee-memo">' + esc(memo || '—') + '</div></div>';
+            '<div class="fee-memo">' + memoHtml(f, false) + '</div></div>';
         });
-        body += '<div class="fee-src popover-trigger"' + popAttrs([{ label:'셀 원문', text: g.cell }, { label:'출처', text: g.url || '—' }]) + '>셀 원문 보기 · ' + esc(domain(g.url) || '출처 여러 개') + '</div></div></details>';
+        var srcList = Object.keys(g.srcs), doms = {};
+        srcList.forEach(function(u){ doms[domain(u)] = 1; });
+        var srcLabel = !srcList.length ? '출처 없음' : Object.keys(doms).length === 1 ? domain(srcList[0]) + (srcList.length > 1 ? ' · 페이지 ' + srcList.length + '곳' : '') : '출처 ' + srcList.length + '곳';
+        body += '<div class="fee-src popover-trigger"' + popAttrs([{ label:'셀 원문', text: g.cell }].concat(srcList.length ? srcList.map(function(u){
+          return { label:'출처', text: u + (srcList.length > 1 ? ' (' + g.srcs[u] + '행)' : '') };
+        }) : [{ label:'출처', text:'—' }])) + '>셀 원문 보기 · ' + esc(srcLabel) + '</div></div></details>';
       });
       body += '</div>';
     });
@@ -1388,7 +1433,8 @@
   }
   var ALLOW_COLS = ['행ID', '원본No', '항공사', '노선구간', '좌석등급', '좌석등급코드', '운임브랜드', '승객유형코드', '회원등급 조건', '회원·특수 구분', '날짜기준', '시작일', '종료일', '기종코드',
     '개념코드', '제공상태', '무료 개수', '개당 최대 kg', '총 허용 kg', '3변 합 cm', '규격1 cm', '규격2 cm', '규격3 cm', '개인소지품 개수', '개인소지품 kg', '2차검증 판정', '최종확인일', '출처URL', '비고 원문'];
-  var FEE_COLS = ['요금행ID', '요금그룹ID', '항공사', '요금유형', '요금존', '구간 원문', '구간 시작', '구간 끝', '구간 단위', '과금 방식', '금액', '금액 상한', '통화', '판매 채널', '행 유형', '파싱상태', '조건 메모', '셀 원문'];
+  var FEE_COLS = ['요금행ID', '요금그룹ID', '항공사', '요금유형', '요금존', '구간 원문', '구간 시작', '구간 끝', '구간 단위', '과금 방식', '금액', '금액 상한', '통화', '다른 통화 표기',
+    '판매 채널', '행 유형', '파싱상태', '조건 메모', '공통 조건(앞머리)', '할인율 표기', '셀 원문', '출처ID', '출처URL'];
   document.getElementById('export-allow-btn').addEventListener('click', function(){
     var rows = []; exList().forEach(function(a){ a.checked.forEach(function(r){ rows.push(Object.assign({ '수하물종류':'위탁' }, r)); }); a.cabin.forEach(function(r){ rows.push(Object.assign({ '수하물종류':'기내' }, r)); }); });
     if(rows.length) download('수하물_허용량', ['수하물종류'].concat(ALLOW_COLS), rows);
