@@ -151,8 +151,8 @@
   /* ---- list view (CSS Grid rows) ---- */
   .table-wrap{ max-width:2200px; margin:0 auto 60px; padding:0 24px; }
   .table-frame{ background:var(--surface); border:1px solid var(--line); border-radius:20px; overflow:auto; height:75vh; box-shadow:var(--shadow-lg); scrollbar-gutter:stable; }
-  .gtable{ font-size:13.5px; min-width:1180px; }
-  .grow{ display:grid; grid-template-columns: 64px 212px 124px 64px 64px 82px 82px 146px 70px 108px minmax(108px,1fr); align-items:center; column-gap:6px; }
+  .gtable{ font-size:13.5px; min-width:1320px; }
+  .grow{ display:grid; grid-template-columns: 60px 196px 120px 52px 52px 74px 74px 140px 210px 62px 100px minmax(100px,1fr); align-items:center; column-gap:6px; }
   .grow .gcell{ padding:15px 10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
   .grow .gcell:first-child{ padding-left:22px; overflow:visible; text-overflow:clip; }
   .grow .gcell.center{ text-align:center; }
@@ -287,7 +287,7 @@
   .mtx-table .mhead .mcell{ font-family:"IBM Plex Mono"; font-size:9.5px; font-weight:700; color:var(--ink-dim); letter-spacing:.06em; padding:6px 12px; white-space:nowrap; text-transform:uppercase; }
   .mtx-table .mcell{ padding:8px 12px; line-height:1.4; min-width:0; white-space:normal; word-break:keep-all; overflow-wrap:anywhere; }
   .mtx-table .note{ color:var(--ink-dim); font-size:11.5px; min-width:0; }
-  .mtx-table .note .popover-trigger{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; cursor:pointer; }
+  .mtx-table .note .popover-trigger:not(.tag){ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; cursor:pointer; }
   .cls-chip{ display:inline-block; padding:3px 9px; border-radius:7px; font-weight:700; font-size:12px; line-height:1.35; background:var(--wait-soft); color:var(--ink); }
   .cls-chip.eco{ background:#eef2f7; color:#2b3a4f; }
   .cls-chip.pe{ background:var(--accent2-soft); color:var(--accent2-ink); }
@@ -458,6 +458,114 @@
   .export-list-item:last-child{ border-bottom:none; }
   .export-list-item .el-name{ font-weight:650; font-size:13.5px; }
   .export-list-item .el-count{ margin-left:auto; font-family:"IBM Plex Mono"; font-size:11.5px; color:var(--ink-dim); }
+
+  /* ---- 불러오기 진행·경고 ---- */
+  .load-prog{ display:inline-flex; align-items:center; gap:8px; }
+  .load-prog .bar{ width:90px; height:5px; border-radius:99px; background:var(--line); overflow:hidden; }
+  .load-prog .bar i{ display:block; height:100%; background:var(--ink); border-radius:99px; transition:width .3s ease; }
+  .load-banner{ margin:12px 0 0; padding:10px 14px; border-radius:14px; background:rgba(250,241,217,.85); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); border:1.5px dashed var(--partial); color:#5c4306; font-size:12.5px; line-height:1.55; max-width:860px; }
+  .load-banner b{ font-weight:800; }
+  .load-banner[hidden]{ display:none; }
+
+  /* ---- 주제별 데이터 타일 ---- */
+  .topic-strip{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:12px; }
+  .topic-strip[hidden]{ display:none; }
+  .topic-tile{ background:rgba(255,255,255,.82); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px); border:1px solid var(--line); border-radius:16px; padding:12px 14px; box-shadow:var(--shadow); min-width:0; }
+  .topic-tile .tt-label{ font-size:12px; font-weight:700; color:var(--ink-dim); display:flex; align-items:center; gap:6px; }
+  .topic-tile .tt-value{ font-size:21px; font-weight:800; letter-spacing:-.02em; font-variant-numeric:tabular-nums; margin-top:2px; }
+  .topic-tile .tt-value small{ font-size:12px; font-weight:600; color:var(--ink-dim); margin-left:3px; }
+  .topic-tile .tt-sub{ font-size:11px; color:var(--ink-faint); margin-top:2px; }
+  .topic-tile .tt-sub b{ color:var(--ink); }
+  .topic-tile.wait .tt-value{ color:var(--ink-faint); font-size:15px; }
+
+  /* 목록의 주제 칩 */
+  .tp-chips{ display:flex; gap:4px; flex-wrap:nowrap; }
+  .tp{ display:inline-flex; align-items:center; gap:2px; padding:2px 6px; border-radius:7px; font-family:"IBM Plex Mono"; font-size:11px; font-weight:700; background:var(--surface-2); border:1px solid var(--line); color:var(--ink); }
+  .tp.zero{ background:transparent; border-style:dashed; color:var(--ink-faint); font-weight:500; opacity:.7; }
+  .tp.warnish{ border:1.5px solid var(--ink); }
+
+  /* 판정 기호 칩(색 대신 기호·굵기·테두리로 구분) */
+  .yn{ display:inline-flex; align-items:center; gap:4px; padding:2px 9px 2px 7px; border-radius:8px; font-size:11.5px; font-weight:700; white-space:nowrap; border:1.5px solid transparent; }
+  .yn b{ font-size:12.5px; font-weight:900; }
+  .yn .yn-l{ font-weight:600; color:var(--ink-dim); margin-right:2px; }
+  .yn.y{ background:var(--ok-soft); color:#14613e; border-color:#9fd3b6; }
+  .yn.n{ background:#2b2f3a; color:#fff; border-color:#2b2f3a; }
+  .yn.n .yn-l{ color:#d0d4de; }
+  .yn.c{ background:#fff; color:#6b4e00; border:1.5px dashed #9b7a1f; }
+  .yn.u{ background:transparent; color:var(--ink-faint); border:1.5px dotted var(--ink-faint); font-weight:600; }
+  .yn.t{ background:var(--surface-2); color:var(--ink-dim); border-color:var(--line); }
+
+  /* ---- 새 주제 섹션(반려동물·특수수하물·위험물·사고·환승) ---- */
+  .sec-tools{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:0 0 12px; }
+  .sec-tools input[type="search"]{ width:220px; max-width:100%; padding:7px 12px 7px 30px; font-size:12.5px; border-radius:9px; }
+  .sec-tools .search-ico{ left:10px; }
+  .chip-btn{ border:1px solid var(--line); background:var(--surface); color:var(--ink-dim); font-family:"Pretendard"; font-size:12px; font-weight:600; padding:5px 11px; border-radius:999px; cursor:pointer; white-space:nowrap; }
+  .chip-btn .n{ font-family:"IBM Plex Mono"; font-size:10.5px; margin-left:4px; opacity:.75; }
+  .chip-btn.on{ background:var(--ink); border-color:var(--ink); color:#fff; font-weight:800; }
+  .chip-btn.warn-only{ border-style:dashed; }
+  details.rec-group{ border:1px solid var(--line); border-radius:14px; background:var(--surface); margin-bottom:8px; overflow:hidden; }
+  details.rec-group > summary{ list-style:none; cursor:pointer; padding:10px 14px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; background:var(--surface-2); font-size:13px; font-weight:800; }
+  details.rec-group > summary::-webkit-details-marker{ display:none; }
+  details.rec-group > summary::before{ content:'›'; font-size:16px; color:var(--ink-faint); transition:transform .18s ease; line-height:1; }
+  details.rec-group[open] > summary::before{ transform:rotate(90deg); }
+  details.rec-group > summary .g-meta{ margin-left:auto; display:flex; gap:6px; align-items:center; font-weight:600; }
+  .rec{ padding:11px 14px 10px; border-top:1px solid var(--line); font-size:12.5px; position:relative; }
+  .rec.warn{ background:repeating-linear-gradient(135deg, rgba(250,241,217,.55) 0 8px, rgba(255,255,255,.55) 8px 16px); box-shadow:inset 4px 0 0 #2b2f3a; }
+  .rec-head{ display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px; }
+  .rec-title{ font-weight:750; font-size:13px; color:var(--ink); word-break:keep-all; overflow-wrap:anywhere; }
+  .rec-scope{ font-size:11.5px; color:var(--ink-dim); }
+  .rec-facts{ display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:7px; }
+  .fact{ font-size:12px; color:var(--ink); min-width:0; max-width:100%; word-break:keep-all; overflow-wrap:anywhere; }
+  .fact .fl{ font-size:10.5px; font-weight:700; color:var(--ink-faint); margin-right:5px; }
+  .fact.wide{ flex-basis:100%; }
+  .rec-warn{ margin-top:7px; font-size:11.5px; color:#3d2e05; background:#fff; border:1.5px solid #2b2f3a; border-radius:8px; padding:5px 9px; display:inline-block; max-width:100%; overflow-wrap:anywhere; }
+  .rec-warn b{ font-weight:900; margin-right:4px; }
+  .rec-foot{ display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; margin-top:8px; font-size:11px; color:var(--ink-faint); }
+  .rec-foot .rid{ font-family:"IBM Plex Mono"; font-size:10.5px; }
+  .rec-foot .orig{ border:1px solid var(--line); background:var(--surface-2); border-radius:999px; padding:2px 10px; font-size:11px; font-weight:600; color:var(--ink-dim); }
+  .rec-foot a{ color:var(--accent2); text-decoration:none; font-weight:600; }
+  .rec-foot a:hover{ text-decoration:underline; }
+  .rec.hide, details.rec-group.hide{ display:none; }
+  .sec-nomatch{ font-size:12px; color:var(--ink-faint); padding:8px 2px; }
+  .pet-fee{ margin-top:8px; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--surface); }
+  .pet-fee > summary{ list-style:none; cursor:pointer; padding:6px 10px; font-size:11.5px; font-weight:700; color:var(--accent-ink); background:var(--accent-soft); }
+  .pet-fee > summary::-webkit-details-marker{ display:none; }
+  .pf-row{ display:flex; flex-wrap:wrap; gap:4px 12px; padding:6px 10px; border-top:1px solid var(--line); font-size:11.5px; align-items:baseline; }
+  .pf-row.warn{ box-shadow:inset 3px 0 0 #2b2f3a; }
+  .pf-row .pf-amt{ font-family:"IBM Plex Mono"; font-weight:700; font-size:12.5px; }
+  .pf-row .pf-sub{ color:var(--ink-dim); }
+  .ok-mark{ font-size:10.5px; font-weight:600; color:var(--ink-dim); }
+  .pet-fee > summary::before{ content:'› '; font-weight:800; }
+  .pet-fee[open] > summary::before{ content:'⌄ '; }
+  .stat-mark{ font-family:"IBM Plex Mono"; font-size:10.5px; font-weight:800; padding:1px 6px; border-radius:6px; border:1.5px solid var(--ink); background:#fff; color:var(--ink); }
+  .vcount{ font-family:"IBM Plex Mono"; font-size:10.5px; color:var(--ink-dim); margin-top:3px; white-space:nowrap; }
+  .vcount b{ color:var(--ink); }
+  .vbar-track .o{ background:#1f7a4d; } .vbar-track .p{ background:repeating-linear-gradient(90deg,#c99a1a 0 2px,#f5e3ad 2px 4px); } .vbar-track .x{ background:#f2b8ba; }
+
+  /* ---- 모바일: 넓은 표는 표 안에서만 가로 스크롤 ---- */
+  @media (max-width:760px){
+    .modal-overlay{ padding:8px; }
+    .modal{ max-height:94vh; border-radius:16px; }
+    .tk-header{ padding:18px 18px 16px; }
+    .tk-facts{ padding:14px 18px; grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .tk-perf{ margin:0 18px; }
+    .tk-body{ padding:16px 14px 22px; }
+    .mtx-table, .fee-table, .tier-list, details.tier-rep{ overflow-x:auto; }
+    .mtx-table .mrow{ min-width:880px; }
+    .fee-table .frow{ min-width:700px; }
+    .trow{ min-width:800px; }
+    .rep-row{ min-width:740px; }
+    .spec-card{ grid-template-columns:1fr; }
+    .toolbar input[type="search"]{ width:100%; }
+    .toolbar-left, .search-wrap{ width:100%; }
+    .dash-wrap, .toolbar, .table-wrap, .hero-inner{ padding-left:16px; padding-right:16px; }
+    .rec{ padding:10px 12px; }
+    .side-rail{ position:absolute; top:10px; left:10px; width:auto; height:auto; padding:0; background:none; border:none; -webkit-backdrop-filter:none; backdrop-filter:none; }
+    .rail-toggle{ background:rgba(255,255,255,.8); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); }
+    .rail-menu{ left:10px; top:58px; }
+    .hero-inner{ padding-top:62px; }
+    .hero .meta{ border-radius:14px; }
+  }
 </style>
 </head>
 <body>
@@ -480,13 +588,14 @@
       <span class="hero-badge"><span class="b-dot"></span>BD OPS · BAGGAGE INTELLIGENCE</span>
     </div>
     <h1 class="hero-title">항공사 <em>수하물 정책</em> 트래커</h1>
-    <p class="hero-sub">구글시트 수하물 DB 탭(허용량 · 초과요금 · 회원등급 · 특수조건 · 유아소아)을 그대로 읽어 보여줍니다. 무게와 규격은 원문에서 뽑은 숫자로 보여주고, 원문은 칸을 누르면 볼 수 있습니다.</p>
+    <p class="hero-sub">구글시트 수하물 DB(허용량 · 초과요금 · 회원등급 · 특수조건 · 유아소아 · 반려동물 · 특수수하물 · 제한위험물 · 수하물사고 · 환승수하물)를 읽기 전용 웹앱으로 받아 보여줍니다. 시트 필터와 상관없이 모든 행이 들어오고, 원문은 칸이나 “원문” 버튼을 누르면 볼 수 있습니다.</p>
     <p class="meta" id="meta-line"><span class="dot"></span>데이터 불러오는 중…</p>
+    <div class="load-banner" id="load-banner" hidden></div>
   </div>
   <div class="hero-shelf"></div>
 </header>
 
-<div class="dash-wrap"><div class="dash-panel" id="dash-panel" hidden></div></div>
+<div class="dash-wrap"><div class="dash-panel" id="dash-panel" hidden></div><div class="topic-strip" id="topic-strip" hidden></div></div>
 
 <div class="toolbar">
   <div class="toolbar-left">
@@ -521,7 +630,7 @@
 <section id="view-export" class="view" hidden>
   <div class="page-head">
     <h1>내보내기</h1>
-    <p>검색어 · 동맹으로 걸러진 항공사의 허용량 행 또는 초과요금 구간 행을 CSV로 내려받습니다.</p>
+    <p>검색어 · 동맹으로 걸러진 항공사의 허용량 · 초과요금 · 새 주제(반려동물 등) 행을 CSV로 내려받습니다.</p>
   </div>
   <div class="toolbar export-toolbar">
     <div class="toolbar-left">
@@ -530,6 +639,8 @@
     </div>
     <div class="toolbar-left">
       <span class="stat" id="export-count-stat"></span>
+      <select id="export-topic"><option value="pet">16_반려동물</option><option value="petFee">17_반려동물요금</option><option value="sp">18_특수수하물</option><option value="dgr">19_제한위험물</option><option value="irr">20_수하물사고</option><option value="trf">21_환승수하물</option></select>
+      <button class="btn" id="export-topic-btn" type="button">⬇ 주제 CSV</button>
       <button class="btn" id="export-fee-btn" type="button">⬇ 초과요금 CSV</button>
       <button class="btn primary" id="export-allow-btn" type="button">⬇ 허용량 CSV</button>
     </div>
@@ -538,7 +649,8 @@
 </section>
 
 <footer>
-  데이터 소스: <a href="https://docs.google.com/spreadsheets/d/12WL67NcJZq09hT_nx07y-zZKCOP5AyZAHgqjZAy8nSo/edit" target="_blank" rel="noopener">항공사 수하물 정책 트래커 v5 (Google Sheets)</a>의 01_항공사 · 02_위탁허용량 · 03_기내허용량 · 04_초과요금 · 05_유아소아 · 06_회원등급 · 08_특수조건 · 항공사별 공통정책 탭. 시트가 "링크가 있는 모든 사용자 - 뷰어"로 공유돼 있어야 읽을 수 있습니다. 시트 값을 바꾼 뒤 "새로고침"을 누르면 반영됩니다(몇 분 걸릴 수 있음).
+  데이터 소스: <a href="https://docs.google.com/spreadsheets/d/12WL67NcJZq09hT_nx07y-zZKCOP5AyZAHgqjZAy8nSo/edit" target="_blank" rel="noopener">항공사 수하물 정책 트래커 v5 (Google Sheets)</a>의 01_항공사 · 02_위탁허용량 · 03_기내허용량 · 04_초과요금 · 05_유아소아 · 06_회원등급 · 08_특수조건 · 16_반려동물 · 17_반려동물요금 · 18_특수수하물 · 19_제한위험물 · 20_수하물사고 · 21_환승수하물 · 항공사별 공통정책 탭.
+  읽기 전용 Apps Script 웹앱이 화면에 보이는 글자 그대로(시트 필터 무시) 돌려줍니다. 웹앱이 응답하지 않으면 예전 방식(gviz)으로 대신 읽는데, 이때는 시트 필터에 숨은 행이 빠지거나 일부 칸이 비어 보일 수 있어 화면 위에 경고가 뜹니다. “데이터 기준”은 웹앱이 시트를 읽은 시각입니다.
 </footer>
 
   </div>
@@ -556,7 +668,9 @@
 (function(){
   'use strict';
   var SHEET_ID = '12WL67NcJZq09hT_nx07y-zZKCOP5AyZAHgqjZAy8nSo';
-  // 사본 탭을 분리한 수하물 DB 탭(2026-09-29 반영). 열은 이름으로 읽으므로 열 순서가 바뀌어도 깨지지 않는다.
+  // 읽기 전용 Apps Script 웹앱(doGet). 시트 필터를 무시하고 화면 표시 글자 그대로 준다. 실패하면 gviz로 대신 읽는다.
+  var WEBAPP = 'https://script.google.com/macros/s/AKfycbyD_O4uOUn2gBHZUhEXiev5YhkXfkKSRU3wckLfcqXp_XzF96uaicrkAoVl1xx4bPT9/exec';
+  // 열은 이름으로 읽으므로 열 순서가 바뀌어도 깨지지 않는다.
   var TABS = [
     { key:'guide',   name:'00_안내', raw:true },
     { key:'airline', name:'01_항공사' },
@@ -566,8 +680,17 @@
     { key:'pax',     name:'05_유아소아' },
     { key:'tier',    name:'06_회원등급' },
     { key:'spec',    name:'08_특수조건' },
-    { key:'policy',  name:'항공사별 공통정책', raw:true }
+    { key:'policy',  name:'항공사별 공통정책', raw:true },
+    { key:'pet',     name:'16_반려동물' },
+    { key:'petFee',  name:'17_반려동물요금' },
+    { key:'sp',      name:'18_특수수하물' },
+    { key:'dgr',     name:'19_제한위험물' },
+    { key:'irr',     name:'20_수하물사고' },
+    { key:'trf',     name:'21_환승수하물' }
   ];
+  // 웹앱 요청 묶음. 첫 묶음(항공사·허용량)이 오면 바로 표를 그리고 나머지는 오는 대로 채운다.
+  var GROUPS = [['guide', 'airline', 'checked', 'cabin'], ['pax', 'tier', 'spec', 'policy'], ['fee'], ['pet', 'petFee', 'sp'], ['dgr', 'irr', 'trf']];
+  var PARALLEL = 3;
   // "항공사별 공통정책" 탭(항공사당 1행, A~R 18열)은 헤더가 '그룹|항목' 형식이라 위치로 읽는다.
   var PCOL = { CODE:0, GOLF:3, SKI:4, BIKE:5, SURF:6, INST_CABIN:7, INST_SEAT:8, PET_CABIN:9, PET_HOLD:10, PET_FEE:11, STROLLER:12, CARSEAT:13, STATUS:14, LAST_CHECK:15, SOURCE:16, NOTE:17 };
   var FEE_TYPES = ['중량초과', '개수초과', '규격초과', '사전구매'];
@@ -580,6 +703,16 @@
     check: { label:'확인 필요', short:'확인 필요' }
   };
   var SPEC_TYPE = { STU:'학생', SEA:'선원', LBR:'근로자', RES:'거주자', DISC:'할인 대상', NEGO:'네고', ETC:'기타', TIER:'회원 가산' };
+  // 새 주제 탭(10/2). key는 TABS의 key와 같다.
+  var TOPICS = [
+    { key:'pet',    sec:'sec-pet', icon:'🐾', label:'반려동물',      unit:'행' },
+    { key:'petFee', sec:'sec-pet', icon:'💳', label:'반려동물 요금', unit:'행', sub:true },
+    { key:'sp',     sec:'sec-sp',  icon:'🎿', label:'특수수하물',    unit:'행' },
+    { key:'dgr',    sec:'sec-dgr', icon:'🔋', label:'제한위험물',    unit:'행' },
+    { key:'irr',    sec:'sec-irr', icon:'🧾', label:'수하물사고',    unit:'행' },
+    { key:'trf',    sec:'sec-trf', icon:'🔁', label:'환승수하물',    unit:'행' }
+  ];
+  var paxById = {};
 
   var frame = document.getElementById('table-frame');
   var metaLine = document.getElementById('meta-line');
@@ -640,18 +773,34 @@
   }
   function vBadge(v){
     var s = str(v);
-    if(s === 'o') return '<span class="vb o" title="2차검증 일치">o</span>';
+    if(s === 'o') return '<span class="vb o" title="2차검증 일치">✓</span>';
     if(s === '△') return '<span class="vb p" title="2차검증 부분 일치">△</span>';
-    if(s === 'x') return '<span class="vb x" title="2차검증 불일치">x</span>';
+    if(s === 'x') return '<span class="vb x" title="2차검증 불일치">✕</span>';
     return '<span class="vb n" title="2차검증 판정 없음">·</span>';
   }
   function vbar(v){
     var t = v.o + v.p + v.x + v.n || 1;
     function seg(cls, n){ return n ? '<i class="' + cls + '" style="width:' + (n / t * 100) + '%"></i>' : ''; }
     var pct = Math.round(v.o / t * 100);
-    return '<div class="vbar" title="o ' + v.o + ' · △ ' + v.p + ' · x ' + v.x + ' · 판정 없음 ' + v.n + '"><div class="vbar-track">' +
+    return '<div class="vbar" title="✓ ' + v.o + ' · △ ' + v.p + ' · ✕ ' + v.x + ' · 판정 없음 ' + v.n + '"><div class="vbar-track">' +
       seg('o', v.o) + seg('p', v.p) + seg('x', v.x) + seg('n', v.n) + '</div><span class="vbar-pct">' + pct + '%</span></div>';
   }
+  // 새 주제 탭 확인상태: "o(…)" 일치, "△(사유)" 확인 필요
+  function stat(r){
+    var s = str(r['확인상태']);
+    if(/^o/i.test(s)) return { k:'o', why: s.replace(/^o\s*\(?/i, '').replace(/\)$/, '') };
+    if(/^△/.test(s)) return { k:'p', why: s.replace(/^△\s*\(?/, '').replace(/\)$/, '') };
+    if(/^x/i.test(s)) return { k:'x', why: s.replace(/^x\s*\(?/i, '').replace(/\)$/, '') };
+    return { k:'n', why: s };
+  }
+  // 가능·불가·조건부를 색이 아니라 기호(✓ ✕ △ ?)와 채움·테두리로 구분
+  function yn(v, label){
+    var s = str(v); if(!s) return '';
+    var k = /^(가능|허용|예)$/.test(s) ? 'y' : /^(불가|아니오|아니요)$/.test(s) ? 'n' : /조건/.test(s) ? 'c' : /미기재/.test(s) ? 'u' : 't';
+    var sym = { y:'✓', n:'✕', c:'◐', u:'?', t:'·' }[k];
+    return '<span class="yn ' + k + '">' + (label ? '<span class="yn-l">' + esc(label) + '</span>' : '') + '<b>' + sym + '</b>' + esc(s) + '</span>';
+  }
+  function vcount(v){ return '<div class="vcount">✓ <b>' + v.o + '</b> · △ <b>' + v.p + '</b> · ✕ <b>' + v.x + '</b>' + (v.n ? ' · 없음 ' + v.n : '') + '</div>'; }
   var LOGO_OVERRIDES = { TW: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii00LjUgLTIuNSAzOCAzOCI+PHBhdGggZD0iTTE1LjA1NDcgMzMuMTY1OUwyOC42NTQ3IDkuNjA0NDlMMjIuMDYzNyAxMC4zNjg0QzE5LjI5NzMgMTAuNjg4NCAxNy4xMjQ0IDEyLjg5MjIgMTYuODQwNSAxNS42NjM5TDE1LjA1NDcgMzMuMTY1OVoiIGZpbGw9InVybCgjcGFpbnQwX2xpbmVhcl8yNzkyXzM1MTYpIi8+PHBhdGggZD0iTTEzLjU5NjEgMzMuMTY1OUwtMC4wMDM5MDYyNSA5LjYwNDQ5TDYuNTg3MDggMTAuMzY4NEM5LjM1MzU0IDEwLjY4ODQgMTEuNTI2NSAxMi44OTIyIDExLjgxMDMgMTUuNjYzOUwxMy41OTYxIDMzLjE2NTlaIiBmaWxsPSJ1cmwoI3BhaW50MV9saW5lYXJfMjc5Ml8zNTE2KSIvPjxwYXRoIGQ9Ik0xNi4wMTUzIDkuMjUyNTdMMjYuNzUwOCA0LjMxODM2SDEuOTA0M0wxMi42MzQ3IDkuMjUyNTdDMTMuNzA4MiA5Ljc0ODA1IDE0Ljk0MTggOS43NDgwNSAxNi4wMTAxIDkuMjUyNTdIMTYuMDE1M1oiIGZpbGw9InVybCgjcGFpbnQyX2xpbmVhcl8yNzkyXzM1MTYpIi8+PGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0icGFpbnQwX2xpbmVhcl8yNzkyXzM1MTYiIHgxPSIxLjgwNTYxIiB5MT0iMzYuNTU2OCIgeDI9IjIxLjgyNjMiIHkyPSIxNy45NCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBvZmZzZXQ9IjAuMDEiIHN0b3AtY29sb3I9IiNGMkU5RDIiLz4KPHN0b3Agb2Zmc2V0PSIwLjUiIHN0b3AtY29sb3I9IiNFN0Q1QTkiLz4KPHN0b3Agb2Zmc2V0PSIwLjk5IiBzdG9wLWNvbG9yPSIjQzFCNDk0Ii8+CjwvbGluZWFyR3JhZGllbnQ+CjxsaW5lYXJHcmFkaWVudCBpZD0icGFpbnQxX2xpbmVhcl8yNzkyXzM1MTYiIHgxPSIxNi4yMTI5IiB5MT0iMzUuMjI1MiIgeDI9IjguNzc1NDgiIHkyPSIxOC42NjI2IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiNFMkM3QjUiLz4KPHN0b3Agb2Zmc2V0PSIwLjUyIiBzdG9wLWNvbG9yPSIjRDdBNzlCIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0M2OTE4NiIvPgo8L2xpbmVhckdyYWRpZW50Pgo8bGluZWFyR3JhZGllbnQgaWQ9InBhaW50Ml9saW5lYXJfMjc5Ml8zNTE2IiB4MT0iOC4yMTY1OCIgeTE9Ii04LjYwMDM5IiB4Mj0iMTcuNzkwOCIgeTI9IjExLjYzNzEiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0M2QzhDOCIvPgo8c3RvcCBvZmZzZXQ9IjAuMzQiIHN0b3AtY29sb3I9IiNDRkQwRDAiLz4KPHN0b3Agb2Zmc2V0PSIwLjg5IiBzdG9wLWNvbG9yPSIjRThFN0U3Ii8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0VGRURFRCIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+PC9zdmc+' };
   function logoUrl(code){ return LOGO_OVERRIDES[code] || 'https://pics.avs.io/60/60/' + encodeURIComponent(code) + '.png'; }
 
@@ -700,40 +849,114 @@
     return resp.table.rows.map(function(r){ return (r.c || []).map(function(c){ var v = cellVal(c); return v === '' ? '' : String(v); }); });
   }
 
-  var pending = 0, failed = false, timer = null;
-  function setMeta(state, text){
-    var dot = state === 'ok' ? '' : state === 'wait' ? ' style="background:var(--wait);box-shadow:0 0 0 3px var(--wait-soft)"' : ' style="background:var(--partial);box-shadow:0 0 0 3px var(--partial-soft)"';
-    metaLine.innerHTML = '<span class="dot"' + dot + '></span>' + text;
+  function tabOf(key){ return TABS.find(function(t){ return t.key === key; }); }
+  function fromValues(t, values){
+    if(t.raw) return values.slice(1);
+    var head = (values[0] || []).map(function(h){ return String(h).trim(); });
+    hdr[t.key] = head;
+    return values.slice(1).map(function(r){ var o = {}; head.forEach(function(k, i){ o[k] = r[i] == null ? '' : r[i]; }); return o; });
   }
-  function fail(detail){
-    if(failed) return;
-    failed = true; clearTimeout(timer);
-    frame.innerHTML = '<div class="state">시트를 불러오지 못했습니다.<br><br>구글시트 공유 설정이 "링크가 있는 모든 사용자 - 뷰어"인지, 수하물 DB 탭 이름(01_항공사 등)이 그대로인지 확인해주세요.<br><span style="font-size:12px;">(' + esc(detail || '') + ')</span></div>';
-    setMeta('fail', '불러오기 실패');
+  function fetchWebapp(names){
+    var ctl = window.AbortController ? new AbortController() : null;
+    var t = setTimeout(function(){ if(ctl) ctl.abort(); }, 60000);
+    return fetch(WEBAPP + '?tabs=' + encodeURIComponent(names.join(',')), ctl ? { signal: ctl.signal } : {})
+      .then(function(r){ return r.text(); })
+      .then(function(txt){
+        clearTimeout(t);
+        var d; try { d = JSON.parse(txt); } catch(e){ throw new Error('JSON 아님(구글 오류 페이지)'); }
+        if(!d || !d.ok || !d.tabs) throw new Error((d && d.error) || '응답 형식 오류');
+        return d;
+      }, function(e){ clearTimeout(t); throw e; });
   }
-  function load(){
-    raw = {}; failed = false; pending = TABS.length;
-    frame.innerHTML = '<div class="state"><div class="spinner"></div>불러오는 중… (탭 ' + TABS.length + '개)</div>';
-    setMeta('wait', '데이터 불러오는 중…');
-    TABS.forEach(function(t){
-      var cb = '__bt_' + t.key;
+  // 웹앱이 가끔 동시 요청에 구글 오류 페이지를 돌려줘서 몇 번 다시 시도한다.
+  function retry(fn, n, wait){
+    return fn().catch(function(e){
+      if(n <= 1) throw e;
+      return new Promise(function(r){ setTimeout(r, wait); }).then(function(){ return retry(fn, n - 1, wait * 2); });
+    });
+  }
+  var gvSeq = 0;
+  function gvizTab(t){
+    return new Promise(function(resolve, reject){
+      var cb = '__bt_' + t.key + '_' + (++gvSeq), s = document.createElement('script');
+      var to = setTimeout(function(){ cleanup(); reject(new Error(t.name + ' gviz 시간 초과')); }, 30000);
+      function cleanup(){ clearTimeout(to); delete window[cb]; s.remove(); }
       window[cb] = function(resp){
-        if(failed) return;
-        if(!resp || resp.status !== 'ok'){ fail(t.name + ' 응답 상태: ' + (resp && resp.status)); return; }
-        raw[t.key] = t.raw ? toArrays(resp) : toObjects(resp);
-        pending--;
-        if(pending === 0){ clearTimeout(timer); done(); }
+        cleanup();
+        if(!resp || resp.status !== 'ok') return reject(new Error(t.name + ' gviz 상태 ' + (resp && resp.status)));
+        var rows = t.raw ? toArrays(resp) : toObjects(resp);
+        if(!t.raw && rows.length) hdr[t.key] = Object.keys(rows[0]);
+        resolve(rows);
       };
-      var old = document.getElementById('gviz-' + t.key); if(old) old.remove();
-      var s = document.createElement('script');
-      s.id = 'gviz-' + t.key;
+      s.onerror = function(){ cleanup(); reject(new Error(t.name + ' gviz 로드 실패')); };
       s.src = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json;responseHandler:' + cb +
         '&sheet=' + encodeURIComponent(t.name) + '&headers=1&_=' + Date.now();
-      s.onerror = function(){ fail(t.name + ' 스크립트 로드 실패(네트워크/접근 권한)'); };
       document.body.appendChild(s);
     });
-    clearTimeout(timer);
-    timer = setTimeout(function(){ if(pending > 0) fail('응답 시간 초과(30초) — 남은 탭 ' + pending + '개'); }, 30000);
+  }
+
+  var loaded = {}, hdr = {}, ats = [], viaGviz = [], failedTabs = [], loadSeq = 0, groupsDone = 0, loadDone = false;
+  function setMeta(state, html){
+    var dot = state === 'ok' ? '' : state === 'wait' ? ' style="background:var(--wait);box-shadow:0 0 0 3px var(--wait-soft)"' : ' style="background:var(--partial);box-shadow:0 0 0 3px var(--partial-soft)"';
+    metaLine.innerHTML = '<span class="dot"' + dot + '></span>' + html;
+  }
+  function fmtAt(iso){
+    var d = new Date(iso); if(isNaN(d)) return esc(iso);
+    function p(n){ return String(n).padStart(2, '0'); }
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+  }
+  function updateMeta(){
+    var nTabs = TABS.filter(function(t){ return loaded[t.key]; }).length;
+    var at = ats.slice().sort()[0];
+    var src = viaGviz.length ? '웹앱 + gviz 대체 ' + viaGviz.length + '개 탭' : '읽기 전용 웹앱(시트 필터 무시)';
+    if(!loadDone){
+      setMeta('wait', '<span class="load-prog">불러오는 중 · 탭 ' + nTabs + '/' + TABS.length + '<span class="bar"><i style="width:' + Math.round(nTabs / TABS.length * 100) + '%"></i></span></span>' +
+        (at ? ' · 데이터 기준 ' + fmtAt(at) : ''));
+    } else {
+      setMeta(viaGviz.length || failedTabs.length ? 'warn' : 'ok', (at ? '데이터 기준 ' + fmtAt(at) + ' (웹앱이 시트를 읽은 시각)' : '데이터 기준 시각 없음(gviz로 읽음)') + ' · ' + src +
+        ' · 탭 ' + nTabs + '/' + TABS.length + (snapshotLabel ? ' · 사본 분리 기준 ' + esc(snapshotLabel) : ''));
+    }
+    var banner = document.getElementById('load-banner'), msg = '';
+    if(viaGviz.length) msg += '<b>⚠ 일부 행이 빠질 수 있음</b> — 웹앱으로 못 읽은 탭을 예전 방식(gviz)으로 대신 읽었습니다: ' + esc(viaGviz.join(', ')) +
+      '. 시트 필터에 숨은 행이 빠지고(예: 02는 x·△ 행만), 형식이 섞인 열의 일부 값이 비어 보일 수 있습니다. 잠시 뒤 새로고침해 보세요.';
+    if(failedTabs.length) msg += (msg ? '<br>' : '') + '<b>✕ 못 읽은 탭</b> — ' + esc(failedTabs.join(', ')) + ' (해당 섹션은 비어 보입니다)';
+    banner.innerHTML = msg; banner.hidden = !msg;
+  }
+  function load(){
+    var seq = ++loadSeq;
+    raw = {}; loaded = {}; hdr = {}; ats = []; viaGviz = []; failedTabs = []; groupsDone = 0; loadDone = false;
+    frame.innerHTML = '<div class="state"><div class="spinner"></div>항공사 · 허용량 탭 불러오는 중… (웹앱 응답에 5~15초 걸립니다)</div>';
+    updateMeta();
+    var queue = GROUPS.slice(), running = 0;
+    function put(t, rows){ raw[t.key] = rows; loaded[t.key] = true; }
+    function fallback(tabs){
+      return Promise.all(tabs.map(function(t){
+        return gvizTab(t).then(function(rows){ put(t, rows); viaGviz.push(t.name); },
+          function(e){ console.warn(e); put(t, []); failedTabs.push(t.name); });
+      }));
+    }
+    function run(keys){
+      running++;
+      var tabs = keys.map(tabOf);
+      retry(function(){ return fetchWebapp(tabs.map(function(t){ return t.name; })); }, 3, 1500).then(function(d){
+        if(seq !== loadSeq) return;
+        if(d.at) ats.push(d.at);
+        var miss = tabs.filter(function(t){ if(d.tabs[t.name]){ put(t, fromValues(t, d.tabs[t.name])); return false; } return true; });
+        return miss.length ? fallback(miss) : null;
+      }, function(e){
+        if(seq !== loadSeq) return;
+        console.warn('웹앱 실패, gviz로 대체:', keys.join(','), e);
+        return fallback(tabs);
+      }).then(function(){
+        if(seq !== loadSeq) return;
+        running--; groupsDone++;
+        loadDone = !queue.length && !running;
+        refresh();
+        next();
+      });
+    }
+    function next(){ while(running < PARALLEL && queue.length) run(queue.shift()); }
+    next();
   }
 
   // ---------------------------------------------------------------- 모델
@@ -746,7 +969,8 @@
         alli: str(r['동맹']), alliSrc: str(r['동맹 근거']), alliStatus: str(r['동맹 확인상태']),
         program: str(r['회원 프로그램(사본 기재)']), tierWhere: str(r['회원등급 정보 위치']),
         calcGroup: str(r['계산기 그룹']), calcForm: str(r['계산기 제공 형태']), risk: str(r['위험도 등급(초안 0923)']),
-        checked: [], cabin: [], feeRows: [], groups: {}, groupOrder: [], pax: [], tiers: [], specs: [], policy: null
+        checked: [], cabin: [], feeRows: [], groups: {}, groupOrder: [], pax: [], tiers: [], specs: [], policy: null,
+        pet: [], petFee: [], sp: [], dgr: [], irr: [], trf: []
       };
       order.push(code);
     });
@@ -757,6 +981,8 @@
     attach(raw.pax, 'pax', '항공사');
     attach(raw.tier, 'tiers', '항공사');
     attach(raw.spec, 'specs', 'airline_code');
+    TOPICS.forEach(function(tp){ attach(raw[tp.key], tp.key, '항공사'); });
+    paxById = {}; (raw.pax || []).forEach(function(p){ paxById[str(p['규정ID'])] = p; });
     (raw.policy || []).forEach(function(arr){
       var a = byCode[str(arr[PCOL.CODE])]; if(!a) return;
       a.policy = { golf: arr[PCOL.GOLF], ski: arr[PCOL.SKI], bike: arr[PCOL.BIKE], surf: arr[PCOL.SURF],
@@ -776,7 +1002,8 @@
       all.forEach(function(r){
         FEE_TYPES.forEach(function(t){ var g = a.groups[str(r[FEE_FK[t]])]; if(g) g.refs.push(r); });
       });
-      a.v = { o:0, p:0, x:0, n:0 };
+      a.v = { o:0, p:0, x:0, n:0 }; a.v2 = { o:0, p:0, x:0, n:0 };
+      a.checked.forEach(function(r){ var v = str(r['2차검증 판정']); if(v === 'o') a.v2.o++; else if(v === '△') a.v2.p++; else if(v === 'x') a.v2.x++; else a.v2.n++; });
       var last = '', routes = {}, srcs = {};
       all.forEach(function(r){
         var v = str(r['2차검증 판정']);
@@ -792,6 +1019,8 @@
       a.nFee = a.feeRows.length; a.nGroups = a.groupOrder.length;
       a.nFeeNeed = a.feeRows.filter(function(f){ return str(f['파싱상태']) === '확인 필요'; }).length;
       a.nTier = a.tiers.length; a.nSpec = a.specs.length;
+      a.nTopic = 0; a.nTopicWarn = 0;
+      TOPICS.forEach(function(tp){ a.nTopic += a[tp.key].length; a.nTopicWarn += a[tp.key].filter(function(r){ return stat(r).k === 'p'; }).length; });
       a.alliKey = alliKey(a.alli);
       a.riskOrder = a.risk === '상' ? 3 : a.risk === '중' ? 2 : a.risk === '하' ? 1 : 0;
       return a;
@@ -802,34 +1031,42 @@
     });
   }
 
-  function done(){
-    try { build(); } catch(e){ fail('데이터 해석 오류: ' + e.message); console.error(e); return; }
-    setMeta('ok', '마지막 불러오기 ' + new Date().toLocaleString('ko-KR') + ' · 수하물 DB 탭에서 직접 읽음' +
-      (snapshotLabel ? ' · 사본 분리 기준 ' + esc(snapshotLabel) : ''));
+  var openCode = null;
+  function refresh(){
+    updateMeta();
+    if(!loaded.airline) return;
+    try { build(); } catch(e){ console.error(e); frame.innerHTML = '<div class="state">데이터 해석 오류: ' + esc(e.message) + '</div>'; return; }
+    updateMeta();
     renderSeg(); renderStats(); render(); renderCompareChips(); renderCompare(); renderExport();
+    if(openCode && !overlay.hidden){
+      var m = overlay.querySelector('.modal'), top = m.scrollTop;
+      modalContent.innerHTML = detailHtml(byCodeOf(openCode), false); m.scrollTop = top;
+    }
   }
 
   // ---------------------------------------------------------------- 대시보드
   function renderStats(){
-    var n = airlines.length || 1, rows = 0, ck = 0, cb = 0, v = { o:0, p:0, x:0, n:0 };
+    var n = airlines.length || 1, ck = 0, cb = 0, v2 = { o:0, p:0, x:0, n:0 }, v3 = { o:0, p:0, x:0, n:0 };
     var fee = 0, feeNeed = 0, groups = 0, tierAl = 0, tierRows = 0, spec = 0, pol = 0, polStat = {}, al = { star:0, sky:0, one:0 };
     airlines.forEach(function(a){
-      rows += a.total; ck += a.nChecked; cb += a.nCabin;
-      v.o += a.v.o; v.p += a.v.p; v.x += a.v.x; v.n += a.v.n;
+      ck += a.nChecked; cb += a.nCabin;
+      ['o', 'p', 'x', 'n'].forEach(function(k){ v2[k] += a.v2[k]; v3[k] += a.v[k] - a.v2[k]; });
       fee += a.nFee; feeNeed += a.nFeeNeed; groups += a.nGroups;
       if(a.nTier){ tierAl++; tierRows += a.nTier; }
       spec += a.nSpec;
       if(a.policy){ var ps = str(a.policy.status) || '상태 없음'; polStat[ps] = (polStat[ps] || 0) + 1; if(/완료/.test(ps) && !/진행/.test(ps)) pol++; }
       if(al[a.alliKey] != null) al[a.alliKey]++;
     });
-    var vt = v.o + v.p + v.x + v.n || 1;
+    var paxRows = raw.pax || [], paxDone = paxRows.filter(function(p){ return /^(완료|성인과 동일)/.test(str(p['구조화 상태'])); }).length;
+    function pct(v){ var t = v.o + v.p + v.x + v.n; return t ? Math.round(v.o / t * 100) : 0; }
+    function wait(k, txt){ return loaded[k] ? txt : '불러오는 중…'; }
     var cards = [
       { label:'항공사', value: airlines.length + '개', sub:'Star ' + al.star + ' · SkyTeam ' + al.sky + ' · oneworld ' + al.one, pct:null },
-      { label:'무료 허용량 조건', value: rows.toLocaleString('ko-KR') + '행', sub:'위탁 ' + ck.toLocaleString('ko-KR') + ' · 기내 ' + cb, pct:null },
-      { label:'2차검증 일치', value: Math.round(v.o / vt * 100) + '%', sub:'o ' + v.o + ' · △ ' + v.p + ' · x ' + v.x, pct: Math.round(v.o / vt * 100), c:'var(--ok)' },
-      { label:'초과요금 구간', value: fee.toLocaleString('ko-KR') + '행', sub:'요금표 ' + groups + '개 · 확인 필요 ' + feeNeed, pct: Math.round((fee - feeNeed) / (fee || 1) * 100), c:'var(--accent)' },
-      { label:'회원등급 혜택', value: tierAl + '개사', sub: tierRows + '행 · 특수조건 ' + spec + '건', pct: Math.round(tierAl / n * 100), c:'var(--plane)' },
-      { label:'부가서비스 검수완료', value: pol + '개사', sub: Object.keys(polStat).sort(function(x, y){ return polStat[y] - polStat[x]; }).map(function(k){ return k + ' ' + polStat[k]; }).join(' · '), pct: Math.round(pol / n * 100), c:'var(--accent2)' }
+      { label:'위탁 허용량 (02)', value: wait('checked', ck.toLocaleString('ko-KR') + '행'), sub:'2차검증 ✓ ' + v2.o + ' · △ ' + v2.p + ' · ✕ ' + v2.x, pct: loaded.checked ? pct(v2) : null, c:'var(--ok)' },
+      { label:'기내 허용량 (03)', value: wait('cabin', cb.toLocaleString('ko-KR') + '행'), sub:'2차검증 ✓ ' + v3.o + ' · △ ' + v3.p + ' · ✕ ' + v3.x, pct: loaded.cabin ? pct(v3) : null, c:'var(--ok)' },
+      { label:'초과요금 구간 (04)', value: wait('fee', fee.toLocaleString('ko-KR') + '행'), sub: loaded.fee ? '요금표 ' + groups + '개 · 확인 필요 ' + feeNeed : '', pct: loaded.fee ? Math.round((fee - feeNeed) / (fee || 1) * 100) : null, c:'var(--accent)' },
+      { label:'회원등급 (06·08)', value: wait('tier', tierAl + '개사'), sub: loaded.tier ? tierRows + '행 · 특수조건 ' + spec + '건' : '', pct: loaded.tier ? Math.round(tierAl / n * 100) : null, c:'var(--plane)' },
+      { label:'유아 · 소아 (05)', value: wait('pax', paxRows.length + '종'), sub: loaded.pax ? '구조화 끝 ' + paxDone + ' · 나머지 ' + (paxRows.length - paxDone) : '', pct: loaded.pax && paxRows.length ? Math.round(paxDone / paxRows.length * 100) : null, c:'var(--accent2)' }
     ];
     dashPanel.hidden = false;
     dashPanel.innerHTML = cards.map(function(c){
@@ -837,6 +1074,19 @@
       return '<div class="dash-cell"><div class="dash-top"><div class="dash-label">' + esc(c.label) + '</div>' + ring + '</div>' +
         '<div class="dash-value">' + esc(c.value) + '</div><div class="dash-sub">' + esc(c.sub) + '</div></div>';
     }).join('');
+    // 주제별 데이터: 행 수 · 데이터 있는 항공사 수 · △ 행 수
+    var tiles = TOPICS.map(function(tp){
+      if(!loaded[tp.key]) return '<div class="topic-tile wait"><div class="tt-label">' + tp.icon + ' ' + esc(tp.label) + '</div><div class="tt-value">불러오는 중…</div></div>';
+      var rows = raw[tp.key] || [], als = {}, warn = 0;
+      rows.forEach(function(r){ als[str(r['항공사'])] = 1; if(stat(r).k === 'p') warn++; });
+      return '<div class="topic-tile"><div class="tt-label">' + tp.icon + ' ' + esc(tp.label) + '</div><div class="tt-value">' + rows.length.toLocaleString('ko-KR') + '<small>행</small></div>' +
+        '<div class="tt-sub"><b>' + Object.keys(als).length + '</b>개사 · △ 확인 필요 <b>' + warn + '</b></div></div>';
+    });
+    tiles.push(loaded.policy ? '<div class="topic-tile"><div class="tt-label">🧭 부가서비스(공통정책)</div><div class="tt-value">' + pol + '<small>개사 검수완료</small></div><div class="tt-sub">' +
+      esc(Object.keys(polStat).sort(function(x, y){ return polStat[y] - polStat[x]; }).map(function(k){ return k + ' ' + polStat[k]; }).join(' · ')) + '</div></div>'
+      : '<div class="topic-tile wait"><div class="tt-label">🧭 부가서비스(공통정책)</div><div class="tt-value">불러오는 중…</div></div>');
+    var strip = document.getElementById('topic-strip');
+    strip.hidden = false; strip.innerHTML = tiles.join('');
   }
 
   // ---------------------------------------------------------------- 목록
@@ -880,9 +1130,16 @@
     { key:'code', label:'코드' }, { key:'kr', label:'항공사명' }, { key:'alli', label:'동맹' },
     { key:'nChecked', label:'위탁', center:true }, { key:'nCabin', label:'기내', center:true },
     { key:'nFee', label:'초과요금', center:true }, { key:'nTier', label:'회원등급', center:true },
-    { key:'vPct', label:'2차검증 일치' }, { key:'riskOrder', label:'위험도', center:true },
+    { key:'vPct', label:'2차검증 일치' }, { key:'nTopic', label:'새 주제 🐾🎿🔋🧾🔁' }, { key:'riskOrder', label:'위험도', center:true },
     { key:'lastDate', label:'최종확인일', center:true }, { key:'source', label:'대표 출처' }
   ];
+  function topicChips(a){
+    return '<div class="tp-chips">' + TOPICS.filter(function(tp){ return !tp.sub; }).map(function(tp){
+      if(!loaded[tp.key]) return '<span class="tp zero" title="' + escAttr(tp.label) + ' 불러오는 중">' + tp.icon + '…</span>';
+      var n = a[tp.key].length, w = a[tp.key].filter(function(r){ return stat(r).k === 'p'; }).length;
+      return '<span class="tp' + (n ? '' : ' zero') + (w ? ' warnish' : '') + '" title="' + escAttr(tp.label + ' ' + n + '행' + (w ? ' · △ ' + w : '')) + '">' + tp.icon + (n || '·') + (w ? '<span style="font-weight:900">△</span>' : '') + '</span>';
+    }).join('') + '</div>';
+  }
   function render(){
     var q = filterInput.value.trim().toLowerCase();
     var list = airlines.filter(function(a){ return matches(a, q, alliFilter, riskValue); });
@@ -909,7 +1166,8 @@
         '<div class="gcell center">' + countChip(a.nCabin) + '</div>' +
         '<div class="gcell center" title="요금표 ' + a.nGroups + '개 · 확인 필요 ' + a.nFeeNeed + '">' + countChip(a.nFee, a.nFeeNeed > 0) + '</div>' +
         '<div class="gcell center" title="' + escAttr(a.tierWhere) + '">' + countChip(a.nTier) + '</div>' +
-        '<div class="gcell">' + vbar(a.v) + '</div>' +
+        '<div class="gcell">' + vbar(a.v) + vcount(a.v) + '</div>' +
+        '<div class="gcell">' + topicChips(a) + '</div>' +
         '<div class="gcell center">' + riskChip(a.risk) + '</div>' +
         '<div class="gcell center">' + esc(a.lastDate || '—') + '</div>' +
         '<div class="gcell">' + (a.source ? '<div class="src-cell"><a class="src-btn" href="' + escAttr(href(a.source)) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">출처 ↗</a><span class="src-domain">' + esc(domain(a.source)) + '</span></div>' : '<span class="badge empty">—</span>') + '</div>' +
@@ -998,6 +1256,11 @@
     var bits = [];
     if(has(r['승객유형']) && str(r['승객유형']) !== '성인') bits.push('<span class="tag t">' + esc(r['승객유형']) + '</span>');
     if(has(r['회원등급 조건'])) bits.push('<span class="tag t">' + esc(r['회원등급 조건']) + '</span>');
+    [['유아규정ID', '유아'], ['소아규정ID', '소아']].forEach(function(k){
+      var p = paxById[str(r[k[0]])]; if(!p) return;
+      var bag = [num(p['무료 위탁 개수']) != null ? p['무료 위탁 개수'] + '개' : '', num(p['무료 위탁 kg']) != null ? p['무료 위탁 kg'] + 'kg' : ''].filter(Boolean).join(' · ');
+      bits.push('<span class="tag t popover-trigger"' + popAttrs([{ label: k[1] + ' 규정 ' + p['규정ID'], text: str(p['원문']) }, { label:'무료 위탁', text: bag || '수치 없음' }, { label:'구조화 상태', text: str(p['구조화 상태']) || '—' }]) + '>' + k[1] + (bag ? ' ' + esc(bag) : ' 규정') + '</span>');
+    });
     var note = str(r['비고 원문']);
     if(!note && !bits.length) return '—';
     var items = [];
@@ -1268,12 +1531,14 @@
         if(str(p['유모차 언급']) === 'Y') flags.push('<span class="pill">유모차</span>');
         if(str(p['카시트 언급']) === 'Y') flags.push('<span class="pill">카시트</span>');
         if(str(p['요람 언급']) === 'Y') flags.push('<span class="pill">요람</span>');
-        return '<div class="pax-item">' + esc(p['원문']) + (flags.length ? '<div class="flags">' + flags.join('') + '</div>' : '') +
+        var bag = (num(p['무료 위탁 개수']) != null ? '<span class="tok qty"><b>' + esc(p['무료 위탁 개수']) + '</b>개</span>' : '') + (num(p['무료 위탁 kg']) != null ? '<span class="tok wt"><b>' + esc(p['무료 위탁 kg']) + '</b>kg</span>' : '');
+        var bagLine = (bag || has(p['구조화 상태'])) ? '<div class="flags"><span class="allow-tokens">' + bag + '</span>' + (has(p['구조화 상태']) ? '<span class="pill' + (/확인 필요/.test(str(p['구조화 상태'])) ? ' warn' : '') + '">' + esc(p['구조화 상태']) + '</span>' : '') + '</div>' : '';
+        return '<div class="pax-item"><span style="font-family:IBM Plex Mono;font-size:10.5px;color:var(--ink-faint);margin-right:6px">' + esc(p['규정ID']) + '</span>' + esc(p['원문']) + bagLine + (flags.length ? '<div class="flags">' + flags.join('') + '</div>' : '') +
           '<div class="ref">' + esc(p['참조 좌석등급']) + ' · ' + esc(p['참조 행 수']) + '행에서 사용</div></div>';
       }).join('') + '</div>';
     }
     return '<div class="mtx-section" id="sec-pax"><div class="mtx-section-title"><span class="icon">👶</span>유아 · 소아<span class="count">' + a.pax.length + '종</span></div>' +
-      '<div class="mtx-section-note">원문 기준입니다. 개수·무게 구조화는 다음 단계라 언급 여부만 표시합니다.</div><div class="pax-grid">' + col('INF', '유아') + col('CHD', '소아') + '</div></div>';
+      '<div class="mtx-section-note">무료 위탁 개수 · kg은 원문에서 뽑은 값이고, 회색 꼬리표는 구조화 상태입니다. 위탁 허용량 표의 “유아/소아 규정” 꼬리표를 누르면 연결된 규정이 보입니다.</div><div class="pax-grid">' + col('INF', '유아') + col('CHD', '소아') + '</div></div>';
   }
   function policyItem(icon, label, val){
     var ok = has(val) && !/^(미확인|공홈 미기재)/.test(str(val));
@@ -1299,6 +1564,139 @@
       list.map(function(u){ return '<div>' + linkify(u) + '<span class="n">' + a.sources[u] + '행</span></div>'; }).join('') + '</div></div>';
   }
 
+  // ---------------------------------------------------------------- 상세: 새 주제(16~21) 공용
+  function fact(label, html, wide){ return html ? '<span class="fact' + (wide ? ' wide' : '') + '"><span class="fl">' + esc(label) + '</span>' + html + '</span>' : ''; }
+  function txt(v){ return has(v) ? esc(v) : ''; }
+  function joinNum(parts, unit){ var p = parts.filter(function(x){ return has(x); }); return p.length ? esc(p.join('×')) + unit : ''; }
+  function recFoot(r, idField){
+    var st = stat(r), items = [];
+    if(has(r['원문'])) items.push({ label:'원문', text: r['원문'] });
+    if(has(r['원문 위치'])) items.push({ label:'원문 위치', text: r['원문 위치'] });
+    if(has(r['추출 메모'])) items.push({ label:'추출 메모', text: r['추출 메모'], accent:true });
+    if(has(r['확인상태'])) items.push({ label:'확인상태', text: r['확인상태'] });
+    if(has(r['발견'])) items.push({ label:'발견', text: r['발견'] });
+    if(has(r['기록'])) items.push({ label:'기록', text: r['기록'] });
+    var u = str(r['출처URL']);
+    return '<div class="rec-foot">' + (st.k === 'o' ? '<span class="ok-mark" title="' + escAttr(r['확인상태']) + '">✓ 원문 일치</span>' : '') +
+      (items.length ? '<button type="button" class="orig popover-trigger"' + popAttrs(items) + '>원문 보기</button>' : '') +
+      (/\./.test(u) ? linkify(u) .replace(/>([^<]+)<\/a>/g, function(m, t){ return '>출처 ↗ ' + esc(domain(t)) + '</a>'; }) : '') +
+      '<span class="rid">' + esc(r[idField]) + (has(r['출처ID']) ? ' · ' + esc(r['출처ID']) : '') + '</span></div>';
+  }
+  function recHtml(r, idField, head, facts, extra, cat){
+    var st = stat(r);
+    var q = [r['원문'], r['비고'], r['조건'], r['품목'], r['품목분류'], r['노선구간'], r['허용 동물'], r['상황'], r['사고유형'], r['운송방식']].map(str).join(' ').toLowerCase();
+    return '<div class="rec' + (st.k === 'p' ? ' warn' : '') + '" data-q="' + escAttr(q) + '" data-cat="' + escAttr(cat) + '" data-w="' + (st.k === 'p' ? 1 : 0) + '">' +
+      '<div class="rec-head">' + (st.k === 'p' ? '<span class="stat-mark">△ 확인 필요</span>' : '') + head + '</div>' +
+      (facts.filter(Boolean).length ? '<div class="rec-facts">' + facts.join('') + '</div>' : '') +
+      (st.k === 'p' ? '<div class="rec-warn"><b>△ 사유</b>' + esc(st.why || '사유 미기재') + '</div>' : '') +
+      (extra || '') + recFoot(r, idField) + '</div>';
+  }
+  // 행을 분류 필드로 묶어 접기 + (행이 많으면) 검색 · 분류 칩 · △만 보기
+  function topicSection(id, icon, title, key, rows, catField, rowFn, note){
+    var head = '<div class="mtx-section-title"><span class="icon">' + icon + '</span>' + esc(title);
+    if(!loaded[key]) return '<div class="mtx-section" id="' + id + '">' + head + '</div><div class="mtx-empty">불러오는 중…</div></div>';
+    if(!rows.length) return '<div class="mtx-section" id="' + id + '">' + head + '</div><div class="mtx-empty">이 항공사는 아직 수집된 행이 없습니다.</div></div>';
+    var groups = groupBy(rows, function(r){ return str(r[catField]) || '기타'; });
+    var warn = rows.filter(function(r){ return stat(r).k === 'p'; }).length;
+    var tools = '';
+    if(rows.length > 6){
+      tools = '<div class="sec-tools" data-sec="' + id + '"><div class="search-wrap"><span class="search-ico">⌕</span><input type="search" data-sec-search placeholder="' + esc(title) + ' 안에서 검색…" autocomplete="off"></div>' +
+        (groups.length > 1 ? '<button type="button" class="chip-btn on" data-sec-cat="">전체<span class="n">' + rows.length + '</span></button>' +
+          groups.map(function(g){ return '<button type="button" class="chip-btn" data-sec-cat="' + escAttr(g.key) + '">' + esc(g.key) + '<span class="n">' + g.rows.length + '</span></button>'; }).join('') : '') +
+        (warn ? '<button type="button" class="chip-btn warn-only" data-sec-warn>△만 보기<span class="n">' + warn + '</span></button>' : '') + '</div>';
+    }
+    var openAll = rows.length <= 12;
+    var body = groups.map(function(g, gi){
+      var w = g.rows.filter(function(r){ return stat(r).k === 'p'; }).length;
+      return '<details class="rec-group" data-cat="' + escAttr(g.key) + '"' + (openAll || gi === 0 ? ' open' : '') + '><summary>' + esc(g.key) +
+        '<span class="g-meta">' + (w ? '<span class="stat-mark">△ ' + w + '</span>' : '') + '<span class="pill">' + g.rows.length + '행</span></span></summary>' +
+        g.rows.map(function(r){ return rowFn(r, g.key); }).join('') + '</details>';
+    }).join('');
+    return '<div class="mtx-section" id="' + id + '">' + head + '<span class="count">' + rows.length + '행' + (warn ? ' · △ ' + warn : '') + '</span></div>' +
+      (note ? '<div class="mtx-section-note">' + note + '</div>' : '') + tools + '<div class="sec-body">' + body + '<div class="sec-nomatch" hidden>조건에 맞는 행이 없습니다.</div></div></div>';
+  }
+  function short(v){ var t = str(v); return t.length > 70 ? t.slice(0, 68) + '…' : t; }
+  function scopeLine(r){ return [r['노선구간'], r['좌석등급']].filter(function(x){ return has(x) && str(x) !== '공통'; }).map(esc).join(' · '); }
+  function feeAmt(amt, cur, unit){ return has(amt) ? '<b>' + esc(fmtNum(amt)) + '</b> ' + esc(cur) + (has(unit) ? ' <span class="pf-sub">' + esc(unit) + '</span>' : '') : ''; }
+
+  function sectionPet(a){
+    var fees = {}, shown = {};
+    a.petFee.forEach(function(f){ var g = str(f['요금그룹ID']); (fees[g] = fees[g] || []).push(f); });
+    return topicSection('sec-pet', '🐾', '반려동물', 'pet', a.pet, '운송방식', function(r, cat){
+      var box = has(r['용기 3변 합 cm']) ? esc(r['용기 3변 합 cm']) + 'cm(3변 합)' : joinNum([r['용기 가로 cm'], r['용기 세로 cm'], r['용기 높이 cm']], 'cm');
+      if(has(r['용기 최대 높이 cm'])) box += (box ? ' · ' : '') + '높이 ≤' + esc(r['용기 최대 높이 cm']) + 'cm';
+      var cnt = [has(r['1인당 최대 마리']) ? '1인당 ' + r['1인당 최대 마리'] : '', has(r['용기당 최대 마리']) ? '용기당 ' + r['용기당 최대 마리'] : '', has(r['편당 최대 마리']) ? '편당 ' + r['편당 최대 마리'] : ''].filter(Boolean).join(' · ');
+      var g = str(r['요금그룹ID']), extra = '';
+      if(g && fees[g]){
+        if(shown[g]) extra = '<div class="rec-facts"><span class="fact"><span class="fl">요금</span>위 요금표 ' + esc(g) + ' 참조</span></div>';
+        else {
+          shown[g] = 1;
+          extra = '<details class="pet-fee"' + (fees[g].length <= 4 ? ' open' : '') + '><summary>요금표 ' + esc(g) + ' · ' + fees[g].length + '행</summary>' + fees[g].map(function(f){
+            var st = stat(f), wt = (has(f['무게 하한 kg']) || has(f['무게 상한 kg'])) ? esc(f['무게 하한 kg'] || '') + '~' + esc(f['무게 상한 kg'] || '') + 'kg' : '';
+            return '<div class="pf-row' + (st.k === 'p' ? ' warn' : '') + ' popover-trigger"' + popAttrs([{ label:'원문', text: str(f['원문']) || '—' }, { label:'확인상태', text: str(f['확인상태']) }].concat(has(f['추출 메모']) ? [{ label:'추출 메모', text: f['추출 메모'], accent:true }] : [])) + '>' +
+              (st.k === 'p' ? '<span class="stat-mark">△</span>' : '') + '<span class="pf-amt">' + (feeAmt(f['금액'], f['통화'], f['단위']) || '<span class="pf-sub">금액 없음 · 원문 확인</span>') + '</span>' +
+              (f['노선구간'] ? '<span class="pf-sub">' + esc(f['노선구간']) + '</span>' : '') + (wt ? '<span class="pf-sub">' + wt + '</span>' : '') +
+              (has(f['결제 수단']) ? '<span class="pf-sub">' + esc(f['결제 수단']) + '</span>' : '') + (st.k === 'p' ? '<span class="pf-sub"><b>△ ' + esc(st.why) + '</b></span>' : '') + '</div>';
+          }).join('') + '</details>';
+        }
+      }
+      return recHtml(r, '반려동물행ID', yn(r['허용 여부']) + '<span class="rec-title">' + esc(r['운송방식']) + (has(r['허용 동물']) ? ' · ' + esc(r['허용 동물']) : '') + '</span>' + (scopeLine(r) ? '<span class="rec-scope">' + scopeLine(r) + '</span>' : ''), [
+        fact('최대 무게', has(r['최대 무게 kg']) ? esc(r['최대 무게 kg']) + 'kg' : ''),
+        fact('용기', box), fact('최소 나이', has(r['최소 나이(주)']) ? esc(r['최소 나이(주)']) + '주' : ''), fact('마리 수', esc(cnt)),
+        fact('사전 신청', has(r['사전 신청 기한(시간)']) ? '출발 ' + esc(r['사전 신청 기한(시간)']) + '시간 전까지' : ''),
+        fact('무료 수하물과', txt(r['무료 수하물과 관계'])), fact('소프트 용기', txt(r['소프트 용기 조건'])), fact('2마리 한 용기', txt(r['한 용기 2마리 조건'])),
+        fact('제한 품종', txt(r['제한 품종']), true), fact('단두종', txt(r['단두종'])), fact('기종·계절', txt(r['기종·계절 제한'])), fact('반입 금지 국가', txt(r['반입 금지 국가'])), fact('비고', txt(r['비고']), true)
+      ], extra, cat);
+    }, '운송방식(기내 · 위탁 · 화물 · 보조견)별로 묶었습니다. 요금은 17_반려동물요금을 요금그룹ID로 이어 붙였습니다.');
+  }
+  function sectionSp(a){
+    return topicSection('sec-sp', '🎿', '특수수하물', 'sp', a.sp, '품목분류', function(r, cat){
+      return recHtml(r, '특수행ID', yn(r['허용 여부']) + '<span class="rec-title">' + esc(r['품목']) + '</span>' + (has(r['운송방식']) ? '<span class="pill">' + esc(r['운송방식']) + '</span>' : '') + (scopeLine(r) ? '<span class="rec-scope">' + scopeLine(r) + '</span>' : ''), [
+        fact('최대 무게', has(r['최대 무게 kg']) ? esc(r['최대 무게 kg']) + 'kg' : ''), fact('최대 3변 합', has(r['최대 3변 합 cm']) ? esc(r['최대 3변 합 cm']) + 'cm' : ''),
+        fact('최대 길이', has(r['최대 길이 cm']) ? esc(r['최대 길이 cm']) + 'cm' : ''), fact('무료 수하물과', txt(r['무료 수하물과 관계'])),
+        fact('요금', feeAmt(r['금액'], r['통화'], r['요금 단위'])), fact('사전 신청', txt(r['사전 신청'])),
+        fact('포장·조건', txt(r['포장·조건']), true), fact('비고', txt(r['비고']), true)
+      ], '', cat);
+    }, '품목분류별로 묶었습니다. 검색창에 “골프”, “서핑”, “휠체어”처럼 품목을 넣으면 바로 찾습니다.');
+  }
+  // 승인 필요 여부는 좋고 나쁨이 아니라서 ✓/✕ 대신 ! / – 로 구분
+  function apr(v){
+    var s = str(v); if(!s) return '';
+    if(s === '예') return '<span class="yn c"><b>!</b>승인 필요</span>';
+    if(/^아니/.test(s)) return '<span class="yn t"><b>–</b>승인 불필요</span>';
+    return yn(s, '승인');
+  }
+  function sectionDgr(a){
+    return topicSection('sec-dgr', '🔋', '제한위험물', 'dgr', a.dgr, '품목분류', function(r, cat){
+      var cap = (has(r['용량 하한']) || has(r['용량 상한'])) ? (has(r['용량 하한']) ? esc(r['용량 하한']) + '~' : '≤') + esc(r['용량 상한'] || '') + ' ' + esc(r['용량 단위']) : '';
+      return recHtml(r, '위험물행ID', '<span class="rec-title">' + esc(r['품목']) + '</span>' + yn(r['기내 휴대'], '기내') + yn(r['위탁'], '위탁') + apr(r['항공사 승인 필요']), [
+        fact('용량', cap), fact('1인당 최대', has(r['1인당 최대 개수']) ? esc(r['1인당 최대 개수']) + '개' : ''),
+        fact('조건', txt(r['조건']), true), fact('비고', txt(r['비고']), true)
+      ], '', cat);
+    }, '기내·위탁은 ✓ 허용 / ✕ 불가 / ◐ 조건부 / ? 공홈 미기재, 항공사 승인은 ! 필요 / – 불필요로 표시합니다. △는 시트 확인상태가 “확인 필요”인 행입니다.');
+  }
+  function sectionIrr(a){
+    return topicSection('sec-irr', '🧾', '수하물사고', 'irr', a.irr, '사고유형', function(r, cat){
+      var lim = has(r['보상 한도']) ? esc(r['보상 한도']) + (has(r['보상 단위']) ? ' ' + esc(r['보상 단위']) : '') : '';
+      return recHtml(r, '사고행ID', '<span class="rec-title">' + esc(short(r['원문 위치']) || r['사고유형']) + '</span>' + (has(r['노선구간']) && str(r['노선구간']) !== '공통' ? '<span class="rec-scope">' + esc(r['노선구간']) + '</span>' : ''), [
+        fact('신고 기한', txt(r['신고 기한']) + (has(r['신고 기한 일수']) ? ' <span class="pill">' + esc(r['신고 기한 일수']) + '일</span>' : ''), true),
+        fact('신고 방법', txt(r['신고 방법']), true), fact('보상 한도', lim), fact('적용 기준', txt(r['적용 기준'])),
+        fact('지연 시 임시비용', txt(r['지연 시 임시비용']), true), fact('필요 서류', txt(r['필요 서류']), true),
+        fact('면책·제외 품목', txt(r['면책·제외 품목']), true), fact('비고', txt(r['비고']), true)
+      ], '', cat);
+    }, '사고유형(지연 · 파손 · 분실 · 내용물 분실·도난 · 기내 유실물 · 부가 보장 · 공통)별로 묶었습니다.');
+  }
+  function sectionTrf(a){
+    var LINK = { '최종 목적지까지 자동':'→ ', '재수속 필요':'↺ ', '조건부':'◐ ' };
+    return topicSection('sec-trf', '🔁', '환승수하물', 'trf', a.trf, '상황', function(r, cat){
+      var l = str(r['수하물 연결']);
+      return recHtml(r, '환승행ID', (l ? '<span class="yn ' + (l === '재수속 필요' ? 'n' : l === '조건부' ? 'c' : 'y') + '"><b>' + (LINK[l] || '') + '</b>' + esc(l) + '</span>' : '') + '<span class="rec-title">' + esc(short(r['조건']) || r['상황']) + '</span>', [
+        fact('적용 허용량 규칙', txt(r['적용 허용량 규칙']), true), fact('재수속 장소·국가', txt(r['재수속 장소·국가'])),
+        fact('최소 연결 시간', txt(r['최소 연결 시간 언급'])), fact('조건', str(r['조건']).length > 70 ? txt(r['조건']) : '', true), fact('비고', txt(r['비고']), true)
+      ], '', cat);
+    }, '상황별로 묶었습니다. 수하물 연결: → 최종 목적지까지 자동 · ↺ 재수속 필요 · ◐ 조건부');
+  }
+
   function detailHtml(a, compact){
     var base = a.checked.filter(isBase), baseCb = a.cabin.filter(isBase);
     var facts = [
@@ -1308,24 +1706,27 @@
       ['계산기', esc(a.calcGroup.replace(/^\d\s*/, '') || '—'), a.calcForm],
       ['위험도(초안)', riskChip(a.risk), ''],
       ['허용량 행', '<span class="tf-value mono">' + a.nChecked + ' · ' + a.nCabin + '</span>', '위탁 · 기내'],
-      ['2차검증', vbar(a.v), 'o ' + a.v.o + ' · △ ' + a.v.p + ' · x ' + a.v.x],
+      ['2차검증 (02+03)', vbar(a.v), '✓ ' + a.v.o + ' · △ ' + a.v.p + ' · ✕ ' + a.v.x],
+      ['위탁(02) 판정', '<span class="tf-value mono">✓' + a.v2.o + ' △' + a.v2.p + ' ✕' + a.v2.x + '</span>', '2차검증 o / △ / x'],
+      ['새 주제', topicChips(a), a.nTopicWarn ? '△ 확인 필요 ' + a.nTopicWarn + '행' : ''],
       ['최종확인일', '<span class="tf-value mono">' + esc(a.lastDate || '—') + '</span>', '']
     ].map(function(f){ return '<div><div class="tf-label">' + esc(f[0]) + '</div><div class="tf-value">' + f[1] + '</div>' + (f[2] ? '<div class="tf-sub">' + esc(f[2]) + '</div>' : '') + '</div>'; }).join('');
     var nav = compact ? '' : '<div class="tk-nav">' + [
       ['sec-ck', '위탁', base.length], ['sec-cb', '기내', baseCb.length], ['sec-fee', '초과요금', a.nFee], ['sec-tier', '회원등급', a.nTier],
-      ['sec-spec', '특수조건', a.nSpec], ['sec-pax', '유아·소아', a.pax.length], ['sec-pol', '부가서비스', a.policy ? '' : 0], ['sec-src', '출처', Object.keys(a.sources).length]
+      ['sec-spec', '특수조건', a.nSpec], ['sec-pax', '유아·소아', a.pax.length], ['sec-pet', '🐾 반려동물', a.pet.length], ['sec-sp', '🎿 특수수하물', a.sp.length], ['sec-dgr', '🔋 위험물', a.dgr.length], ['sec-irr', '🧾 사고', a.irr.length], ['sec-trf', '🔁 환승', a.trf.length], ['sec-pol', '부가서비스', a.policy ? '' : 0], ['sec-src', '출처', Object.keys(a.sources).length]
     ].filter(function(x){ return x[2] !== 0; }).map(function(x){ return '<a href="#' + x[0] + '" data-jump="' + x[0] + '">' + esc(x[1]) + (x[2] !== '' ? '<span class="n">' + x[2] + '</span>' : '') + '</a>'; }).join('') + '</div>';
     return '<div class="tk-header"><div class="tk-logo"><img src="' + logoUrl(a.code) + '" alt="" onerror="this.parentElement.hidden=true"></div>' +
       '<div class="tk-text"><div class="tk-eyebrow">✈ NUUA BAGGAGE PASS</div><div class="tk-code">' + esc(a.code) + '</div><div class="tk-name">' + esc(a.kr) + ' · ' + esc(a.en) + '</div></div></div>' +
       '<div class="tk-facts">' + facts + '</div><div class="tk-perf"></div><div class="tk-body">' + nav +
       sectionAllow('sec-ck', '🧳', '위탁수하물 · 기본 허용량', base, false) +
       sectionAllow('sec-cb', '🎒', '기내수하물 · 기본 허용량', baseCb, true) +
-      sectionFees(a) + sectionTiers(a) + sectionSpecs(a) + sectionPax(a) + sectionPolicy(a) + sectionSources(a) + '</div>';
+      sectionFees(a) + sectionTiers(a) + sectionSpecs(a) + sectionPax(a) +
+      sectionPet(a) + sectionSp(a) + sectionDgr(a) + sectionIrr(a) + sectionTrf(a) + sectionPolicy(a) + sectionSources(a) + '</div>';
   }
 
   var overlay = document.getElementById('modal-overlay'), modalContent = document.getElementById('modal-content');
-  function openModal(a){ if(!a) return; modalContent.innerHTML = detailHtml(a, false); overlay.hidden = false; overlay.querySelector('.modal').scrollTop = 0; }
-  function closeModal(){ overlay.hidden = true; }
+  function openModal(a){ if(!a) return; openCode = a.code; modalContent.innerHTML = detailHtml(a, false); overlay.hidden = false; overlay.querySelector('.modal').scrollTop = 0; }
+  function closeModal(){ overlay.hidden = true; openCode = null; }
   overlay.addEventListener('click', function(e){
     if(e.target === overlay) closeModal();
     var j = e.target.closest && e.target.closest('[data-jump]');
@@ -1349,6 +1750,32 @@
     var tr = e.target.closest && e.target.closest('.popover-trigger[data-full]');
     if(tr && !e.target.closest('summary')){ showPop(tr); e.stopPropagation(); }
     else if(!e.target.closest('#cell-popover')) hidePop();
+  });
+
+  // 섹션 안 검색 · 분류 칩 · △만 보기 (모달·비교 화면 공용)
+  function applySecFilter(tools){
+    var sec = tools.closest('.mtx-section'), q = tools.querySelector('[data-sec-search]').value.trim().toLowerCase();
+    var on = tools.querySelector('[data-sec-cat].on'), cat = on ? on.getAttribute('data-sec-cat') : '';
+    var wb = tools.querySelector('[data-sec-warn]'), w = wb && wb.classList.contains('on'), any = false;
+    sec.querySelectorAll('details.rec-group').forEach(function(g){
+      var n = 0;
+      g.querySelectorAll('.rec').forEach(function(r){
+        var ok = (!q || r.getAttribute('data-q').indexOf(q) !== -1) && (!cat || r.getAttribute('data-cat') === cat) && (!w || r.getAttribute('data-w') === '1');
+        r.classList.toggle('hide', !ok); if(ok) n++;
+      });
+      g.classList.toggle('hide', !n);
+      if(n && (q || cat || w)) g.open = true;
+      if(n) any = true;
+    });
+    sec.querySelector('.sec-nomatch').hidden = any;
+  }
+  document.addEventListener('input', function(e){ var t = e.target.closest && e.target.closest('[data-sec-search]'); if(t) applySecFilter(t.closest('.sec-tools')); });
+  document.addEventListener('click', function(e){
+    var c = e.target.closest && e.target.closest('[data-sec-cat],[data-sec-warn]'); if(!c) return;
+    var tools = c.closest('.sec-tools');
+    if(c.hasAttribute('data-sec-warn')) c.classList.toggle('on');
+    else tools.querySelectorAll('[data-sec-cat]').forEach(function(b){ b.classList.toggle('on', b === c); });
+    applySecFilter(tools);
   });
 
   filterInput.addEventListener('input', render);
@@ -1439,11 +1866,18 @@
     var rows = []; exList().forEach(function(a){ a.checked.forEach(function(r){ rows.push(Object.assign({ '수하물종류':'위탁' }, r)); }); a.cabin.forEach(function(r){ rows.push(Object.assign({ '수하물종류':'기내' }, r)); }); });
     if(rows.length) download('수하물_허용량', ['수하물종류'].concat(ALLOW_COLS), rows);
   });
+  document.getElementById('export-topic-btn').addEventListener('click', function(){
+    var key = document.getElementById('export-topic').value, rows = [];
+    exList().forEach(function(a){ rows = rows.concat(a[key] || []); });
+    if(rows.length) download('수하물_' + tabOf(key).name, hdr[key] || Object.keys(rows[0]), rows);
+  });
   document.getElementById('export-fee-btn').addEventListener('click', function(){
     var rows = []; exList().forEach(function(a){ rows = rows.concat(a.feeRows); });
     if(rows.length) download('수하물_초과요금', FEE_COLS, rows);
   });
 
+  // 콘솔 점검용: btData().raw['02'…] 행 수 확인 등
+  window.btData = function(){ return { raw: raw, airlines: airlines, loaded: loaded, ats: ats, viaGviz: viaGviz, failedTabs: failedTabs }; };
   load();
 })();
 </script>
