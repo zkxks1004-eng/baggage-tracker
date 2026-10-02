@@ -152,10 +152,10 @@
   .table-wrap{ max-width:2200px; margin:0 auto 60px; padding:0 24px; }
   .table-frame{ background:var(--surface); border:1px solid var(--line); border-radius:20px; overflow:auto; height:75vh; box-shadow:var(--shadow-lg); scrollbar-gutter:stable; }
   .gtable{ font-size:13.5px; min-width:1320px; }
-  .grow{ display:grid; grid-template-columns: 60px 196px 120px 52px 52px 74px 74px 140px 210px 62px 100px minmax(100px,1fr); align-items:center; column-gap:6px; }
+  .grow{ display:grid; grid-template-columns: 60px 200px 126px 52px 52px 70px 70px 140px 268px 52px 96px minmax(90px,1fr); align-items:center; column-gap:4px; }
   .grow .gcell{ padding:15px 10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
   .grow .gcell:first-child{ padding-left:22px; overflow:visible; text-overflow:clip; }
-  .grow .gcell.center{ text-align:center; }
+  .grow .gcell.center{ text-align:center; padding-left:4px; padding-right:4px; }
   .ghead{ position:sticky; top:0; background:var(--surface); z-index:1; border-bottom:1px solid var(--line); }
   .ghead .gcell{ color:var(--ink-faint); font-size:11.5px; font-weight:700; cursor:pointer; user-select:none; transition:color .15s ease; }
   .ghead .gcell:hover{ color:var(--accent2); }
@@ -175,7 +175,7 @@
   .al-logo{ width:30px; height:30px; border-radius:9px; background:var(--surface-2); border:1px solid var(--line); flex-shrink:0; display:flex; align-items:center; justify-content:center; overflow:hidden; }
   .al-logo img{ width:76%; height:76%; object-fit:contain; display:block; }
   .al-name{ font-weight:650; min-width:0; overflow:hidden; text-overflow:ellipsis; }
-  .al-name .al-en{ color:var(--ink-faint); font-size:11px; margin-top:2px; font-weight:500; overflow:hidden; text-overflow:ellipsis; }
+  .al-name .al-en{ color:var(--ink-faint); font-size:10.5px; margin-top:2px; font-weight:500; white-space:normal; line-height:1.3; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
   .count-chip{ display:inline-flex; align-items:center; justify-content:center; min-width:30px; padding:4px 9px; border-radius:999px; font-family:"IBM Plex Mono"; font-size:12px; font-weight:700; background:var(--surface-2); color:var(--ink-dim); }
   .count-chip.zero{ background:transparent; color:var(--ink-faint); font-weight:500; }
   .count-chip.warn{ background:var(--partial-soft); color:var(--partial); }
@@ -501,8 +501,13 @@
   .topic-tile.wait .tt-value{ color:var(--ink-faint); font-size:15px; }
 
   /* 목록의 주제 칩 */
-  .tp-chips{ display:flex; gap:4px; flex-wrap:nowrap; }
-  .tp{ display:inline-flex; align-items:center; gap:2px; padding:2px 6px; border-radius:7px; font-family:"IBM Plex Mono"; font-size:11px; font-weight:700; background:var(--surface-2); border:1px solid var(--line); color:var(--ink); }
+  .tp-chips{ display:flex; gap:3px; flex-wrap:nowrap; }
+  .tp{ display:inline-flex; align-items:center; gap:3px; padding:2px 4px; flex-shrink:0; border-radius:7px; font-family:"IBM Plex Mono"; font-size:11px; font-weight:700; background:var(--surface-2); border:1px solid var(--line); color:var(--ink); }
+  .ic.sp{ margin-right:4px; }
+  .tk-facts .tp-chips{ flex-wrap:wrap; }
+  .mtx-section-title .icon{ display:inline-block; width:1.4em; text-align:center; }
+  .mtx-section-title .icon, .pol-icon, .ic{ font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif; }
+  .tp .ic, .ic{ font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif; font-style:normal; font-weight:400; font-size:12px; line-height:1; display:inline-block; width:1.4em; text-align:center; flex-shrink:0; overflow:visible; }
   .tp.zero{ background:transparent; border-style:dashed; color:var(--ink-faint); font-weight:500; opacity:.7; }
   .tp.warnish{ border:1.5px solid var(--ink); }
 
@@ -1197,14 +1202,14 @@
     { key:'code', label:'코드' }, { key:'kr', label:'항공사명' }, { key:'alli', label:'동맹' },
     { key:'nChecked', label:'위탁', center:true }, { key:'nCabin', label:'기내', center:true },
     { key:'nFee', label:'초과요금', center:true }, { key:'nTier', label:'회원등급', center:true },
-    { key:'vPct', label:'2차검증 일치' }, { key:'nTopic', label:'새 주제 🐾🎿🔋🧾🔁' }, { key:'riskOrder', label:'위험도', center:true },
+    { key:'vPct', label:'2차검증 일치' }, { key:'nTopic', label:'새 주제' }, { key:'riskOrder', label:'위험도', center:true },
     { key:'lastDate', label:'최종확인일', center:true }, { key:'source', label:'대표 출처' }
   ];
   function topicChips(a){
     return '<div class="tp-chips">' + TOPICS.filter(function(tp){ return !tp.sub; }).map(function(tp){
-      if(!loaded[tp.key]) return '<span class="tp zero" title="' + escAttr(tp.label) + ' 불러오는 중">' + tp.icon + '…</span>';
+      if(!loaded[tp.key]) return '<span class="tp zero" title="' + escAttr(tp.label) + ' 불러오는 중"><i class="ic">' + tp.icon + '</i>…</span>';
       var n = a[tp.key].length, w = a[tp.key].filter(function(r){ return stat(r).k === 'p'; }).length;
-      return '<span class="tp' + (n ? '' : ' zero') + (w ? ' warnish' : '') + '" title="' + escAttr(tp.label + ' ' + n + '행' + (w ? ' · △ ' + w : '')) + '">' + tp.icon + (n || '·') + (w ? '<span style="font-weight:900">△</span>' : '') + '</span>';
+      return '<span class="tp' + (n ? '' : ' zero') + (w ? ' warnish' : '') + '" title="' + escAttr(tp.label + ' ' + n + '행' + (w ? ' · △ ' + w : '')) + '"><i class="ic">' + tp.icon + '</i>' + (n || '·') + (w ? '<span style="font-weight:900">△</span>' : '') + '</span>';
     }).join('') + '</div>';
   }
   function render(){
@@ -1237,7 +1242,7 @@
         '<div class="gcell">' + topicChips(a) + '</div>' +
         '<div class="gcell center">' + riskChip(a.risk) + '</div>' +
         '<div class="gcell center">' + esc(a.lastDate || '—') + '</div>' +
-        '<div class="gcell">' + (a.source ? '<div class="src-cell"><a class="src-btn" href="' + escAttr(href(a.source)) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">출처 ↗</a><span class="src-domain">' + esc(domain(a.source)) + '</span></div>' : '<span class="badge empty">—</span>') + '</div>' +
+        '<div class="gcell">' + (a.source ? '<div class="src-cell"><a class="src-btn" href="' + escAttr(href(a.source)) + '" title="' + escAttr(domain(a.source)) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">출처 ↗</a></div>' : '<span class="badge empty">—</span>') + '</div>' +
         '</div>';
     });
     html += '</div></div>';
@@ -1781,7 +1786,7 @@
     var nav = compact ? '' : '<div class="tk-nav">' + [
       ['sec-ck', '위탁', base.length], ['sec-cb', '기내', baseCb.length], ['sec-fee', '초과요금', a.nFee], ['sec-tier', '회원등급', a.nTier],
       ['sec-spec', '특수조건', a.nSpec], ['sec-pax', '유아·소아', a.pax.length], ['sec-pet', '🐾 반려동물', a.pet.length], ['sec-sp', '🎿 특수수하물', a.sp.length], ['sec-dgr', '🔋 위험물', a.dgr.length], ['sec-irr', '🧾 사고', a.irr.length], ['sec-trf', '🔁 환승', a.trf.length], ['sec-pol', '부가서비스', a.policy ? '' : 0], ['sec-src', '출처', Object.keys(a.sources).length]
-    ].filter(function(x){ return x[2] !== 0; }).map(function(x){ return '<a href="#' + x[0] + '" data-jump="' + x[0] + '">' + esc(x[1]) + (x[2] !== '' ? '<span class="n">' + x[2] + '</span>' : '') + '</a>'; }).join('') + '</div>';
+    ].filter(function(x){ return x[2] !== 0; }).map(function(x){ return '<a href="#' + x[0] + '" data-jump="' + x[0] + '">' + esc(x[1]).replace(/(\p{Extended_Pictographic}\uFE0F?)\s*/gu, '<i class="ic sp">$1</i>') + (x[2] !== '' ? '<span class="n">' + x[2] + '</span>' : '') + '</a>'; }).join('') + '</div>';
     return '<div class="tk-header"><div class="tk-logo"><img src="' + logoUrl(a.code) + '" alt="" onerror="this.parentElement.hidden=true"></div>' +
       '<div class="tk-text"><div class="tk-eyebrow">✈ NUUA BAGGAGE PASS</div><div class="tk-code">' + esc(a.code) + '</div><div class="tk-name">' + esc(a.kr) + ' · ' + esc(a.en) + '</div></div></div>' +
       '<div class="tk-facts">' + facts + '</div><div class="tk-perf"></div><div class="tk-body">' + nav +
