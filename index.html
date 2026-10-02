@@ -79,7 +79,7 @@
 
   /* ---- stat dashboard ---- */
   .dash-wrap{ max-width:2200px; margin:-52px auto 0; padding:0 24px; position:relative; z-index:2; }
-  .dash-panel{ background:var(--surface); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow-lg); display:grid; grid-template-columns:repeat(6,1fr); overflow:hidden; }
+  .dash-panel{ background:var(--surface); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow-lg); display:grid; grid-template-columns:repeat(4,1fr); overflow:hidden; }
   .dash-cell{ padding:20px 20px 18px; position:relative; border-right:1px solid var(--line); display:flex; flex-direction:column; gap:10px; transition:background .15s ease; min-width:0; }
   .dash-cell:last-child{ border-right:none; }
   .dash-cell:hover{ background:var(--surface-2); }
@@ -93,9 +93,9 @@
   .dash-cell:hover .ring::after{ background:var(--surface-2); }
   .ring span{ position:relative; z-index:1; font-family:"IBM Plex Mono"; font-size:8.5px; font-weight:700; color:var(--ink-dim); }
   @media (max-width:1100px){
-    .dash-panel{ grid-template-columns:repeat(3,1fr); }
-    .dash-cell:nth-child(3){ border-right:none; }
-    .dash-cell:nth-child(n+4){ border-top:1px solid var(--line); }
+    .dash-panel{ grid-template-columns:repeat(2,1fr); }
+    .dash-cell:nth-child(2){ border-right:none; }
+    .dash-cell:nth-child(n+3){ border-top:1px solid var(--line); }
   }
   @media (max-width:600px){
     .dash-panel{ grid-template-columns:repeat(2,1fr); }
@@ -467,6 +467,28 @@
   .load-banner b{ font-weight:800; }
   .load-banner[hidden]{ display:none; }
 
+  /* ---- 시트별 완료도 ---- */
+  .sheet-prog{ margin-top:12px; background:rgba(255,255,255,.82); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px); border:1px solid var(--line); border-radius:20px; padding:16px 20px 14px; box-shadow:var(--shadow); }
+  .sheet-prog[hidden]{ display:none; }
+  .sp-head{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+  .sp-title{ font-size:14px; font-weight:800; }
+  .sp-note{ font-size:11px; color:var(--ink-faint); }
+  .sp-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0 32px; }
+  .sp-gtitle{ font-family:"IBM Plex Mono"; font-size:10px; font-weight:700; letter-spacing:.07em; color:var(--ink-dim); padding:4px 0 6px; border-bottom:1px solid var(--line); }
+  .sp-row{ display:grid; grid-template-columns:minmax(0,1.3fr) minmax(60px,1fr) 40px 118px; gap:10px; align-items:center; font-size:12.5px; padding:7px 0; border-bottom:1px solid var(--line); }
+  .sp-row:last-child{ border-bottom:none; }
+  .sp-name{ font-weight:700; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .sp-name small{ font-weight:500; font-size:10.5px; color:var(--ink-faint); margin-left:6px; }
+  .sp-bar{ height:8px; border-radius:6px; background:var(--line); overflow:hidden; display:flex; }
+  .sp-bar i{ display:block; height:100%; background:var(--ok); }
+  .sp-bar i.p{ background:repeating-linear-gradient(45deg,#8a6d1f 0 2px,transparent 2px 5px); }
+  .sp-pct{ font-family:"IBM Plex Mono"; font-weight:700; text-align:right; font-variant-numeric:tabular-nums; }
+  .sp-cnt{ font-size:11px; color:var(--ink-dim); text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .sp-cnt b{ color:var(--ink); }
+  .sp-row.wait .sp-pct, .sp-row.wait .sp-cnt{ color:var(--ink-faint); }
+  .sp-foot{ margin-top:8px; font-size:11px; color:var(--ink-faint); }
+  @media (max-width:900px){ .sp-grid{ grid-template-columns:1fr; gap:10px; } }
+  @media (max-width:520px){ .sp-row{ grid-template-columns:minmax(0,1fr) 40px 96px; } .sp-bar{ display:none; } }
   /* ---- 주제별 데이터 타일 ---- */
   .topic-strip{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:12px; }
   .topic-strip[hidden]{ display:none; }
@@ -588,14 +610,14 @@
       <span class="hero-badge"><span class="b-dot"></span>BD OPS · BAGGAGE INTELLIGENCE</span>
     </div>
     <h1 class="hero-title">항공사 <em>수하물 정책</em> 트래커</h1>
-    <p class="hero-sub">구글시트 수하물 DB(허용량 · 초과요금 · 회원등급 · 특수조건 · 유아소아 · 반려동물 · 특수수하물 · 제한위험물 · 수하물사고 · 환승수하물)를 읽기 전용 웹앱으로 받아 보여줍니다. 시트 필터와 상관없이 모든 행이 들어오고, 원문은 칸이나 “원문” 버튼을 누르면 볼 수 있습니다.</p>
+    <p class="hero-sub">수하물 DB 12개 시트를 실시간으로 읽어 항공사별로 보여줍니다. 원문은 칸이나 “원문” 버튼으로 볼 수 있습니다.</p>
     <p class="meta" id="meta-line"><span class="dot"></span>데이터 불러오는 중…</p>
     <div class="load-banner" id="load-banner" hidden></div>
   </div>
   <div class="hero-shelf"></div>
 </header>
 
-<div class="dash-wrap"><div class="dash-panel" id="dash-panel" hidden></div><div class="topic-strip" id="topic-strip" hidden></div></div>
+<div class="dash-wrap"><div class="dash-panel" id="dash-panel" hidden></div><div class="topic-strip" id="topic-strip" hidden></div><div class="sheet-prog" id="sheet-prog" hidden></div></div>
 
 <div class="toolbar">
   <div class="toolbar-left">
@@ -1060,13 +1082,12 @@
     var paxRows = raw.pax || [], paxDone = paxRows.filter(function(p){ return /^(완료|성인과 동일)/.test(str(p['구조화 상태'])); }).length;
     function pct(v){ var t = v.o + v.p + v.x + v.n; return t ? Math.round(v.o / t * 100) : 0; }
     function wait(k, txt){ return loaded[k] ? txt : '불러오는 중…'; }
+    var pg = progStats(), done = loadDone || PROG.every(function(p){ return loaded[p.key]; });
     var cards = [
       { label:'항공사', value: airlines.length + '개', sub:'Star ' + al.star + ' · SkyTeam ' + al.sky + ' · oneworld ' + al.one, pct:null },
-      { label:'위탁 허용량 (02)', value: wait('checked', ck.toLocaleString('ko-KR') + '행'), sub:'2차검증 ✓ ' + v2.o + ' · △ ' + v2.p + ' · ✕ ' + v2.x, pct: loaded.checked ? pct(v2) : null, c:'var(--ok)' },
-      { label:'기내 허용량 (03)', value: wait('cabin', cb.toLocaleString('ko-KR') + '행'), sub:'2차검증 ✓ ' + v3.o + ' · △ ' + v3.p + ' · ✕ ' + v3.x, pct: loaded.cabin ? pct(v3) : null, c:'var(--ok)' },
-      { label:'초과요금 구간 (04)', value: wait('fee', fee.toLocaleString('ko-KR') + '행'), sub: loaded.fee ? '요금표 ' + groups + '개 · 확인 필요 ' + feeNeed : '', pct: loaded.fee ? Math.round((fee - feeNeed) / (fee || 1) * 100) : null, c:'var(--accent)' },
-      { label:'회원등급 (06·08)', value: wait('tier', tierAl + '개사'), sub: loaded.tier ? tierRows + '행 · 특수조건 ' + spec + '건' : '', pct: loaded.tier ? Math.round(tierAl / n * 100) : null, c:'var(--plane)' },
-      { label:'유아 · 소아 (05)', value: wait('pax', paxRows.length + '종'), sub: loaded.pax ? '구조화 끝 ' + paxDone + ' · 나머지 ' + (paxRows.length - paxDone) : '', pct: loaded.pax && paxRows.length ? Math.round(paxDone / paxRows.length * 100) : null, c:'var(--accent2)' }
+      { label:'전체 데이터', value: pg.t.toLocaleString('ko-KR') + '행', sub:'시트 ' + PROG.length + '개 · 04 초과요금 ' + fee.toLocaleString('ko-KR') + '행 포함', pct:null },
+      { label:'검증 완료 ✓', value: pg.vt ? (pg.vo / pg.vt * 100).toFixed(1) + '%' : '-', sub: pg.vo.toLocaleString('ko-KR') + ' / ' + pg.vt.toLocaleString('ko-KR') + '행 (04 제외)', pct:null },
+      { label:'남은 확인', value: '△ ' + pg.p.toLocaleString('ko-KR') + ' · ✕ ' + pg.x, sub: (done ? '' : '불러오는 중 · ') + '△ 확인 필요 · ✕ 공홈과 다름' + (pg.n ? ' · 미판정 ' + pg.n : ''), pct:null }
     ];
     dashPanel.hidden = false;
     dashPanel.innerHTML = cards.map(function(c){
@@ -1074,19 +1095,65 @@
       return '<div class="dash-cell"><div class="dash-top"><div class="dash-label">' + esc(c.label) + '</div>' + ring + '</div>' +
         '<div class="dash-value">' + esc(c.value) + '</div><div class="dash-sub">' + esc(c.sub) + '</div></div>';
     }).join('');
-    // 주제별 데이터: 행 수 · 데이터 있는 항공사 수 · △ 행 수
-    var tiles = TOPICS.map(function(tp){
-      if(!loaded[tp.key]) return '<div class="topic-tile wait"><div class="tt-label">' + tp.icon + ' ' + esc(tp.label) + '</div><div class="tt-value">불러오는 중…</div></div>';
-      var rows = raw[tp.key] || [], als = {}, warn = 0;
-      rows.forEach(function(r){ als[str(r['항공사'])] = 1; if(stat(r).k === 'p') warn++; });
-      return '<div class="topic-tile"><div class="tt-label">' + tp.icon + ' ' + esc(tp.label) + '</div><div class="tt-value">' + rows.length.toLocaleString('ko-KR') + '<small>행</small></div>' +
-        '<div class="tt-sub"><b>' + Object.keys(als).length + '</b>개사 · △ 확인 필요 <b>' + warn + '</b></div></div>';
+    document.getElementById('topic-strip').hidden = true;
+    renderProgress({ pax: loaded.pax ? '구조화 끝 ' + paxDone + '/' + paxRows.length : '', fee: loaded.fee ? '요금표 ' + groups + '개' : '',
+      policy: loaded.policy ? '부가서비스(공통정책) 검수완료 ' + pol + '개사 · ' + Object.keys(polStat).sort(function(x, y){ return polStat[y] - polStat[x]; }).map(function(k){ return k + ' ' + polStat[k]; }).join(' · ') : '' });
+  }
+
+
+  // 시트별 완료도: 탭마다 검증 열의 o 비율. 색만으로 구분하지 않게 ✓/△/✕ 숫자와 빗금(△)을 같이 쓴다.
+  var PROG = [
+    { key:'checked', label:'02 위탁허용량', col:'2차검증 판정' },
+    { key:'cabin',   label:'03 기내허용량', col:'2차검증 판정' },
+    { key:'fee',     label:'04 초과요금',   col:'파싱상태', map:{ '자동':'o', '원문만':'p' }, note:'자동 파싱 비율(검증 열 없음)' },
+    { key:'pax',     label:'05 유아소아',   col:'2차검증 판정' },
+    { key:'tier',    label:'06 회원등급',   col:'확인상태' },
+    { key:'spec',    label:'08 특수조건',   col:'verify_status' },
+    { key:'pet',     label:'16 반려동물',   col:'확인상태' },
+    { key:'petFee',  label:'17 반려동물요금', col:'확인상태' },
+    { key:'sp',      label:'18 특수수하물', col:'확인상태' },
+    { key:'dgr',     label:'19 제한위험물', col:'확인상태' },
+    { key:'irr',     label:'20 수하물사고', col:'확인상태' },
+    { key:'trf',     label:'21 환승수하물', col:'확인상태' }
+  ];
+  function progKind(p, v){
+    v = str(v);
+    if(p.map) return p.map[v] || 'n';
+    return /^o/i.test(v) ? 'o' : /^△/.test(v) ? 'p' : /^x/i.test(v) ? 'x' : 'n';
+  }
+  function progCount(p){
+    var c = { o:0, p:0, x:0, n:0, t:0, al:{} };
+    (raw[p.key] || []).forEach(function(r){ c[progKind(p, r[p.col])]++; c.t++; var a = str(r['항공사'] || r['airline_code']); if(a) c.al[a] = 1; });
+    return c;
+  }
+  function progStats(){
+    var s = { t:0, vo:0, vt:0, p:0, x:0, n:0 };
+    PROG.forEach(function(p){
+      if(!loaded[p.key]) return;
+      var c = progCount(p); s.t += c.t;
+      if(!p.map){ s.vo += c.o; s.vt += c.t; s.p += c.p; s.x += c.x; s.n += c.n; }
     });
-    tiles.push(loaded.policy ? '<div class="topic-tile"><div class="tt-label">🧭 부가서비스(공통정책)</div><div class="tt-value">' + pol + '<small>개사 검수완료</small></div><div class="tt-sub">' +
-      esc(Object.keys(polStat).sort(function(x, y){ return polStat[y] - polStat[x]; }).map(function(k){ return k + ' ' + polStat[k]; }).join(' · ')) + '</div></div>'
-      : '<div class="topic-tile wait"><div class="tt-label">🧭 부가서비스(공통정책)</div><div class="tt-value">불러오는 중…</div></div>');
-    var strip = document.getElementById('topic-strip');
-    strip.hidden = false; strip.innerHTML = tiles.join('');
+    return s;
+  }
+  function renderProgress(extra){
+    var el = document.getElementById('sheet-prog');
+    function row(p){
+      var hint = (extra && extra[p.key]) || '';
+      if(!loaded[p.key]) return '<div class="sp-row wait"><span class="sp-name">' + esc(p.label) + '</span><span class="sp-bar"></span><span class="sp-pct">…</span><span class="sp-cnt">불러오는 중</span></div>';
+      var c = progCount(p), po = c.t ? c.o / c.t * 100 : 0, pp = c.t ? c.p / c.t * 100 : 0, nal = Object.keys(c.al).length;
+      return '<div class="sp-row" title="' + escAttr(p.col + ' 기준' + (p.note ? ' · ' + p.note : '')) + '">' +
+        '<span class="sp-name">' + esc(p.label) + '<small>' + c.t.toLocaleString('ko-KR') + '행' + (nal ? ' · ' + nal + '개사' : '') + (hint ? ' · ' + esc(hint) : '') + '</small></span>' +
+        '<span class="sp-bar"><i style="width:' + po.toFixed(1) + '%"></i><i class="p" style="width:' + pp.toFixed(1) + '%"></i></span>' +
+        '<span class="sp-pct">' + Math.floor(po) + '%</span>' +
+        '<span class="sp-cnt">' + (p.map ? '자동 ' + c.o.toLocaleString('ko-KR') + ' · 원문만 ' + c.p : '△ <b>' + c.p + '</b> · ✕ <b>' + c.x + '</b>' + (c.n ? ' · 미판정 ' + c.n : '')) + '</span></div>';
+    }
+    function group(title, keys){
+      return '<div class="sp-group"><div class="sp-gtitle">' + esc(title) + '</div>' + PROG.filter(function(p){ return keys.indexOf(p.key) >= 0; }).map(row).join('') + '</div>';
+    }
+    el.hidden = false;
+    el.innerHTML = '<div class="sp-head"><span class="sp-title">시트별 완료도</span><span class="sp-note">완료 = 검증 o 비율 · 막대: 채움 ✓ / 빗금 △ · 04는 검증 열이 없어 자동 파싱 비율</span></div>' +
+      '<div class="sp-grid">' + group('허용량 · 요금', ['checked', 'cabin', 'fee', 'pax', 'tier', 'spec']) + group('새 주제', ['pet', 'petFee', 'sp', 'dgr', 'irr', 'trf']) + '</div>' +
+      (extra && extra.policy ? '<div class="sp-foot">' + esc(extra.policy) + '</div>' : '');
   }
 
   // ---------------------------------------------------------------- 목록
