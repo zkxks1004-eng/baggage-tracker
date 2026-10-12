@@ -615,7 +615,7 @@
       <span class="hero-badge"><span class="b-dot"></span>BD OPS · BAGGAGE INTELLIGENCE</span>
     </div>
     <h1 class="hero-title">항공사 <em>수하물 정책</em> 트래커</h1>
-    <p class="hero-sub">수하물 DB 12개 시트를 실시간으로 읽어 항공사별로 보여줍니다. 원문은 칸이나 “원문” 버튼으로 볼 수 있습니다.</p>
+    <p class="hero-sub">수하물 DB 14개 시트를 실시간으로 읽어 항공사별로 보여줍니다. 원문은 칸이나 “원문” 버튼으로 볼 수 있습니다.</p>
     <p class="meta" id="meta-line"><span class="dot"></span>데이터 불러오는 중…</p>
     <div class="load-banner" id="load-banner" hidden></div>
   </div>
@@ -713,10 +713,12 @@
     { key:'sp',      name:'18_특수수하물' },
     { key:'dgr',     name:'19_제한위험물' },
     { key:'irr',     name:'20_수하물사고' },
-    { key:'trf',     name:'21_환승수하물' }
+    { key:'trf',     name:'21_환승수하물' },
+    { key:'route',   name:'09_노선구간' },
+    { key:'brand',   name:'10_운임브랜드' }
   ];
   // 웹앱 요청 묶음. 첫 묶음(항공사·허용량)이 오면 바로 표를 그리고 나머지는 오는 대로 채운다.
-  var GROUPS = [['guide', 'airline', 'checked', 'cabin'], ['pax', 'tier', 'spec', 'policy'], ['fee'], ['pet', 'petFee', 'sp'], ['dgr', 'irr', 'trf']];
+  var GROUPS = [['guide', 'airline', 'checked', 'cabin'], ['pax', 'tier', 'spec', 'policy'], ['fee'], ['pet', 'petFee', 'sp'], ['dgr', 'irr', 'trf'], ['route', 'brand']];
   var PARALLEL = 3;
   // "항공사별 공통정책" 탭(항공사당 1행, A~R 18열)은 헤더가 '그룹|항목' 형식이라 위치로 읽는다.
   var PCOL = { CODE:0, GOLF:3, SKI:4, BIKE:5, SURF:6, INST_CABIN:7, INST_SEAT:8, PET_CABIN:9, PET_HOLD:10, PET_FEE:11, STROLLER:12, CARSEAT:13, STATUS:14, LAST_CHECK:15, SOURCE:16, NOTE:17 };
@@ -1119,16 +1121,22 @@
     { key:'sp',      label:'18 특수수하물', col:'확인상태' },
     { key:'dgr',     label:'19 제한위험물', col:'확인상태' },
     { key:'irr',     label:'20 수하물사고', col:'확인상태' },
-    { key:'trf',     label:'21 환승수하물', col:'확인상태' }
+    { key:'trf',     label:'21 환승수하물', col:'확인상태' },
+    // 10/12 기준표: 검증 열이 없어 정의 상태·RBD 채움으로 본다(검증 완료 % 계산에서는 뺀다). 사용 행 수는 시트 수식(02·03 COUNTIF)이라 늘 실제와 같다.
+    { key:'route',   label:'09 노선구간', col:'정의 상태', ref:true, note:'확정 비율(폐기·폐지 행 제외)',
+      fn:function(v){ return /^확정/.test(v) ? 'o' : /^폐/.test(v) ? 'skip' : /^초안/.test(v) ? 'p' : 'n'; }, cnt:function(c){ return '확정 ' + c.o.toLocaleString('ko-KR') + ' · 초안 ' + c.p + (c.n ? ' · 정의 필요 ' + c.n : ''); } },
+    { key:'brand',   label:'10 운임브랜드', col:'RBD(부킹클래스)', ref:true, note:'RBD(부킹클래스)가 채워진 비율',
+      fn:function(v){ return v ? 'o' : 'n'; }, cnt:function(c){ return 'RBD 있음 ' + c.o + ' · 없음 ' + c.n; } }
   ];
   function progKind(p, v){
     v = str(v);
+    if(p.fn) return p.fn(v);
     if(p.map) return p.map[v] || 'n';
     return /^o/i.test(v) ? 'o' : /^△/.test(v) ? 'p' : /^x/i.test(v) ? 'x' : 'n';
   }
   function progCount(p){
     var c = { o:0, p:0, x:0, n:0, t:0, al:{} };
-    (raw[p.key] || []).forEach(function(r){ c[progKind(p, r[p.col])]++; c.t++; var a = str(r['항공사'] || r['airline_code']); if(a) c.al[a] = 1; });
+    (raw[p.key] || []).forEach(function(r){ var k = progKind(p, r[p.col]); if(k === 'skip') return; c[k]++; c.t++; var a = str(r['항공사'] || r['airline_code']); if(a) c.al[a] = 1; });
     return c;
   }
   function progStats(){
@@ -1136,7 +1144,7 @@
     PROG.forEach(function(p){
       if(!loaded[p.key]) return;
       var c = progCount(p); s.t += c.t;
-      if(!p.map){ s.vo += c.o; s.vt += c.t; s.p += c.p; s.x += c.x; s.n += c.n; }
+      if(!p.map && !p.ref){ s.vo += c.o; s.vt += c.t; s.p += c.p; s.x += c.x; s.n += c.n; }
     });
     return s;
   }
@@ -1150,14 +1158,14 @@
         '<span class="sp-name">' + esc(p.label) + '<small>' + c.t.toLocaleString('ko-KR') + '행' + (nal ? ' · ' + nal + '개사' : '') + (hint ? ' · ' + esc(hint) : '') + '</small></span>' +
         '<span class="sp-bar"><i style="width:' + po.toFixed(1) + '%"></i><i class="p" style="width:' + pp.toFixed(1) + '%"></i></span>' +
         '<span class="sp-pct">' + Math.floor(po) + '%</span>' +
-        '<span class="sp-cnt">' + (p.map ? '자동 ' + c.o.toLocaleString('ko-KR') + ' · 원문만 ' + c.p : '△ <b>' + c.p + '</b> · ✕ <b>' + c.x + '</b>' + (c.n ? ' · 미판정 ' + c.n : '')) + '</span></div>';
+        '<span class="sp-cnt">' + (p.cnt ? p.cnt(c) : p.map ? '자동 ' + c.o.toLocaleString('ko-KR') + ' · 원문만 ' + c.p : '△ <b>' + c.p + '</b> · ✕ <b>' + c.x + '</b>' + (c.n ? ' · 미판정 ' + c.n : '')) + '</span></div>';
     }
     function group(title, keys){
       return '<div class="sp-group"><div class="sp-gtitle">' + esc(title) + '</div>' + PROG.filter(function(p){ return keys.indexOf(p.key) >= 0; }).map(row).join('') + '</div>';
     }
     el.hidden = false;
     el.innerHTML = '<div class="sp-head"><span class="sp-title">시트별 완료도</span><span class="sp-note">완료 = 검증 o 비율 · 막대: 채움 ✓ / 빗금 △ · 04는 검증 열이 없어 자동 파싱 비율</span></div>' +
-      '<div class="sp-grid">' + group('허용량 · 요금', ['checked', 'cabin', 'fee', 'pax', 'tier', 'spec']) + group('새 주제', ['pet', 'petFee', 'sp', 'dgr', 'irr', 'trf']) + '</div>' +
+      '<div class="sp-grid">' + group('허용량 · 요금', ['checked', 'cabin', 'fee', 'pax', 'tier', 'spec']) + group('새 주제', ['pet', 'petFee', 'sp', 'dgr', 'irr', 'trf']) + group('기준표', ['route', 'brand']) + '</div>' +
       (extra && extra.policy ? '<div class="sp-foot">' + esc(extra.policy) + '</div>' : '');
   }
 
