@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AirPlus 데이터 정리</title>
+<link rel="icon" href="data:,">
+<meta name="description" content="AirPlus(트래블포트)로 받을 수 있는 데이터, 있긴 한데 부족한 것, 선제적으로 모아야 할 것">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root {
+    --bg: #f3f5f9;
+    --card: rgba(255, 255, 255, 0.78);
+    --line: #e3e7ef;
+    --ink: #1b2240;
+    --sub: #5d6680;
+    --soft: #8a92a8;
+    --navy: #1e2761;
+    --chip: #eef1f7;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background:
+      radial-gradient(1200px 600px at 10% -10%, #e4e9f7 0%, transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, #f1ece2 0%, transparent 55%),
+      var(--bg);
+    color: var(--ink);
+    font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 56px 24px 72px; }
+
+  header { margin-bottom: 36px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 600; letter-spacing: .02em; color: var(--sub);
+    background: rgba(255,255,255,.7); border: 1px solid var(--line);
+    padding: 6px 12px; border-radius: 999px;
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  }
+  h1 {
+    margin: 16px 0 10px; font-size: clamp(28px, 4vw, 42px); line-height: 1.25;
+    font-weight: 800; letter-spacing: -0.02em; color: var(--navy);
+  }
+  .lead { margin: 0; font-size: 16px; color: var(--sub); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+  .legend span {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 14px; color: var(--ink); font-weight: 600;
+  }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: start; }
+
+  .col {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,.9);
+    border-radius: 22px;
+    box-shadow: 0 1px 2px rgba(27,34,64,.04), 0 12px 32px rgba(27,34,64,.07);
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    padding: 26px 24px 10px;
+  }
+  .col-head { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+  .mark {
+    flex: none; width: 38px; height: 38px; border-radius: 12px;
+    display: grid; place-items: center;
+    font-size: 19px; font-weight: 800; line-height: 1;
+  }
+  /* 색이 아니라 기호 모양 + 채움/테두리로 구분 */
+  .mark.have { background: var(--navy); color: #fff; }
+  .mark.weak { background: #fff; color: var(--navy); border: 2px solid var(--navy); }
+  .mark.need { background: var(--chip); color: var(--navy); border: 2px dashed var(--navy); }
+  .col h2 { margin: 0; font-size: 21px; font-weight: 800; letter-spacing: -0.01em; color: var(--navy); }
+  .col .desc { margin: 4px 0 14px 50px; font-size: 13px; color: var(--soft); }
+
+  ul { list-style: none; margin: 0; padding: 0; }
+  li { padding: 14px 2px; border-top: 1px solid var(--line); }
+  li:first-child { border-top: none; }
+  li b { display: block; font-size: 16px; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
+  li small { display: block; margin-top: 4px; font-size: 14px; line-height: 1.5; color: var(--sub); }
+
+  footer { margin-top: 32px; font-size: 13px; color: var(--soft); text-align: center; }
+
+  @media (max-width: 980px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    .wrap { padding: 36px 16px 56px; }
+    .col { padding: 22px 18px 6px; }
+    .col .desc { margin-left: 0; }
+  }
+  @media print {
+    body { background: #fff; }
+    .col { box-shadow: none; border: 1px solid var(--line); backdrop-filter: none; }
+    .grid { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">2026.10.13 · AirPlus(트래블포트) 데이터 정리</span>
+    <h1>AirPlus로 받을 수 있는 것 · 부족한 것 · 먼저 모아야 할 것</h1>
+    <p class="lead">개발 서버에서 직접 조회해 본 기준</p>
+    <div class="legend">
+      <span><i class="mark have" style="width:26px;height:26px;font-size:14px;border-radius:8px;font-style:normal">✓</i>받을 수 있음</span>
+      <span><i class="mark weak" style="width:26px;height:26px;font-size:14px;border-radius:8px;font-style:normal">△</i>있긴 한데 부족</span>
+      <span><i class="mark need" style="width:26px;height:26px;font-size:14px;border-radius:8px;font-style:normal">+</i>우리가 모아야 함</span>
+    </div>
+  </header>
+
+  <main class="grid">
+    <section class="col" aria-labelledby="h-have">
+      <div class="col-head"><span class="mark have" aria-hidden="true">✓</span><h2 id="h-have">받을 수 있는 데이터</h2></div>
+      <p class="desc">AirPlus 응답으로 바로 오는 것</p>
+      <ul>
+        <li><b>위탁 수하물 허용량</b><small>개수·무게·크기 · 운임 브랜드·클래스별</small></li>
+        <li><b>기내 수하물 허용량</b><small>개수·무게·크기</small></li>
+        <li><b>추가 위탁 요금</b><small>두 번째 가방 등</small></li>
+        <li><b>승객 유형별 허용량</b><small>소아·유아</small></li>
+        <li><b>노선·환승 여정별 허용량</b><small>같은 항공사라도 노선마다 다른 값</small></li>
+        <li><b>운임 브랜드 · 예약 클래스 · 운임 코드</b><small>브랜드명·단계 포함</small></li>
+        <li><b>좌석 등급별 예약 클래스 목록</b><small>이코노미·비즈니스 등 → 클래스</small></li>
+        <li><b>브랜드 혜택</b><small>포함/유료/불가 — 좌석 지정·기내식·마일리지 적립 등</small></li>
+        <li><b>취소·변경 수수료</b><small>언제나·출발 전·출발 후·노쇼</small></li>
+        <li><b>총운임 · 세금 · 유류할증료</b></li>
+        <li><b>항공사 수하물 안내 링크</b></li>
+        <li><b>기내 서비스</b><small>기내식·음료·엔터·USB·와이파이·좌석 배열·기종</small></li>
+        <li><b>좌석 수치 · 정식 기종명</b><small>좌석 간격·폭·기울기</small></li>
+        <li><b>사진 · 비행 거리 · 터미널</b><small>기내·외부·기내식 사진</small></li>
+      </ul>
+    </section>
+
+    <section class="col" aria-labelledby="h-weak">
+      <div class="col-head"><span class="mark weak" aria-hidden="true">△</span><h2 id="h-weak">있긴 한데 부족한 것</h2></div>
+      <p class="desc">값은 오지만 그대로 믿거나 일반화하기 어려운 것</p>
+      <ul>
+        <li><b>안 나오는 항공사</b><small>5J·BX·QV·RS·HA</small></li>
+        <li><b>규칙이 아니라 조회 1건의 답</b><small>어느 노선·조건에 적용되는지는 없음</small></li>
+        <li><b>상위 클래스 기내 값</b><small>일반석 값으로 나오는 경우 있음</small></li>
+        <li><b>최저가(Lite) 운임</b><small>잘 안 나옴</small></li>
+        <li><b>학생·선원·근로자 운임</b><small>대부분 성인 운임으로 대체됨</small></li>
+        <li><b>조회 기준이 트래블포트 쪽 대리점</b><small>우리 조건으로 보면 다를 수 있음</small></li>
+        <li><b>잔여석</b><small>반영 안 됨 — 매진 클래스도 가격이 나옴</small></li>
+        <li><b>추가 요금</b><small>근사치 · 추가 1개 요금만</small></li>
+        <li><b>반입 제한(Embargo)</b><small>"있음"과 링크만</small></li>
+        <li><b>검색 API 브랜드명</b><small>클래스와 상관없이 기본값으로 나오는 항공사 많음</small></li>
+        <li><b>기준일</b><small>응답에 없음 · 옛 데이터(코로나 항목·옛 사진) 섞임</small></li>
+        <li><b>가격 투명성 · 운임 규정 원문 API</b><small>우리 PCC가 있어야 해서 못 받음 (받으면 적립 마일·기간별 수수료)</small></li>
+        <li><b>빈 항목</b><small>항공사 정보 · 좌석 배치도</small></li>
+        <li><b>이용 조건</b><small>호출 한도·과금·사진 사용 범위 미확인</small></li>
+      </ul>
+    </section>
+
+    <section class="col" aria-labelledby="h-need">
+      <div class="col-head"><span class="mark need" aria-hidden="true">+</span><h2 id="h-need">선제적으로 모아야 할 것</h2></div>
+      <p class="desc">AirPlus에 없거나 "있음"만 오는 것</p>
+      <ul>
+        <li><b>회원·동맹 등급별 추가 수하물</b></li>
+        <li><b>반려동물</b><small>허용 조건·요금</small></li>
+        <li><b>특수수하물</b><small>스포츠 장비·악기·유모차·휠체어</small></li>
+        <li><b>제한·위험물</b><small>배터리 등</small></li>
+        <li><b>수하물 사고·보상 규정</b></li>
+        <li><b>환승 수하물 규정</b><small>연결 수속·셀프 환승</small></li>
+        <li><b>특수운임 조건</b><small>학생·선원·근로자·군인</small></li>
+        <li><b>노선 범위 정의</b><small>어느 노선에 어떤 규정이 적용되는지</small></li>
+        <li><b>초과요금 전체</b><small>무게·크기 초과 · 사전 구매 할인</small></li>
+        <li><b>반입 제한(Embargo) 내용</b></li>
+        <li><b>유아 세부</b><small>유모차·카시트·나이 기준</small></li>
+        <li><b>AirPlus에 없는 항공사 정책 전체</b></li>
+        <li><b>정책 변경 이력</b><small>언제 바뀌었는지</small></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>최종 수정 2026.10.13</footer>
+</div>
+</body>
+</html>
