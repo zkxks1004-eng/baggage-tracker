@@ -800,8 +800,17 @@
     var s = str(r); if(!s) return '<span class="badge empty">—</span>';
     return '<span class="risk ' + (s === '상' ? 'hi' : s === '중' ? 'mid' : 'lo') + '">' + esc(s) + '</span>';
   }
+  // 10/16: 24_계산기·예약화면에서 온 행은 판정 칸이 '실측'(o와 같게 셈) 또는 '실측(미판매)'(△와 같게 셈)
+  function vKind(v){
+    var s = str(v);
+    if(/^실측\(미판매/.test(s)) return 'p';
+    if(/^실측/.test(s)) return 'o';
+    return s === 'o' ? 'o' : s === '△' ? 'p' : s === 'x' ? 'x' : 'n';
+  }
   function vBadge(v){
     var s = str(v);
+    if(/^실측\(미판매/.test(s)) return '<span class="vb p" title="예약 화면에서 미판매 확인(참고)">△</span>';
+    if(/^실측/.test(s)) return '<span class="vb o" title="계산기·예약 화면 실측">✓</span>';
     if(s === 'o') return '<span class="vb o" title="2차검증 일치">✓</span>';
     if(s === '△') return '<span class="vb p" title="2차검증 부분 일치">△</span>';
     if(s === 'x') return '<span class="vb x" title="2차검증 불일치">✕</span>';
@@ -817,6 +826,8 @@
   // 새 주제 탭 확인상태: "o(…)" 일치, "△(사유)" 확인 필요
   function stat(r){
     var s = str(r['확인상태']);
+    if(/^실측\(미판매/.test(s)) return { k:'p', why:'예약 화면에서 미판매 확인(참고)' };
+    if(/^실측/.test(s)) return { k:'o', why:'계산기·예약 화면 실측' };
     if(/^o/i.test(s)) return { k:'o', why: s.replace(/^o\s*\(?/i, '').replace(/\)$/, '') };
     if(/^△/.test(s)) return { k:'p', why: s.replace(/^△\s*\(?/, '').replace(/\)$/, '') };
     if(/^x/i.test(s)) return { k:'x', why: s.replace(/^x\s*\(?/i, '').replace(/\)$/, '') };
@@ -1032,11 +1043,10 @@
         FEE_TYPES.forEach(function(t){ var g = a.groups[str(r[FEE_FK[t]])]; if(g) g.refs.push(r); });
       });
       a.v = { o:0, p:0, x:0, n:0 }; a.v2 = { o:0, p:0, x:0, n:0 };
-      a.checked.forEach(function(r){ var v = str(r['2차검증 판정']); if(v === 'o') a.v2.o++; else if(v === '△') a.v2.p++; else if(v === 'x') a.v2.x++; else a.v2.n++; });
+      a.checked.forEach(function(r){ a.v2[vKind(r['2차검증 판정'])]++; });
       var last = '', routes = {}, srcs = {};
       all.forEach(function(r){
-        var v = str(r['2차검증 판정']);
-        if(v === 'o') a.v.o++; else if(v === '△') a.v.p++; else if(v === 'x') a.v.x++; else a.v.n++;
+        a.v[vKind(r['2차검증 판정'])]++;
         var d = str(r['최종확인일']); if(d > last) last = d;
         if(r['노선구간']) routes[r['노선구간']] = 1;
         var u = str(r['출처URL']); if(u) srcs[u] = (srcs[u] || 0) + 1;
@@ -1132,6 +1142,7 @@
     v = str(v);
     if(p.fn) return p.fn(v);
     if(p.map) return p.map[v] || 'n';
+    if(/^실측/.test(v)) return vKind(v);
     return /^o/i.test(v) ? 'o' : /^△/.test(v) ? 'p' : /^x/i.test(v) ? 'x' : 'n';
   }
   function progCount(p){
@@ -1528,7 +1539,7 @@
     var x = str(t['추출 상태']), c = str(t['확인상태']);
     var out = '';
     if(x && x !== '자동') out += '<span class="pill warn">' + esc(x) + '</span>';
-    out += '<span class="pill' + (/^o/.test(c) ? ' info' : '') + '">' + esc(c || '미검증') + '</span>';
+    out += '<span class="pill' + (/^(o|실측$)/.test(c) ? ' info' : '') + '">' + esc(c || '미검증') + '</span>';
     return '<div class="tstat">' + out + '</div>';
   }
   function sectionTiers(a){
@@ -1657,7 +1668,7 @@
     if(has(r['발견'])) items.push({ label:'발견', text: r['발견'] });
     if(has(r['기록'])) items.push({ label:'기록', text: r['기록'] });
     var u = str(r['출처URL']);
-    return '<div class="rec-foot">' + (st.k === 'o' ? '<span class="ok-mark" title="' + escAttr(r['확인상태']) + '">✓ 원문 일치</span>' : '') +
+    return '<div class="rec-foot">' + (st.k === 'o' ? '<span class="ok-mark" title="' + escAttr(r['확인상태']) + '">' + (/^실측/.test(str(r['확인상태'])) ? '✓ 계산기·예약 화면 실측' : '✓ 원문 일치') + '</span>' : '') +
       (items.length ? '<button type="button" class="orig popover-trigger"' + popAttrs(items) + '>원문 보기</button>' : '') +
       (/\./.test(u) ? linkify(u) .replace(/>([^<]+)<\/a>/g, function(m, t){ return '>출처 ↗ ' + esc(domain(t)) + '</a>'; }) : '') +
       '<span class="rid">' + esc(r[idField]) + (has(r['출처ID']) ? ' · ' + esc(r['출처ID']) : '') + '</span></div>';
