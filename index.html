@@ -1441,6 +1441,7 @@
   }
   // 조건 메모 끝의 "※ 공홈 확인(날짜): URL"·"※ 확인 필요: 이유"는 글자 대신 표시로 보여준다
   function memoHtml(f, withCommon){
+    if(str(f['파싱상태']) === '확인 필요') return '<span class="tag q">확인 필요</span>';
     var parts = str(f['조건 메모']).split(/\s*※\s*/), main = parts.shift(), marks = [];
     parts.forEach(function(p){
       var ok = p.match(/^공홈 확인\(([^)]*)\):\s*(\S+)\s*([\s\S]*)$/), need = p.match(/^확인 필요:\s*([\s\S]*)$/);
@@ -1454,8 +1455,9 @@
     if(!bits.length && !marks.length) return '—';
     return esc(bits.join(' · ')) + (marks.length ? '<span class="marks">' + marks.join('') + '</span>' : '');
   }
-  // 10/29 승연님 기준: 파싱상태 '확인 필요'인 04 행은 공개 화면·CSV에서 금액·금액 상한·다른 통화 표기를 비우고 '확인 필요'로만 보여준다(원문 칸은 그대로)
-  var UNCONFIRMED_HIDE = ['금액', '금액 상한', '다른 통화 표기'];
+  // 10/29 승연님 기준: 파싱상태 '확인 필요'인 04 행은 공개 화면·CSV에서 금액·금액 상한·다른 통화 표기·조건 메모·할인율 표기를 비우고 '확인 필요'로만 보여준다
+  // (AGG 묶음 참고 행 규칙과 같게, 원문 칸은 그대로)
+  var UNCONFIRMED_HIDE = ['금액', '금액 상한', '다른 통화 표기', '조건 메모', '할인율 표기'];
   function hideUnconfirmed(f){ if(str(f['파싱상태']) === '확인 필요') UNCONFIRMED_HIDE.forEach(function(k){ if(k in f) f[k] = ''; }); }
   function amtText(f){
     if(str(f['파싱상태']) === '확인 필요') return '<span class="tag q">확인 필요</span>';
