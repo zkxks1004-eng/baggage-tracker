@@ -968,7 +968,10 @@
     frame.innerHTML = '<div class="state"><div class="spinner"></div>항공사 · 허용량 탭 불러오는 중… (웹앱 응답에 5~15초 걸립니다)</div>';
     updateMeta();
     var queue = GROUPS.slice(), running = 0;
-    function put(t, rows){ raw[t.key] = rows; loaded[t.key] = true; }
+    function put(t, rows){
+      if(t.key === 'fee') rows.forEach(hideUnconfirmed);   // 웹앱·gviz 어느 쪽으로 읽어도 화면·CSV 전에 비움
+      raw[t.key] = rows; loaded[t.key] = true;
+    }
     function fallback(tabs){
       return Promise.all(tabs.map(function(t){
         return gvizTab(t).then(function(rows){ put(t, rows); viaGviz.push(t.name); },
@@ -1451,7 +1454,11 @@
     if(!bits.length && !marks.length) return '—';
     return esc(bits.join(' · ')) + (marks.length ? '<span class="marks">' + marks.join('') + '</span>' : '');
   }
+  // 10/29 승연님 기준: 파싱상태 '확인 필요'인 04 행은 공개 화면·CSV에서 금액·금액 상한·다른 통화 표기를 비우고 '확인 필요'로만 보여준다(원문 칸은 그대로)
+  var UNCONFIRMED_HIDE = ['금액', '금액 상한', '다른 통화 표기'];
+  function hideUnconfirmed(f){ if(str(f['파싱상태']) === '확인 필요') UNCONFIRMED_HIDE.forEach(function(k){ if(k in f) f[k] = ''; }); }
   function amtText(f){
+    if(str(f['파싱상태']) === '확인 필요') return '<span class="tag q">확인 필요</span>';
     var kind = str(f['행 유형']);
     if(kind === '무료') return '<span class="fee-amt free">무료</span>';
     if(kind === '불가·한도'){ var lk = limitKind(f); return '<span class="fee-amt ' + (lk === '한도' ? 'limit' : 'block') + '">' + lk + '</span>'; }
@@ -1488,8 +1495,7 @@
           var common = str(f['공통 조건(앞머리)']);
           if(common && common !== prevCommon) body += '<div class="frow fcommon"><span class="lbl">공통 조건</span>' + esc(common) + '</div>';
           prevCommon = common;
-          body += '<div class="frow' + (common ? ' in-common' : '') + '"><div class="fee-memo">' + esc(f['요금존'] || '—') + '</div><div>' + segText(f) + '</div><div>' + amtText(f) +
-            (str(f['파싱상태']) === '확인 필요' ? ' <span class="tag q">확인</span>' : '') + '</div><div class="fee-memo">' + esc(f['판매 채널'] || '—') + '</div>' +
+          body += '<div class="frow' + (common ? ' in-common' : '') + '"><div class="fee-memo">' + esc(f['요금존'] || '—') + '</div><div>' + segText(f) + '</div><div>' + amtText(f) + '</div><div class="fee-memo">' + esc(f['판매 채널'] || '—') + '</div>' +
             '<div class="fee-memo">' + memoHtml(f, false) + '</div></div>';
         });
         var srcList = Object.keys(g.srcs), doms = {};
